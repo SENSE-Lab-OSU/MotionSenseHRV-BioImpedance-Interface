@@ -12,8 +12,14 @@ const float gyroThreshold= 5.0f;
 uint8_t blePktMagneto[ble_magnetometerPktLength];
 uint8_t blePktMotion[ble_motionPktLength];
 float quaternionResult_1[4] = {0.0, 0.0, 0.0, 1.0};
-struct motionSendInfo my_motionData; 
+struct motionSendInfo my_motionData;
+
+// Magnometer variables
+ 
 bool validMeasurement = false;
+bool magnoSecondReading = false;
+uint8_t burst_tx_magneto[17];	
+
 void spiRead_registerIMU(uint8_t * tx_buffer, uint8_t txLen, 
 uint8_t * rx_buffer, uint8_t rxLen){
   int err;
@@ -322,12 +328,13 @@ static void prepare_gyros(float * quaternionResult){
 // Read the magnetometer sample and use it for orientation calculation
 static void magnetometer_data_read_send(bool validMeasurement , uint16_t pktCounter){
   uint8_t txLen=9, rxLen=9;
-
-  uint8_t burst_tx_magneto[11];	
+  
   // Burst read external sensor ( Magnetometer)  registers (0x49-0x50).
   uint8_t burst_rx_magneto[9];	// SPI burst read holders.
-
+  
+  printk("packet counter: %i", (unsigned int)pktCounter);
   //Magneto Transmitting 0xFF
+  
   burst_tx_magneto[0] =(READMASTER | EXT_SENSE_DATA_0_IMU);
   burst_tx_magneto[1] = SPI_FILL;
   burst_tx_magneto[2] = SPI_FILL;
@@ -337,16 +344,17 @@ static void magnetometer_data_read_send(bool validMeasurement , uint16_t pktCoun
   burst_tx_magneto[6] = SPI_FILL;
   burst_tx_magneto[7] = SPI_FILL;
   burst_tx_magneto[8] = SPI_FILL;
-
   // Reading magnetometer data
   spiRead_registerIMU(burst_tx_magneto, txLen, burst_rx_magneto, rxLen);
   
   // Sort magneto data.
-  for(uint8_t i=0;i<6;i++)
-    blePktMagneto[i]=burst_rx_magneto[i+1];
-  
-  blePktMagneto[6] = (pktCounter&0xFF00) >> 8;
-  blePktMagneto[7] = (pktCounter&0x00FF);
+  if (magnoSecondReading){
+  //for(uint8_t i=0;i<6;i++)
+    //blePktMagneto[i]=burst_rx_magneto[i+1];
+    blePktMagneto[0] = burst_rx_magneto[0+1];
+    blePktMagneto[1] = burst_rx_magneto[0+1];
+  blePktMagneto[15] = (pktCounter&0xFF00) >> 8;
+  blePktMagneto[16] = (pktCounter&0x00FF);
   if(magnetoConfig.txPacketEnable == true){
     my_magnetoSensor.dataPacket = blePktMagneto;
     my_magnetoSensor.packetLength = MAGNETOMETER_DATA_LEN;
@@ -381,6 +389,7 @@ static void magnetometer_data_read_send(bool validMeasurement , uint16_t pktCoun
   //  magnetoData1.Hx_val,magnetoData1.Hy_val,magnetoData1.Hz_val);
   motion_data_orientation_timeout_handler(pktCounter);
   validMeasurement = false;
+  magnoSecondReading = !magnoSecondReading;
 }
 
 // Configure the magnetometer sensor using the external sensor mode
