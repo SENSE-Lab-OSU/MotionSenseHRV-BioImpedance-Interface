@@ -192,9 +192,10 @@ static void gyroscope_measurement(float * quaternionResult){
     quaternionResult[3] = -quaternionResult[3];
   }
 }
+
+
 // Function that converts the accumulated quarternion 
 // back to angular velocity measurements.
-
 static void prepare_gyros(float * quaternionResult){
   float quantizerScale; 
   float pi =(float) 3.14159;
@@ -351,14 +352,28 @@ static void magnetometer_data_read_send(bool validMeasurement , uint16_t pktCoun
   if (magnoSecondReading){
   //for(uint8_t i=0;i<6;i++)
     //blePktMagneto[i]=burst_rx_magneto[i+1];
-    blePktMagneto[0] = burst_rx_magneto[0+1];
-    blePktMagneto[1] = burst_rx_magneto[0+1];
+    blePktMagneto[2] = burst_rx_magneto[0+1];
+    blePktMagneto[3] = burst_rx_magneto[1+1];
+    blePktMagneto[6] = burst_rx_magneto[2+1];
+    blePktMagneto[7] = burst_rx_magneto[3+1];
+    blePktMagneto[9] = burst_rx_magneto[4+1];
+    blePktMagneto[10] = burst_rx_magneto[5+1];
+
+
   blePktMagneto[15] = (pktCounter&0xFF00) >> 8;
   blePktMagneto[16] = (pktCounter&0x00FF);
   if(magnetoConfig.txPacketEnable == true){
     my_magnetoSensor.dataPacket = blePktMagneto;
     my_magnetoSensor.packetLength = MAGNETOMETER_DATA_LEN;
     k_work_submit(&my_magnetoSensor.work);
+  }
+  else{
+    blePktMagneto[0] = burst_rx_magneto[0+1];
+    blePktMagneto[1] = burst_rx_magneto[1+1];
+    blePktMagneto[4] = burst_rx_magneto[2+1];
+    blePktMagneto[5] = burst_rx_magneto[3+1];
+    blePktMagneto[7] = burst_rx_magneto[4+1];
+    blePktMagneto[8] = burst_rx_magneto[5+1];
   }
 
   if(validMeasurement == true){
@@ -521,7 +536,7 @@ void motion_data_timeout_handler(struct k_work *item){
   //printf("q0=%f,q1=%f,q2=%f,q3=%f\n", 
   //  quaternionResult_1[0],quaternionResult_1[1],
   //  quaternionResult_1[2],quaternionResult_1[3]);
-  if(gyro_first_readTemp ==0){
+  if(gyro_first_readTemp == 0){
     spiRead_registerIMU(burst_tx,7, burst_rx, 7);  		  
     for(int i=0;i<6;i++)
       blePktMotion[i] = burst_rx[i+1];

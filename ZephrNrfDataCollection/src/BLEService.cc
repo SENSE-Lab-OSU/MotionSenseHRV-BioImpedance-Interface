@@ -343,6 +343,7 @@ static void on_sent(struct bt_conn *conn, void *user_data){
 
 /* This function is called whenever the CCCD register has been changed by the client*/
 void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value){
+  
   ARG_UNUSED(attr);
   switch(value){
     case BT_GATT_CCC_NOTIFY: 
