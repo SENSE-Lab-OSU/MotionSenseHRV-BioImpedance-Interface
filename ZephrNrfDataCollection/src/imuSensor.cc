@@ -7,6 +7,7 @@
 float32_t runningMeanGyro=0.0f, runningSquaredMeanGyro=0.0f;
 float32_t runningMeanAcc=0.0f, runningSquaredMeanAcc=0.0f;
 uint16_t counterGyro=0,counterAcc=0;
+int16_t dataReadGyroX, dataReadGyroY,dataReadGyroZ;
 const float accThreshold= 0.001f;
 const float gyroThreshold= 5.0f;
 uint8_t blePktMagneto[ble_magnetometerPktLength];
@@ -59,7 +60,6 @@ static void gyroscope_measurement(float * quaternionResult){
   float newMagGyro= 0.0f;
   const float pi =(float) 3.14159;
   const float deg_rad = (float)(2.0/360.0)*pi;
-  int16_t dataReadGyroX, dataReadGyroY,dataReadGyroZ;
   float angularVelX,angularVelY,angularVelZ;
   float thetaRate;
   const float deltaT = 1.0/250.0;
@@ -541,15 +541,12 @@ void motion_data_timeout_handler(struct k_work *item){
     for(int i=0;i<6;i++)
       blePktMotion[i] = burst_rx[i+1];
     
-    blePktMotion[18] = (pktCounter&0xFF00) >> 8;
-    blePktMotion[19] = (pktCounter&0x00FF);
+    
     prepare_gyros(quaternionResult_1);
 
-    my_motionData.dataPacket = blePktMotion;
-    my_motionData.packetLength = ACC_GYRO_DATA_LEN;
+    
 
-    if(accelConfig.txPacketEnable == true)
-      k_work_submit(&my_motionData.work);
+    
 
     dataReadAccX = (burst_rx[1] << 8) | burst_rx[2];
     if((burst_rx[1] & 0x80) == 0x80)
@@ -574,8 +571,21 @@ void motion_data_timeout_handler(struct k_work *item){
     for (uint8_t i=0; i<3; i++)
       quaternionResult_1[i] = 0.0;	  
     quaternionResult_1[3] = 1.0;
-    gyroscope_measurement(quaternionResult_1); 
-
+    gyroscope_measurement(quaternionResult_1);
+    blePktMotion[6] = ((uint16_t)dataReadGyroX >> 8) & 0xFF;
+    blePktMotion[7] = (uint16_t)dataReadGyroX & 0xFF;
+    blePktMotion[8] = ((uint16_t)dataReadGyroY >> 8) & 0xFF;
+    blePktMotion[9] = (uint16_t)dataReadGyroY & 0xFF;
+    blePktMotion[10] = ((uint16_t)dataReadGyroZ >> 8) & 0xFF;
+    blePktMotion[11] = (uint16_t)dataReadGyroZ & 0xFF;
+    
+    blePktMotion[18] = (pktCounter&0xFF00) >> 8;
+    blePktMotion[19] = (pktCounter&0x00FF);
+    my_motionData.dataPacket = blePktMotion;
+    my_motionData.packetLength = ACC_GYRO_DATA_LEN;
+    
+    if(accelConfig.txPacketEnable == true)
+      k_work_submit(&my_motionData.work);
   }
   else
     gyroscope_measurement(quaternionResult_1);
