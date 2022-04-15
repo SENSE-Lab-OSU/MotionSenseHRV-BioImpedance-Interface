@@ -143,14 +143,6 @@ ssize_t on_receive(struct bt_conn *conn,
         orientationConfig.isEnabled = false;
         configRead[1] = configRead[1] & 0xFB; 
       }
-      if((buffer[1] & TFMICRO_ENABLE) == TFMICRO_ENABLE){
-        tfMicroCoonfig.isEnabled = true;
-        configRead[1] = configRead[1] | 0x08; 
-      }
-      else if((buffer[1] & TFMICRO_ENABLE) == 0x00){
-        tfMicroCoonfig.isEnabled = false;
-        configRead[1] = configRead[1] & 0xF7; 
-      }
       if((buffer[2] & MOTION_BLE_ENABLE) == MOTION_BLE_ENABLE){
         accelConfig.txPacketEnable = true;
         gyroConfig.txPacketEnable = true;
@@ -366,7 +358,7 @@ void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value){
 /* TF micro Button Service Declaration and Registration */
 BT_GATT_SERVICE_DEFINE(tfMicro_service,
   BT_GATT_PRIMARY_SERVICE(BT_UUID_TFMICRO_SERVICE), //0
-  BT_GATT_CHARACTERISTIC(BT_UUID_TFMICRO_CONFIG_RX, //1,2
+  /*BT_GATT_CHARACTERISTIC(BT_UUID_TFMICRO_CONFIG_RX, //1,2
     BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,
     BT_GATT_PERM_READ | BT_GATT_PERM_WRITE, 
     configSet, on_receive, configRead),
@@ -376,7 +368,7 @@ BT_GATT_SERVICE_DEFINE(tfMicro_service,
     NULL, NULL, NULL),
   BT_GATT_CCC(on_cccd_changed, //6
     BT_GATT_PERM_READ | BT_GATT_PERM_WRITE), 
-  BT_GATT_CUD(TFMICRO_NAME, BT_GATT_PERM_READ),//7
+  BT_GATT_CUD(TFMICRO_NAME, BT_GATT_PERM_READ),*///7
   BT_GATT_CHARACTERISTIC(BT_UUID_PPG_TX,//8,9
     BT_GATT_CHRC_NOTIFY,BT_GATT_PERM_READ,
     NULL, NULL, NULL),
