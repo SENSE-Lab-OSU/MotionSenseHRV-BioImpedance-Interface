@@ -966,6 +966,142 @@ void read_ppg_fifo_buffer(struct k_work *item){
   ppg_led_currentUpdate();
 }
 
+
+
+/* This function reads and fills bleSendArr with unfiltered ppg according
+to the desired packet format */
+void ppg_bluetooth_fill(uint8_t* bleSendArr){
+  struct ppgInfo* the_device=  ((struct ppgInfo *)(((char *)(item)) 
+    - offsetof(struct ppgInfo, work)));
+  
+  uint16_t pktCounter = the_device->pktCounter;
+  bool movingFlag = the_device->movingFlag;
+  bool ppgTFPass = the_device->ppgTFPass;
+  uint8_t cmd_array[] = {PPG_CHIP_ID_1, WRITEMASTER, SPI_FILL};
+  uint8_t read_array[128*2*2*3] = {0};
+  uint8_t txLen,rxLen;
+  uint32_t led1A[32];
+  uint32_t led1B[32];
+  uint32_t led2A[32];
+  uint32_t led2B[32];
+  uint8_t tag1A, tag1B, tag2A, tag2B, tag;
+  float channel1A_in, channel1B_in, channel2A_in, channel2B_in;
+  float meanChannel1A, meanChannel1B, meanChannel2A, meanChannel2B;
+
+  float channel1A_out, channel1B_out, channel2A_out, channel2B_out;
+  float_cast buff_val_filtered;
+  uint32_cast buff_val_raw;
+  int i;
+  uint8_t j, k;
+  uint8_t sampleCnt[5] = {0};
+		
+  // Reading the total number of PPG samples
+  cmd_array[0] = PPG_FIFO_DATA_COUNTER;
+  cmd_array[1] = READMASTER;
+  txLen=3;
+  rxLen=3;
+  spiRead_registerPPG(cmd_array, txLen, sampleCnt, rxLen);
+    
+  // Reading the PPG samples
+  cmd_array[0] = PPG_FIFO_DATA;
+
+  
+  spiRead_registerPPG(cmd_array, txLen, read_array,sampleCnt[2]*3+2);
+  for (i=0; i<sampleCnt[2]; i++){
+    for (j=0; j <= 9; j=j+3){
+      tag = (read_array[i*12+j+2] & 0xF8) >>3;
+      switch(tag){
+        case PPG1_LEDC1_DATA: // IR 1
+          led1A[i] = ((read_array[i*12+j+2]<<16) | (read_array[i*12+j+1+2]<<8)
+           | (read_array[i*12+j+2+2])) & 0x7ffff;
+          break;
+        case PPG1_LEDC2_DATA: // Green 1
+          led2A[i] = ((read_array[i*12+j+2]<<16) | (read_array[i*12+j+1+2]<<8)
+           | (read_array[i*12+j+2+2])) & 0x7ffff;
+          break;
+        case PPG2_LEDC1_DATA: // IR 2
+          led1B[i] = ((read_array[i*12+j+2]<<16) | (read_array[i*12+j+1+2]<<8)
+           | (read_array[i*12+j+2+2])) & 0x7ffff;
+          break;
+        case PPG2_LEDC2_DATA: // Green 2
+          led2B[i] = ((read_array[i*12+j+2]<<16) | (read_array[i*12+j+1+2]<<8)
+           | (read_array[i*12+j+2+2])) & 0x7ffff;
+          break;
+      }
+    }
+    k = i;
+    k = 0;
+    tag1A = (read_array[k*12+0+2] & 0xF8) >>3;
+    tag1B = (read_array[k*12+3+2] & 0xF8) >>3;
+    tag2A = (read_array[k*12+6+2] & 0xF8) >>3;
+    tag2B = (read_array[k*12+9+2] & 0xF8) >>3;
+  }
+
+  if(counterCheck ==0){
+    runningMeanCh1a=0.0f;
+    runningMeanCh1b=0.0f;
+    runningMeanCh2a=0.0f;
+    runningMeanCh2b=0.0f;
+    runningMeanCh1aFil= 0.0f;
+    runningMeanCh1bFil =0.0f;
+    runningMeanCh2aFil =0.0f;
+    runningMeanCh2bFil =0.0f;
+    runningSquaredMeanCh1aFil= 0.0f;
+    runningSquaredMeanCh1bFil =0.0f;
+    runningSquaredMeanCh2aFil =0.0f;
+    runningSquaredMeanCh2bFil =0.0f;
+  }
+  runningMeanCh1a = runningMeanCh1a +led1A[0]*1.0f/timeWindow;
+  runningMeanCh1b = runningMeanCh1b +led1B[0]*1.0f/timeWindow;
+  runningMeanCh2a = runningMeanCh2a +led2A[0]*1.0f/timeWindow;
+  runningMeanCh2b = runningMeanCh2b +led2B[0]*1.0f/timeWindow;
+		
+  buff_val_raw.integer = led1A[0];
+  blePktPPG_noFilter[0] = ((buff_val_raw.intcast[2]&0x07)<<5)|((buff_val_raw.intcast[1])&0xF8)>>3;
+  blePktPPG_noFilter[1] = ((buff_val_raw.intcast[1]&0x07)<<5)|((buff_val_raw.intcast[0]&0xF8)>>3);
+  blePktPPG_noFilter[2] =  (buff_val_raw.intcast[0]&0x07)<<5;
+        
+  buff_val_raw.integer = led1B[0];
+  blePktPPG_noFilter[2] = blePktPPG_noFilter[2] | ((buff_val_raw.intcast[2]&0x07)<<2) |((buff_val_raw.intcast[1]&0xC0)>>6);
+  blePktPPG_noFilter[3] = ((buff_val_raw.intcast[1]&0x3F)<<2) | ((buff_val_raw.intcast[0]&0xC0) >>6);
+  blePktPPG_noFilter[4] = ((buff_val_raw.intcast[0]&0x3F) <<2) ;
+        
+  buff_val_raw.integer = led2A[0];
+  blePktPPG_noFilter[4] = blePktPPG_noFilter[4] | ((buff_val_raw.intcast[2]&0x06)>>1);
+  blePktPPG_noFilter[5] = ((buff_val_raw.intcast[2]&0x01)<<7) | ((buff_val_raw.intcast[1]&0xFE)>>1);
+  blePktPPG_noFilter[6] = ((buff_val_raw.intcast[1]&0x01)<<7) | ((buff_val_raw.intcast[0]&0xFE)>>1);
+  blePktPPG_noFilter[7] = ((buff_val_raw.intcast[0]&0x01)<<7);
+        
+  buff_val_raw.integer = led2B[0];
+  blePktPPG_noFilter[7] = blePktPPG_noFilter[7] | ((buff_val_raw.intcast[2]&0x07) <<4)|((buff_val_raw.intcast[1]&0xF0) >>4);
+  blePktPPG_noFilter[8] = ((buff_val_raw.intcast[1]&0x0F) <<4) | ((buff_val_raw.intcast[0]&0xF0)>>4);
+  blePktPPG_noFilter[9] =  (buff_val_raw.intcast[0]&0x0F) <<4;
+  blePktPPG_noFilter[10] = (pktCounter&0xFF00) >> 8;
+  blePktPPG_noFilter[11] = (pktCounter&0x00FF);
+   
+  // Transmitting the un-filtered data on BLE 
+  if(ppgConfig.txPacketEnable == true){
+    
+  }
+  /*
+  if(ppgTFPass){
+    ppgData1.green_ch1_buffer[ppgData1.bufferIndex] = ppgData1.green_ch1;
+    ppgData1.green_ch2_buffer[ppgData1.bufferIndex] = ppgData1.green_ch2;
+    ppgData1.infraRed_ch1_buffer[ppgData1.bufferIndex] = ppgData1.infraRed_ch1;
+    ppgData1.infraRed_ch1_buffer[ppgData1.bufferIndex] = ppgData1.infraRed_ch2;
+    ppgData1.bufferIndex = (ppgData1.bufferIndex +1 )%400;
+    if(ppgData1.bufferIndex ==0 ){
+      ppgData1.dataReadyTF = true;
+    }
+  }
+  */
+  ppg_led_currentUpdate();
+
+}
+
+
+
+
 void fileOpen(){
   int rc = fs_open(&fileData, fname, FS_O_CREATE | FS_O_RDWR);
   if (rc < 0) 
