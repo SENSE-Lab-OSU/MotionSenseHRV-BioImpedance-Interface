@@ -176,6 +176,9 @@ void ppg_changeIntensity(void);
 void ppg_changeSamplingRate(void);
 void read_ppg_fifo_buffer(struct k_work *item);
 void ppg_sleep(void);
+void ppg_bluetooth_fill(uint8_t* buffer_array);
+
+
 void fs_umountFilesys(void);
 void getFileSysSize(void);
 void fs_mount_init(void);

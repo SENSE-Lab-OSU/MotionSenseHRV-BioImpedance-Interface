@@ -3,6 +3,7 @@
 #include "imuSensor.h"
 #include "common.h"
 #include "BLEService.h"
+#include "ppgSensor.h
 #include<cstdio>
 float32_t runningMeanGyro=0.0f, runningSquaredMeanGyro=0.0f;
 float32_t runningMeanAcc=0.0f, runningSquaredMeanAcc=0.0f;
@@ -571,6 +572,8 @@ void motion_data_timeout_handler(struct k_work *item){
     for (uint8_t i=0; i<3; i++)
       quaternionResult_1[i] = 0.0;	  
     quaternionResult_1[3] = 1.0;
+
+    //collect gyroscope for values 6-12
     gyroscope_measurement(quaternionResult_1);
     blePktMotion[6] = ((uint16_t)dataReadGyroX >> 8) & 0xFF;
     blePktMotion[7] = (uint16_t)dataReadGyroX & 0xFF;
@@ -579,6 +582,13 @@ void motion_data_timeout_handler(struct k_work *item){
     blePktMotion[10] = ((uint16_t)dataReadGyroZ >> 8) & 0xFF;
     blePktMotion[11] = (uint16_t)dataReadGyroZ & 0xFF;
     
+   
+    //this function seperately fills blePktMotion with the desired size
+    //TODO: Make sure packets are in correct size/order
+    ppg_bluetooth_fill(blePktMotion);
+
+
+    //collect packet counter
     blePktMotion[18] = (pktCounter&0xFF00) >> 8;
     blePktMotion[19] = (pktCounter&0x00FF);
     my_motionData.dataPacket = blePktMotion;

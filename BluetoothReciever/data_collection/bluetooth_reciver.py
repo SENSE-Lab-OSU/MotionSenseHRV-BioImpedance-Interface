@@ -25,6 +25,17 @@ ppg_UUID = ""
 
 bleak_device = ""
 
+''' This is a class for holding information about a single bluetooth attribute.'''
+class MSenseCharacteristic:
+
+
+    def __init__(self, name, function, uuid):
+        self.name = name
+        self.function = function
+        self.uuid = uuid
+
+
+
 
 '''Utility class for what sensor options to generate'''
 class MSense_collect_options:
@@ -339,7 +350,7 @@ def write_to_file(name: str, data):
         MSense_data.magnometer.append(data)
         MSense_data.magnometer_packet.append(magnometer_packet_information)
 
-async def run(address, debug=True, path=None, data_amount = 30.0, options=MSense_collect_options()):
+async def run(address, debug=True, path=None, data_amount = 30.0, options=list(MSenseCharacteristic())):
     print("starting run function")
     global bleak_device
     #maybe change the parameter to data amount in seconds
@@ -387,27 +398,29 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=MSense
         #await client.start
         #tf_kr_array = await client.start_notify(l2_service, data_adr2)
         current_services = []
-        if options.collect_ppg:
-            l2_service = client.services.characteristics[uuid_arr["da39c922-1d81-48e2-9c68-d0ae4bbd351f"]]
+        for characteristic in options:
+
+            service = client.services.characteristics[uuid_arr[characteristic.uuid]]
 
             ppg_service = client.services.characteristics[uuid_arr["da39c923-1d81-48e2-9c68-d0ae4bbd351f"]]
-            orientation_service = client.services.characteristics[uuid_arr["da39c926-1d81-48e2-9c68-d0ae4bbd351f"]]
 
             current_services.append(ppg_service)
             create_csv_file("ppg", path)
-            ppg_arr = await client.start_notify(ppg_service, ppg_sensor_handle)
+            ppg_arr = await client.start_notify(service, characteristic.function)
 
 
+
+            #orientation_service = client.services.characteristics[uuid_arr["da39c926-1d81-48e2-9c68-d0ae4bbd351f"]]
         #await client.start_notify(motion_sense_service, motion_sense_characteristic )
-        if options.accelorometer:
-            motion_sense_service = client.services.characteristics[uuid_arr["da39c924-1d81-48e2-9c68-d0ae4bbd351f"]]
-            current_services.append(motion_sense_service)
-            await client.start_notify(motion_sense_service, motion_sense_characteristic)
 
-        if options.magnomater:
-            magnometer_service = client.services.characteristics[uuid_arr["da39c925-1d81-48e2-9c68-d0ae4bbd351f"]]
-            current_services.append(magnometer_service)
-            await client.start_notify(magnometer_service, notification_handler_magnometer)
+            #motion_sense_service = client.services.characteristics[uuid_arr["da39c924-1d81-48e2-9c68-d0ae4bbd351f"]]
+            #current_services.append(motion_sense_service)
+            #await client.start_notify(motion_sense_service, motion_sense_characteristic)
+
+
+            #magnometer_service = client.services.characteristics[uuid_arr["da39c925-1d81-48e2-9c68-d0ae4bbd351f"]]
+            #current_services.append(magnometer_service)
+            #await client.start_notify(magnometer_service, notification_handler_magnometer)
 
 
         #we need to do the rest of the sensors as well
@@ -417,7 +430,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=MSense
 
         await close_fies(client, current_services)
 
-        j = MSense_data
+        #j = MSense_data
         ppg_pack = MSense_data.ppg_packet_counter
         ppg_pack_loss = MSense_data.ppg_packet_loss_counter
 
