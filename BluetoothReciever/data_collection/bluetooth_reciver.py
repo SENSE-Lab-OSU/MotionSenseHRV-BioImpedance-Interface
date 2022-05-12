@@ -14,6 +14,8 @@ import struct
 import csv
 import threading
 import os
+import datetime
+
 
 
 
@@ -24,6 +26,9 @@ Tensorflow_UUID = ""
 ppg_UUID = ""
 
 bleak_device = ""
+start_collection_date = ""
+
+
 
 ''' This is a class for holding information about a single bluetooth attribute.'''
 class MSenseCharacteristic:
@@ -84,7 +89,9 @@ class MSense_data:
 
 
 
-
+async def disconnect_from_clients():
+    if type(bleak_device) == BleakClient:
+        await bleak_device.disconnect()
 
 def notification_handler(sender, data):
     """Simple notification handler which prints the data received."""
@@ -206,6 +213,7 @@ def build_uuid_dict(client):
 
 
 def ppg_sensor_handle(sender, data:bytes):
+    print(sender)
     Led_ir11 = data[0]
     Led_ir11 <<= 11
     Led_ir12 = data[1]
@@ -252,7 +260,7 @@ def ppg_sensor_handle(sender, data:bytes):
     #Led_ir1 += ledir1_ex.tobytes()
     #Led_ir1 += bytes([0])
     #Led_ir1 = bitarray.bitarray(Led_ir1)
-    ppg_file = open("ppg_raw.txt", "w")
+    ppg_file = open(start_collection_date + "-ppg.txt", "a")
 
 
     #print(Led_ir1)
@@ -287,7 +295,9 @@ def ppg_sensor_handle(sender, data:bytes):
               {'branch': 'MCE', 'cgpa': '7.8', 'name': 'Prateek', 'year': '3'},
               {'branch': 'EP', 'cgpa': '9.1', 'name': 'Sahil', 'year': '2'}]
 
-    write_to_csv_file("ppg", file_dict)
+
+    # currently, writing to a csv file is not finished yet, so it is commented out for now
+    #write_to_csv_file("ppg", file_dict)
     MSense_data.ppg_packet_counter.append(packet_counter[0])
     packets_recived = MSense_data.ppg_packet_counter[len(MSense_data.ppg_packet_counter) - 1] - MSense_data.ppg_packet_counter[
         len(MSense_data.ppg_packet_counter) - 2]
@@ -307,7 +317,7 @@ async def connect_address():
     for devi in devices:
         if devi.name == "MotionSenseHRV3":
             addr = devi.address
-            motion_sense_devices.append(addr)
+            motion_sense_devices.append(devi)
             print("found! with adress", str(devi.address))
         print(devi)
         #if the device == MotionSense: get address
@@ -350,9 +360,16 @@ def write_to_file(name: str, data):
         MSense_data.magnometer.append(data)
         MSense_data.magnometer_packet.append(magnometer_packet_information)
 
-async def run(address, debug=True, path=None, data_amount = 30.0, options=list(MSenseCharacteristic())):
+async def run(address, debug=True, path=None, data_amount = 30.0, options=None):
     print("starting run function")
+    # this has to be global because it is async
     global bleak_device
+    global start_collection_date
+    start_collection_date += str(datetime.datetime.now())
+    assert options != None
+    assert len(options) != 0
+    print(type(options[0]))
+    assert type(options[0]) == MSenseCharacteristic
     #maybe change the parameter to data amount in seconds
     if debug:
         import sys
@@ -402,10 +419,10 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=list(M
 
             service = client.services.characteristics[uuid_arr[characteristic.uuid]]
 
-            ppg_service = client.services.characteristics[uuid_arr["da39c923-1d81-48e2-9c68-d0ae4bbd351f"]]
+            #ppg_service = client.services.characteristics[uuid_arr["da39c923-1d81-48e2-9c68-d0ae4bbd351f"]]
 
-            current_services.append(ppg_service)
-            create_csv_file("ppg", path)
+            current_services.append(service)
+            #create_csv_file("ppg", path)
             ppg_arr = await client.start_notify(service, characteristic.function)
 
 
@@ -483,7 +500,7 @@ def non_async_collect(address, path, max_length, collect_options, end_flag):
     print("collection options: " + str(collect_options))
     address = "E0:06:E0:EA:CF:77"
     #path = "D:\tfdownload\OSUMotionSenseChip\MotionSenseHRV_v3_private\software\tutorials\AEHR_model_tutorial\bluetooth_data_collection\data"
-    collect_options = MSense_collect_options(True, True, True)
+
     max_length = 15.0
     #print(collect_options)
     loop = asyncio.new_event_loop()

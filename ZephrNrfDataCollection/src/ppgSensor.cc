@@ -1081,7 +1081,9 @@ void ppg_bluetooth_fill(uint8_t* bleSendArr){
    
   // Transmitting the un-filtered data on BLE 
   if(ppgConfig.txPacketEnable == true){
-    
+    bleSendArr[11] = blePktPPG_noFilter[0];
+    bleSendArr[12] = blePktPPG_noFilter[1];
+    bleSendArr[13] = blePktPPG_noFilter[2];
   }
   /*
   if(ppgTFPass){

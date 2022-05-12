@@ -1,7 +1,7 @@
 import os
 import sys
 import time
-
+import atexit
 import PyQt5.QtBluetooth
 from PyQt5.QtCore import QRunnable, QThreadPool
 import PyQt5.QtCore
@@ -152,16 +152,16 @@ class Window(QWidget):
     def connect_to_motionsense_handle(self):
         print("button pressed")
 
-        connect_address = bluetooth_reciver.non_async_connect()
-        if len(connect_address) != 0:
+        connect_addresses = bluetooth_reciver.non_async_connect()
+        if len(connect_addresses) != 0:
             self.log_disp.setText("collection will be saved to")
             self.button.setText("connected!")
             self.button.setDisabled(True)
             self.gather_button.setEnabled(True)
-            self.addresses.extend(connect_address)
+            self.addresses.extend(connect_addresses)
 
             for count, adress in enumerate(self.addresses):
-                device = MotionSense_device_QWidget(count, adress,)
+                device = MotionSense_device_QWidget(count, adress.address)
                 self.devices.append(device)
                 self.optionsLayout.addWidget(device)
             path = self.file_line.text() + "\\" + self.file_line2.text()
@@ -232,9 +232,13 @@ class Window(QWidget):
 
 
             self.log("registering devices...")
+            # for all MSense devices, get the characteristics that are checked and collect data from them
             for device in self.devices:
                 self.log("registering device " + str(device.address))
-                options = bluetooth_reciver.MSense_collect_options(name="MotionSense")
+                options = device.get_characteristics()
+                if len(options) == 0:
+                    # if the user didn't check any boxes we don't need to run any data
+                    return
                 self.log("got options...")
                 self.log("creating thread...") #data_collection.bluetooth_reciver.non_async_collect
 
@@ -304,7 +308,8 @@ class MotionSense_device_QWidget(QWidget):
         super().__init__()
         # Create a layout for the sensor option checkboxes
         optionsLayout = QFormLayout()
-        options = []
+        self.options = []
+        self.characteristics = []
         # every device must have an address, and name
         self.number = number
         self.address = address
@@ -326,6 +331,7 @@ class MotionSense_device_QWidget(QWidget):
             self.check2 = [QCheckBox("Magnometer collection")]
             self.check3 = [QCheckBox("Accelorometer")]
             self.check4 = [QCheckBox("Tensorflow")]
+
             "da39c922-1d81-48e2-9c68-d0ae4bbd351f"
 
             self.check1.append(bluetooth_reciver.MSenseCharacteristic("PPG", bluetooth_reciver.ppg_sensor_handle,
@@ -333,26 +339,37 @@ class MotionSense_device_QWidget(QWidget):
 
 
             #self.check4.append(bluetooth_reciver.MSenseCharacteristic("l2"), bluetooth_reciver.notification_handler_magnometer,
-                               "da39c922-1d81-48e2-9c68-d0ae4bbd351f")
+            #                   "da39c922-1d81-48e2-9c68-d0ae4bbd351f")
 
-            options.append(self.check1)
-            options.append(self.check2)
-            options.append(self.check3)
-            options.append(self.check4)
+            self.options.append(self.check1)
+            self.options.append(self.check2)
+            self.options.append(self.check3)
+            self.options.append(self.check4)
 
 
         # now we will use the 'new' format
         elif name == "MotionSensef2":
             pass
 
-        for check_widget in options:
+        for check_widget in self.options:
             optionsLayout.addWidget(check_widget[0])
 
 
-        optionsLayout.addWidget(self.check2)
-        optionsLayout.addWidget(self.check3)
+        #optionsLayout.addWidget(self.check2[0])
+        #optionsLayout.addWidget(self.check3[0])
 
         self.setLayout(optionsLayout)
+
+
+    def get_characteristics(self):
+        for options in self.options:
+            if options[0].isChecked():
+                self.characteristics.append(options[1])
+
+            return self.characteristics
+
+
+
 
 
 class Collection_Worker(QRunnable):
@@ -381,8 +398,10 @@ def test_function(address, path, record_length, options, test_flag):
     print("imported")
     try:
         data_collection.bluetooth_reciver.non_async_collect(address, path, record_length, options, test_flag)
-    except:
-        print("bleak error")
+
+    except Exception as err:
+        raise
+
     print("I am done!")
 
 def start():
