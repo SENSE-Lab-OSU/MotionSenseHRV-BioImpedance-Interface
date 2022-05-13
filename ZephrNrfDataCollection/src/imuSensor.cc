@@ -3,7 +3,7 @@
 #include "imuSensor.h"
 #include "common.h"
 #include "BLEService.h"
-#include "ppgSensor.h
+#include "ppgSensor.h"
 #include<cstdio>
 float32_t runningMeanGyro=0.0f, runningSquaredMeanGyro=0.0f;
 float32_t runningMeanAcc=0.0f, runningSquaredMeanAcc=0.0f;
@@ -359,7 +359,7 @@ static void magnetometer_data_read_send(bool validMeasurement , uint16_t pktCoun
     blePktMagneto[7] = burst_rx_magneto[3+1];
     blePktMagneto[9] = burst_rx_magneto[4+1];
     blePktMagneto[10] = burst_rx_magneto[5+1];
-
+}
 
   blePktMagneto[15] = (pktCounter&0xFF00) >> 8;
   blePktMagneto[16] = (pktCounter&0x00FF);
