@@ -7,8 +7,9 @@ from PyQt5.QtCore import QRunnable, QThreadPool
 import PyQt5.QtCore
 import multiprocessing
 from PyQt5.QtCore import pyqtSlot
+from datetime import datetime
 
-
+print(str(datetime.now()))
 
 
 '''This is the UI script for the OSU MotionSense Bluetooth
@@ -72,7 +73,7 @@ class Window(QWidget):
 
         #try to add OSU logo image
         image = QLabel(self)
-        pixmap = QPixmap('OSU.png')
+        pixmap = QPixmap('gui/OSU.png')
         pixmap.scaled(14, 14)
         image.setPixmap(pixmap)
         image.setAlignment(Qt.AlignCenter)
@@ -103,7 +104,10 @@ class Window(QWidget):
         self.file_line3.setText(str(180.0))
         topLayout.addRow("Save Location:", self.file_line)
         topLayout.addRow("Folder Name:", self.file_line2)
-        topLayout.addRow("Max Record Time (sec)", self.file_line3)
+        topLayout.addRow("Maximum Collection Time (sec)", self.file_line3)
+
+        self.enable_csv = QCheckBox()
+        topLayout.addRow("Convert to CSV after collection", self.enable_csv)
 
 
         # layout for connecting to motionsense UI, with a button to connect
@@ -178,7 +182,7 @@ class Window(QWidget):
             finally:
                 self.log("miving on")
             self.log("sucessfully created directories!")
-            self.logging_file = open(path + "\\log.txt", "w")
+            self.logging_file = open(path + "\\" + "log.txt", "w")
             self.log("created and activated log file...")
 
         else:
@@ -211,10 +215,12 @@ class Window(QWidget):
             self.currently_collecting = False
             self.log("Stopped data collection")
             self.gather_button.setText("Saved!")
-            self.log_disp.setText("Collecting Data and saving to file...")
+            self.log_disp.setText("Stopping Collection and saving to file...")
             self.gather_button.setText("Start")
             self.logging_file.close()
 
+            for thread in self.threads:
+                thread.close()
 
             print(datetime.now())
             return
@@ -242,8 +248,8 @@ class Window(QWidget):
                 self.log("got options...")
                 self.log("creating thread...") #data_collection.bluetooth_reciver.non_async_collect
 
-                #th_thread = Collection_Worker(data_collection.bluetooth_reciver.non_async_collect, device.address,
-                #                              path, record_length, options)
+                th_thread = Collection_Worker(bluetooth_reciver.non_async_collect, device.address,
+                                              path, record_length, options)
 
 
                 # a bit of a messy solution. For more compatibility options,
@@ -269,6 +275,7 @@ class Window(QWidget):
             # This is a class of bool values containing what options we would like
             self.log_disp.setText("Collecting Data and saving to file...")
             self.gather_button.setText("Stop")
+
             print("returning to main menu...")
 
             #self.update()
@@ -300,7 +307,7 @@ class Window(QWidget):
 
 
 
-# you can create custom examples for individual classes. For example, this class
+# using this class you can create custom functionality for individual sensors that may be different. For example, this class
 # represents the MotionSense device
 class MotionSense_device_QWidget(QWidget):
 
@@ -366,7 +373,7 @@ class MotionSense_device_QWidget(QWidget):
             if options[0].isChecked():
                 self.characteristics.append(options[1])
 
-            return self.characteristics
+        return self.characteristics
 
 
 
@@ -384,6 +391,9 @@ class Collection_Worker(QRunnable):
         self.path = path
         self.record_length = record_length
         self.function_handler = function_handler
+
+
+
 
 
     @pyqtSlot()

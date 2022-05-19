@@ -27,7 +27,7 @@ ppg_UUID = ""
 
 bleak_device = ""
 start_collection_date = ""
-
+file_name = ""
 
 
 ''' This is a class for holding information about a single bluetooth attribute.'''
@@ -135,6 +135,8 @@ def notification_handler_general(sender, data, num=0, type:str="f", class_vari=N
     return packed_th_data
 
 
+
+#this is not actually used
 def motion_sense_characteristic(sender, data):
     m_service = bleak_device.services.characteristics[30]
     #await bleak_device.read_gatt_char(m_service)
@@ -213,6 +215,7 @@ def build_uuid_dict(client):
 
 
 def ppg_sensor_handle(sender, data:bytes):
+    global file_name
     print(sender)
     Led_ir11 = data[0]
     Led_ir11 <<= 11
@@ -260,7 +263,7 @@ def ppg_sensor_handle(sender, data:bytes):
     #Led_ir1 += ledir1_ex.tobytes()
     #Led_ir1 += bytes([0])
     #Led_ir1 = bitarray.bitarray(Led_ir1)
-    ppg_file = open(start_collection_date + "-ppg.txt", "a")
+    ppg_file = open(file_name + "\\" + start_collection_date + "-ppg.txt", "a")
 
 
     #print(Led_ir1)
@@ -365,8 +368,15 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=None):
     # this has to be global because it is async
     global bleak_device
     global start_collection_date
+    # just a little check to remember why this is global
+    global file_name
+    print(file_name)
     start_collection_date += str(datetime.datetime.now())
+    # windows doesn't like colons, so we have to remove them
+    start_collection_date = start_collection_date.replace(":", "")
     assert options != None
+    assert path != None
+    file_name = path
     assert len(options) != 0
     print(type(options[0]))
     assert type(options[0]) == MSenseCharacteristic
@@ -393,8 +403,6 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=None):
 
 
 
-
-
         bleak_device = client
 
         #l2_service is latent ppg information
@@ -414,6 +422,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=None):
         #await client.write_gatt_char()
         #await client.start
         #tf_kr_array = await client.start_notify(l2_service, data_adr2)
+
         current_services = []
         for characteristic in options:
 
@@ -498,7 +507,7 @@ def non_async_collect(address, path, max_length, collect_options, end_flag):
     print("address: " + address)
     print("path: " + path)
     print("collection options: " + str(collect_options))
-    address = "E0:06:E0:EA:CF:77"
+    #address = "E0:06:E0:EA:CF:77"
     #path = "D:\tfdownload\OSUMotionSenseChip\MotionSenseHRV_v3_private\software\tutorials\AEHR_model_tutorial\bluetooth_data_collection\data"
 
     max_length = 15.0
