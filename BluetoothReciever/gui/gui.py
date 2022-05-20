@@ -62,6 +62,11 @@ class Window(QWidget):
         #
         self.devices = []
         self.addresses = []
+
+
+
+        # initialize all of the components of the UI - The Checkboxs, Line Edits, Logo, Text, what have you not
+
         # Create an outer layout
         outerLayout = QVBoxLayout()
 
@@ -86,13 +91,9 @@ class Window(QWidget):
         font = PyQt5.Qt.QFont()
         font.setBold(True)
         font.setPointSize(14)
-
-
-
         header_label.setFont(font)
-
-
         topLayout.addWidget(header_label)
+
         self.file_line = QLineEdit()
         self.file_line.setText(os.getcwd())
 
@@ -104,7 +105,7 @@ class Window(QWidget):
         self.file_line3.setText(str(180.0))
         topLayout.addRow("Save Location:", self.file_line)
         topLayout.addRow("Folder Name:", self.file_line2)
-        topLayout.addRow("Maximum Collection Time (sec)", self.file_line3)
+        topLayout.addRow("Stop Recording Data after: (sec)", self.file_line3)
 
         self.enable_csv = QCheckBox()
         topLayout.addRow("Convert to CSV after collection", self.enable_csv)
@@ -124,8 +125,10 @@ class Window(QWidget):
         collections_layout.addRow(self.log_button, self.th_log)
         collections_layout.addWidget(self.button)
         collections_layout.addWidget(self.gather_button)
+
         # add out button action to the widget
         self.button.clicked.connect(self.update_connect_ui)
+        # when self.button is clicked, it will now call self.update_connect_ui
         self.button.clicked.connect(self.connect_to_motionsense_handle)
 
         self.optionsLayout = QFormLayout()
@@ -138,6 +141,7 @@ class Window(QWidget):
         self.notice = PyQt5.QtWidgets.QLabel("Note: In order to run this you will need to have "
                                                             "an apropriate MotionSenseDevice ready and turned on!")
         collections_layout.addWidget(self.notice)
+
         # Nest the inner layouts into the outer layout
         outerLayout.addLayout(picture_layout)
         outerLayout.addLayout(topLayout)
@@ -164,6 +168,7 @@ class Window(QWidget):
             self.gather_button.setEnabled(True)
             self.addresses.extend(connect_addresses)
 
+            # for every MotionSense ble device found add it to the list of devices
             for count, adress in enumerate(self.addresses):
                 device = MotionSense_device_QWidget(count, adress.address)
                 self.devices.append(device)
@@ -171,6 +176,7 @@ class Window(QWidget):
             path = self.file_line.text() + "\\" + self.file_line2.text()
             print(path)
 
+            # try and create the directory for storing data
             self.log("making directories..")
             try:
                 os.mkdir(path)
@@ -180,7 +186,7 @@ class Window(QWidget):
                 self.log("Could not create the directory! " + str(path) + " is invalid.")
                 return
             finally:
-                self.log("miving on")
+                self.log("moving on")
             self.log("sucessfully created directories!")
             self.logging_file = open(path + "\\" + "log.txt", "w")
             self.log("created and activated log file...")
@@ -191,6 +197,7 @@ class Window(QWidget):
             self.button.setText("Connect to MotionSense")
             self.button.setEnabled(True)
         QApplication.processEvents()
+
 
 
     def update_connect_ui(self):
@@ -219,6 +226,7 @@ class Window(QWidget):
             self.gather_button.setText("Start")
             self.logging_file.close()
 
+            print("trying to close app")
             for thread in self.threads:
                 thread.close()
 
@@ -254,7 +262,7 @@ class Window(QWidget):
 
                 # a bit of a messy solution. For more compatibility options,
                 # use PyQt threadpool
-                self.log("creating child shared memeory flag for end")
+                self.log("creating child shared memory flag for end")
                 exit_flag = multiprocessing.Value("b")
                 self.log("creating Process...")
                 p = multiprocessing.Process(target=test_function, args=(device.address, path, record_length, options, exit_flag))
@@ -279,8 +287,6 @@ class Window(QWidget):
             print("returning to main menu...")
 
             #self.update()
-
-
 
 
 
@@ -339,19 +345,40 @@ class MotionSense_device_QWidget(QWidget):
             self.check3 = [QCheckBox("Accelorometer")]
             self.check4 = [QCheckBox("Tensorflow")]
 
-            "da39c922-1d81-48e2-9c68-d0ae4bbd351f"
+
 
             self.check1.append(bluetooth_reciver.MSenseCharacteristic("PPG", bluetooth_reciver.ppg_sensor_handle,
                                                                       "da39c923-1d81-48e2-9c68-d0ae4bbd351f"))
 
-
-            #self.check4.append(bluetooth_reciver.MSenseCharacteristic("l2"), bluetooth_reciver.notification_handler_magnometer,
-            #                   "da39c922-1d81-48e2-9c68-d0ae4bbd351f")
-
+            self.check2.append(bluetooth_reciver.MSenseCharacteristic("Magnometer",
+                                                                      bluetooth_reciver.notification_handler_magnometer,
+                                                                      "da39c922-1d81-48e2-9c68-d0ae4bbd351f"))
             self.options.append(self.check1)
             self.options.append(self.check2)
             self.options.append(self.check3)
             self.options.append(self.check4)
+
+
+
+
+        # quick example to illustrate custom devices
+        if name == "Custom Device":
+
+
+            self.check1 = [QCheckBox("Characteristic 1 name")]
+            self.check2 = [QCheckBox("Characteristic 2 name")]
+
+            self.check1.append(bluetooth_reciver.MSenseCharacteristic("Characteristic 1", bluetooth_reciver.ppg_sensor_handle,
+                                                                      "Characteristic1UUID"))
+
+
+            #now, all we need to do is append the MSenseCharacteristic Class containing
+            # the name (can be anything), reciver function, and characteristic UUID
+
+            #self.check4.append(bluetooth_reciver.MSenseCharacteristic("l2"), bluetooth_reciver.notification_handler_magnometer,
+            #                   "da39c922-1d81-48e2-9c68-d0ae4bbd351f")
+
+
 
 
         # now we will use the 'new' format

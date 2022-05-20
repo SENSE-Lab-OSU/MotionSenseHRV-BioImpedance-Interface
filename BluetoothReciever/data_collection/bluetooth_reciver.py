@@ -181,17 +181,18 @@ def motion_sense_characteristic(sender, data):
 
 def notification_handler_magnometer(sender, data):
     magnometer_ints = data[0:6]
+    print("unpacking magnometer data")
     nk_data = struct.unpack("<hhh", magnometer_ints)
     #print(nk_data)
     magnometer_packet_information = data[6:8]
-    if MSense_data.print_data_to_files:
-        magnometer_file = open("magnometer_data.txt", "a")
+
+    magnometer_file = open(file_name + "\\" + start_collection_date + "-magnometer.txt", "a")
 
     magnometer_packet_information = struct.unpack(">h", magnometer_packet_information)
 
 
     m_string = "magnometer: "
-    write_to_file(m_string, nk_data, magnometer_packet_information)
+    magnometer_file.write(magnometer_packet_information)
 
 
 
@@ -432,6 +433,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=None):
 
             current_services.append(service)
             #create_csv_file("ppg", path)
+            print("starting notify for " + str(characteristic.name))
             ppg_arr = await client.start_notify(service, characteristic.function)
 
 
@@ -501,7 +503,7 @@ def non_async_connect():
     return address
 
 
-
+# this is the function that is executed inside the GUI to make sure everything runs properly
 def non_async_collect(address, path, max_length, collect_options, end_flag):
     print("starting non async collecion function with parameters:")
     print("address: " + address)
