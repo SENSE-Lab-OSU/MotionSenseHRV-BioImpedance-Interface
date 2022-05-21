@@ -256,14 +256,13 @@ def ppg_sensor_handle(sender, data:bytes):
     Led_g2 = Led_g21 + Led_g22 + Led_g23
 
 
-
-
     #ledir1_ex = bitarray.bitarray()
     #ledir1_ex.frombytes(bytes([data[2]]))
     #ledir1_ex >>= 5
     #Led_ir1 += ledir1_ex.tobytes()
     #Led_ir1 += bytes([0])
     #Led_ir1 = bitarray.bitarray(Led_ir1)
+
     ppg_file = open(file_name + "\\" + start_collection_date + "-ppg.txt", "a")
 
 
@@ -309,6 +308,24 @@ def ppg_sensor_handle(sender, data:bytes):
     MSense_data.ppg_packet_loss_counter.append(8-packets_recived)
 
     #print(MSense_data.ppg_led1ir_arr)
+
+
+def prev_format_accel_HRV(sender, data: bytes):
+    global file_name
+    print(sender)
+
+    ppg_file = open(file_name + "\\" + start_collection_date + "-ppg.txt", "a")
+
+    # print(Led_ir1)
+    arr = bytearray(data)
+    hex_string = ''
+    for x in arr:
+        hex_string += hex(x) + " "
+
+    ppg_file.write(hex_string + "\n")
+
+
+
 
 def orientation_handler(sender, data):
     pass

@@ -28,9 +28,13 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QVBoxLayout,
     QWidget,
-    QLabel
+    QLabel,
+    QScrollArea,
+    QMainWindow
+
 )
 from PyQt5.QtGui import QPixmap, QFont
+
 from PyQt5.QtCore import Qt
 from datetime import datetime
 import PyQt5.QtWidgets
@@ -48,12 +52,10 @@ bold_font.setPointSize(12)
 # our __init__  should be dependency free
 # for device or bluetooth backend specific functionalities, modify the functions
 # for connecting and updating
-class Window(QWidget):
+class MotionSenseApp(QWidget):
     def __init__(self):
+
         super().__init__()
-
-
-        self.setWindowTitle("MotionSense Bluetooth GUI")
         self.threads = []
 
         # a logging file for notes and documentation.
@@ -79,7 +81,7 @@ class Window(QWidget):
         #try to add OSU logo image
         image = QLabel(self)
         pixmap = QPixmap('gui/OSU.png')
-        pixmap.scaled(14, 14)
+        pixmap.scaled(6, 6)
         image.setPixmap(pixmap)
         image.setAlignment(Qt.AlignCenter)
         picture_layout.addWidget(image)
@@ -170,7 +172,7 @@ class Window(QWidget):
 
             # for every MotionSense ble device found add it to the list of devices
             for count, adress in enumerate(self.addresses):
-                device = MotionSense_device_QWidget(count, adress.address)
+                device = MotionSense_device_QWidget(count, adress.address, adress.name)
                 self.devices.append(device)
                 self.optionsLayout.addWidget(device)
             path = self.file_line.text() + "\\" + self.file_line2.text()
@@ -317,8 +319,9 @@ class Window(QWidget):
 # represents the MotionSense device
 class MotionSense_device_QWidget(QWidget):
 
-    def __init__(self, number, address, name="MotionSense"):
+    def __init__(self, number, address, name):
         super().__init__()
+        print("trying to register " + str(name))
         # Create a layout for the sensor option checkboxes
         optionsLayout = QFormLayout()
         self.options = []
@@ -326,7 +329,15 @@ class MotionSense_device_QWidget(QWidget):
         # every device must have an address, and name
         self.number = number
         self.address = address
+
+        if name == None or name == "":
+            print("error registering device")
+            return -1
+
         self.name = name
+
+
+
 
         #bold font
         #remove this from here and into the log
@@ -336,7 +347,7 @@ class MotionSense_device_QWidget(QWidget):
         device_name.setFont(bold_font)
         optionsLayout.addWidget(device_name)
         # here is where we customize the attributes
-        if name == "MotionSense":
+        if name == "MotionSenseHRV3":
             # for every ble characteristic we want to collect from, we set up this 2 element array:
             # the first element of the Array contains a QCheckBox representing an enabled or disabled
             # state in the application, while the other element is a custom class.
@@ -362,7 +373,7 @@ class MotionSense_device_QWidget(QWidget):
 
 
         # quick example to illustrate custom devices
-        if name == "Custom Device":
+        elif name == "Custom Device":
 
 
             self.check1 = [QCheckBox("Characteristic 1 name")]
@@ -382,8 +393,14 @@ class MotionSense_device_QWidget(QWidget):
 
 
         # now we will use the 'new' format
-        elif name == "MotionSensef2":
-            pass
+        elif name == "MotionSenseF2":
+            self.check1 = [QCheckBox("accel and ppg")]
+            self.check1.append(bluetooth_reciver.MSenseCharacteristic("accel and ppg", bluetooth_reciver.ppg_sensor_handle,
+                                                                      "da39c923-1d81-48e2-9c68-d0ae4bbd351f"
+                                                                      ))
+
+            self.options.append(self.check1)
+
 
         for check_widget in self.options:
             optionsLayout.addWidget(check_widget[0])
@@ -440,6 +457,46 @@ def test_function(address, path, record_length, options, test_flag):
         raise
 
     print("I am done!")
+
+
+
+class Window(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("MotionSense Bluetooth GUI")
+        self.initUI()
+
+    def initUI(self):
+        self.scroll = QScrollArea()  # Scroll Area which contains the widgets, set as the centralWidget
+        self.widget = MotionSenseApp()
+        self.vbox = QVBoxLayout()  # The Vertical Box that contains the Horizontal Boxes of  labels and buttons
+
+        for i in range(1, 50):
+            object = QLabel("TextLabel: " + str(i))
+            self.vbox.addWidget(object)
+
+        self.widget.setLayout(self.vbox)
+
+        # Scroll Area Properties
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(self.widget)
+
+        self.setCentralWidget(self.scroll)
+
+        self.setGeometry(600, 100, 1000, 900)
+        self.setWindowTitle('Scroll Area Demonstration')
+        self.show()
+
+        return
+
+
+
+
+
+
 
 def start():
     print("starting gui")

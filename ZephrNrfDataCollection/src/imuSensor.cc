@@ -581,16 +581,17 @@ void motion_data_timeout_handler(struct k_work *item){
     blePktMotion[9] = (uint16_t)dataReadGyroY & 0xFF;
     blePktMotion[10] = ((uint16_t)dataReadGyroZ >> 8) & 0xFF;
     blePktMotion[11] = (uint16_t)dataReadGyroZ & 0xFF;
-    
    
     //this function seperately fills blePktMotion with the desired size
     //TODO: Make sure packets are in correct size/order
     ppg_bluetooth_fill(blePktMotion);
+    
 
+    blePktMotion[18] = blePktMotion[18] | ((pktCounter >> 8) & 0x03);
 
     //collect packet counter
-    blePktMotion[18] = (pktCounter&0xFF00) >> 8;
-    blePktMotion[19] = (pktCounter&0x00FF);
+    //blePktMotion[18] = (pktCounter&) >> 14;
+    blePktMotion[19] = ((pktCounter) & 0xFF);
     my_motionData.dataPacket = blePktMotion;
     my_motionData.packetLength = ACC_GYRO_DATA_LEN;
     

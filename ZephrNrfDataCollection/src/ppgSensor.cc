@@ -971,12 +971,7 @@ void read_ppg_fifo_buffer(struct k_work *item){
 /* This function reads and fills bleSendArr with unfiltered ppg according
 to the desired packet format */
 void ppg_bluetooth_fill(uint8_t* bleSendArr){
-  //struct ppgInfo* the_device=  ((struct ppgInfo *)(((char *)(item)) 
-  //  - offsetof(struct ppgInfo, work)));
-  
-  //uint16_t pktCounter = the_device->pktCounter;
-  //bool movingFlag = the_device->movingFlag;
-  //bool ppgTFPass = the_device->ppgTFPass;
+
   uint8_t cmd_array[] = {PPG_CHIP_ID_1, WRITEMASTER, SPI_FILL};
   uint8_t read_array[128*2*2*3] = {0};
   uint8_t txLen,rxLen;
@@ -1055,7 +1050,7 @@ void ppg_bluetooth_fill(uint8_t* bleSendArr){
   runningMeanCh1b = runningMeanCh1b +led1B[0]*1.0f/timeWindow;
   runningMeanCh2a = runningMeanCh2a +led2A[0]*1.0f/timeWindow;
   runningMeanCh2b = runningMeanCh2b +led2B[0]*1.0f/timeWindow;
-		
+  /*	
   buff_val_raw.integer = led1A[0];
   blePktPPG_noFilter[0] = (|((buff_val_raw.intcast[1])&0xF8)>>3;
   blePktPPG_noFilter[1] = ((buff_val_raw.intcast[1]&0x07)<<5)|((buff_val_raw.intcast[0]&0xF8)>>3)
@@ -1076,7 +1071,7 @@ void ppg_bluetooth_fill(uint8_t* bleSendArr){
   blePktPPG_noFilter[7] = blePktPPG_noFilter[7] | ((buff_val_raw.intcast[2]&0x07) <<4)|((buff_val_raw.intcast[1]&0xF0) >>4);
   blePktPPG_noFilter[8] = ((buff_val_raw.intcast[1]&0x0F) <<4) | ((buff_val_raw.intcast[0]&0xF0)>>4);
   blePktPPG_noFilter[9] =  (buff_val_raw.intcast[0]&0x0F) <<4;
-  
+  */
   //blePktPPG_noFilter[10] = (pktCounter&0xFF00) >> 8;
   //blePktPPG_noFilter[11] = (pktCounter&0x00FF);
    
@@ -1086,9 +1081,9 @@ void ppg_bluetooth_fill(uint8_t* bleSendArr){
     // additionally, these 24 bit values have five zeros, so we treat them as 19 bit values
     buff_val_raw.integer = led2A[0];
     // grab the first 3 bits (because 5 bits are 0s that we don't want)
-    bleSendArr[12] = (buff_val_raw.intcast[2]&0x07)<<5
+    bleSendArr[12] = (buff_val_raw.intcast[2]&0x07)<<5;
     //put in the remaining 5 bits
-    bleSendArr[12] = bleSendArr[12] | ((buff_val_raw.intcast[1])&0xF8) // 0xF8 = 11111000
+    bleSendArr[12] = bleSendArr[12] | ((buff_val_raw.intcast[1])&0xF8); // 0xF8 = 11111000
 
 
     //continue this pattern for the 2nd byte
@@ -1097,14 +1092,14 @@ void ppg_bluetooth_fill(uint8_t* bleSendArr){
 
     //continue the pattern, but because we have reached the end of the 24 bit number, we need to shorten
     //this from 19 bits to 18 bits, so we cut off 1
-    bleSendArr[14] = (buff_val_raw.intcast[0]&0x06) << 5); //0x06 = 00000110
+    bleSendArr[14] = ((buff_val_raw.intcast[0]&0x06) << 5); //0x06 = 00000110
     
     buff_val_raw.integer = led2B[0];
     // again, we need to cut off 5 bits
     // this means there are only 3 useable bits in intcast[2]
     // in BleSendArr[14] only 6  bits remain
     
-    bleSendArr[14] = bleSendArr[14] | (buff_val_raw.intcast[2]&0x07)<<3); //there has to be 2 zeros, and we have 5 already, so we only need to shift by 3
+    bleSendArr[14] = bleSendArr[14] | ((buff_val_raw.intcast[2]&0x07)<<3); //there has to be 2 zeros, and we have 5 already, so we only need to shift by 3
     // now only 3 bits remain in BleSendArr[13]
     //place last 3 bits in
     bleSendArr[14] = bleSendArr[14] | ((buff_val_raw.intcast[1]&0x0E)>>5);
@@ -1112,7 +1107,7 @@ void ppg_bluetooth_fill(uint8_t* bleSendArr){
     //place remaining 5 bits of intcast[1]
     bleSendArr[15] = (buff_val_raw.intcast[1] &0x1F) << 3;
     //place 3 bits of incast[0]
-    bleSendArr[15] = bleSendArr[15] | (buff_val_raw.intcast[0]&0xE0)>>5); //E0 = 11100000
+    bleSendArr[15] = bleSendArr[15] | ((buff_val_raw.intcast[0]&0xE0)>>5); //E0 = 11100000
 
     //we have to again cut off 1 bit. so we will only be placing 4 total bits
     bleSendArr[16] = (buff_val_raw.intcast[0] & 0x1E) << 3; // 1E = 00011110
@@ -1136,7 +1131,7 @@ void ppg_bluetooth_fill(uint8_t* bleSendArr){
     bleSendArr[18] = (buff_val_raw.intcast[0] & 0x3F) << 1;
 
     // now we write the packet counter
-    pktCounter&0xFF00) >> 8;
+    
   
   ppg_led_currentUpdate();
 

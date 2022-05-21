@@ -470,7 +470,7 @@ void timer_handler(nrf_timer_event_t event_type, void* p_context){
     switch (event_type){
       case NRF_TIMER_EVENT_COMPARE0:
 
-        // submit work to read gyro,acc, magnetometer and orientation
+        // submit work to read gyro, acc, magnetometer and orientation
         my_motionSensor.magneto_first_read = magneto_first_read;
         my_motionSensor.pktCounter = global_counter;
         my_motionSensor.gyro_first_read = gyro_first_read;
