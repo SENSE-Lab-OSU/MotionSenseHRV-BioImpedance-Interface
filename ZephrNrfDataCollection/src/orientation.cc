@@ -2,8 +2,8 @@
 #include <cstdio>
 #include "common.h"
 #include "imuSensor.h"
-#include "DSP/Include/arm_const_structs.h"
-#include "DSP/Include/arm_math.h"
+//#include "DSP/Include/arm_const_structs.h"
+//#include "DSP/Include/arm_math.h"
 #include "BLEService.h"
 float32_t accMagStaticThrehsold =0.015f;
 static float32_t mxBiax_arr[500]={0.0f},myBiax_arr[500]={0.0f},mzBiax_arr[500]={0.0f};

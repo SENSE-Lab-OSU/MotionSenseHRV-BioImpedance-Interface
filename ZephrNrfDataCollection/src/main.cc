@@ -412,7 +412,7 @@ static void spi_init(void){
   ppgConfig.sampling_time = 0x28;
   ppgConfig.numCounts = 8;
   ppgConfig.txPacketEnable = true;
-  high_pass_filter_init_25();
+  //high_pass_filter_init_25();
 
   fileOpen();
   dataFlash = (((uint32_t)ppgConfig.green_intensity)<<8) + ((uint32_t)ppgConfig.infraRed_intensity);

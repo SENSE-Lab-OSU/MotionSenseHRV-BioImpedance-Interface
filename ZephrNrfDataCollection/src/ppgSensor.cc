@@ -88,7 +88,7 @@ float firCoeffs32_200[NUM_TAPS]={-0.006486,-0.007891,-0.009428,-0.011060,-0.0127
 0.010320,0.006021,0.001852,-0.002123,-0.005842,-0.009253,-0.012311,-0.014979,-0.017230,-0.019047,
 -0.020423,-0.021360,-0.021869,-0.021972,-0.021696,-0.021076,-0.020155,-0.018979,-0.017597,-0.016062,
 -0.014426,-0.012742,-0.011060,-0.009428,-0.007891,-0.006486};
-*/
+
 const float firCoeffs32[NUM_TAPS]={0.000650,0.000794,0.000688,0.000533,0.000627,0.000954,0.001155,0.000982,0.000659,0.000638,
 0.000992,0.001266,0.001036,0.000506,0.000300,0.000646,0.001017,0.000771,0.000028,-0.000415,
 -0.000105,0.000403,0.000214,-0.000710,-0.001411,-0.001155,-0.000455,-0.000482,-0.001513,-0.002469,
@@ -184,7 +184,7 @@ float firCoeffs32_200[NUM_TAPS]={-0.005035,-0.004868,-0.004660,-0.004416,-0.0041
 -0.001692,-0.001444,-0.001259,-0.001139,-0.001083,-0.001089,-0.001157,-0.001280,-0.001455,-0.001675,
 -0.001933,-0.002222,-0.002534,-0.002860,-0.003192,-0.003521,-0.003839,-0.004140,-0.004416,-0.004660,
 -0.004868,-0.005035};
-
+*/
 float firCoeffsMA32[NUM_TAPS_MA_FIL] ;
 
 
@@ -258,169 +258,6 @@ void spiWrite_registerPPG(uint8_t * tx_buffer, uint8_t txLen){
 	
 }
 
-void high_pass_filter_init_25(void){
-/* Call FIR init function to initialize the instance structure. */
-  arm_fill_f32(1.0/NUM_TAPS_MA_FIL, (float *) &firCoeffsMA32[0],
-    NUM_TAPS_MA_FIL);
-  arm_fir_init_f32(&S_chan1A, NUM_TAPS, (float *)&firCoeffs32[0], 
-    &firStateF32_chan1A[0], blockSize);
-  arm_fir_init_f32(&S_chan1B, NUM_TAPS, (float *)&firCoeffs32[0], 
-    &firStateF32_chan1B[0], blockSize);
-  arm_fir_init_f32(&S_chan2A, NUM_TAPS, (float *)&firCoeffs32[0], 
-    &firStateF32_chan2A[0], blockSize);
-  arm_fir_init_f32(&S_chan2B, NUM_TAPS, (float *)&firCoeffs32[0], 
-    &firStateF32_chan2B[0], blockSize);
-
-  arm_fir_init_f32(&S_chan1AMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0],
-    &firStateF32_chan1AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan1BMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan1BMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2AMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan2AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2BMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan2BMA[0], blockSize);
-	
-  arm_fir_init_f32(&S_chan1A_fil, NUM_TAPS, (float *)&firCoeffs32[0], 
-    &firStateF32_chan1A[0], blockSize);
-  arm_fir_init_f32(&S_chan1B_fil, NUM_TAPS, (float *)&firCoeffs32[0], 
-    &firStateF32_chan1B[0], blockSize);
-  arm_fir_init_f32(&S_chan2A_fil, NUM_TAPS, (float *)&firCoeffs32[0], 
-    &firStateF32_chan2A[0], blockSize);
-  arm_fir_init_f32(&S_chan2B_fil, NUM_TAPS, (float *)&firCoeffs32[0], 
-    &firStateF32_chan2B[0], blockSize);
-
-  arm_fir_init_f32(&S_chan1AMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan1AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan1BMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan1BMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2AMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan2AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2BMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan2BMA[0], blockSize);
-}
-
-void high_pass_filter_init_50(void){
-/* Call FIR init function to initialize the instance structure. */
-  arm_fill_f32(1.0/NUM_TAPS_MA_FIL, (float *) &firCoeffsMA32[0],
-    NUM_TAPS_MA_FIL);
-  arm_fir_init_f32(&S_chan1A, NUM_TAPS, (float *)&firCoeffs32_50[0], 
-    &firStateF32_chan1A[0], blockSize);
-  arm_fir_init_f32(&S_chan1B, NUM_TAPS, (float *)&firCoeffs32_50[0], 
-    &firStateF32_chan1B[0], blockSize);
-  arm_fir_init_f32(&S_chan2A, NUM_TAPS, (float *)&firCoeffs32_50[0], 
-    &firStateF32_chan2A[0], blockSize);
-  arm_fir_init_f32(&S_chan2B, NUM_TAPS, (float *)&firCoeffs32_50[0], 
-    &firStateF32_chan2B[0], blockSize);
-
-  arm_fir_init_f32(&S_chan1AMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0],
-    &firStateF32_chan1AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan1BMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan1BMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2AMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan2AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2BMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan2BMA[0], blockSize);
-	
-  arm_fir_init_f32(&S_chan1A_fil, NUM_TAPS, (float *)&firCoeffs32_50[0], 
-    &firStateF32_chan1A[0], blockSize);
-  arm_fir_init_f32(&S_chan1B_fil, NUM_TAPS, (float *)&firCoeffs32_50[0], 
-    &firStateF32_chan1B[0], blockSize);
-  arm_fir_init_f32(&S_chan2A_fil, NUM_TAPS, (float *)&firCoeffs32_50[0], 
-    &firStateF32_chan2A[0], blockSize);
-  arm_fir_init_f32(&S_chan2B_fil, NUM_TAPS, (float *)&firCoeffs32_50[0], 
-    &firStateF32_chan2B[0], blockSize);
-
-  arm_fir_init_f32(&S_chan1AMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan1AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan1BMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan1BMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2AMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan2AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2BMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan2BMA[0], blockSize);
-}
-
-void high_pass_filter_init_100(void){
-/* Call FIR init function to initialize the instance structure. */
-  arm_fill_f32(1.0/NUM_TAPS_MA_FIL, (float *) &firCoeffsMA32[0],
-    NUM_TAPS_MA_FIL);
-  arm_fir_init_f32(&S_chan1A, NUM_TAPS, (float *)&firCoeffs32_100[0], 
-    &firStateF32_chan1A[0], blockSize);
-  arm_fir_init_f32(&S_chan1B, NUM_TAPS, (float *)&firCoeffs32_100[0], 
-    &firStateF32_chan1B[0], blockSize);
-  arm_fir_init_f32(&S_chan2A, NUM_TAPS, (float *)&firCoeffs32_100[0], 
-    &firStateF32_chan2A[0], blockSize);
-  arm_fir_init_f32(&S_chan2B, NUM_TAPS, (float *)&firCoeffs32_100[0], 
-    &firStateF32_chan2B[0], blockSize);
-
-  arm_fir_init_f32(&S_chan1AMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0],
-    &firStateF32_chan1AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan1BMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan1BMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2AMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan2AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2BMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan2BMA[0], blockSize);
-	
-  arm_fir_init_f32(&S_chan1A_fil, NUM_TAPS, (float *)&firCoeffs32_100[0], 
-    &firStateF32_chan1A[0], blockSize);
-  arm_fir_init_f32(&S_chan1B_fil, NUM_TAPS, (float *)&firCoeffs32_100[0], 
-    &firStateF32_chan1B[0], blockSize);
-  arm_fir_init_f32(&S_chan2A_fil, NUM_TAPS, (float *)&firCoeffs32_100[0], 
-    &firStateF32_chan2A[0], blockSize);
-  arm_fir_init_f32(&S_chan2B_fil, NUM_TAPS, (float *)&firCoeffs32_100[0], 
-    &firStateF32_chan2B[0], blockSize);
-
-  arm_fir_init_f32(&S_chan1AMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan1AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan1BMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan1BMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2AMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan2AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2BMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan2BMA[0], blockSize);
-}
-
-void high_pass_filter_init_200(void){
-/* Call FIR init function to initialize the instance structure. */
-  arm_fill_f32(1.0/NUM_TAPS_MA_FIL, (float *) &firCoeffsMA32[0],
-    NUM_TAPS_MA_FIL);
-  arm_fir_init_f32(&S_chan1A, NUM_TAPS, (float *)&firCoeffs32_200[0], 
-    &firStateF32_chan1A[0], blockSize);
-  arm_fir_init_f32(&S_chan1B, NUM_TAPS, (float *)&firCoeffs32_200[0], 
-    &firStateF32_chan1B[0], blockSize);
-  arm_fir_init_f32(&S_chan2A, NUM_TAPS, (float *)&firCoeffs32_200[0], 
-    &firStateF32_chan2A[0], blockSize);
-  arm_fir_init_f32(&S_chan2B, NUM_TAPS, (float *)&firCoeffs32_200[0], 
-    &firStateF32_chan2B[0], blockSize);
-
-  arm_fir_init_f32(&S_chan1AMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0],
-    &firStateF32_chan1AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan1BMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan1BMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2AMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan2AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2BMA, NUM_TAPS_MA_FIL, (float *)&firCoeffsMA32[0], 
-    &firStateF32_chan2BMA[0], blockSize);
-	
-  arm_fir_init_f32(&S_chan1A_fil, NUM_TAPS, (float *)&firCoeffs32_200[0], 
-    &firStateF32_chan1A[0], blockSize);
-  arm_fir_init_f32(&S_chan1B_fil, NUM_TAPS, (float *)&firCoeffs32_200[0], 
-    &firStateF32_chan1B[0], blockSize);
-  arm_fir_init_f32(&S_chan2A_fil, NUM_TAPS, (float *)&firCoeffs32_200[0], 
-    &firStateF32_chan2A[0], blockSize);
-  arm_fir_init_f32(&S_chan2B_fil, NUM_TAPS, (float *)&firCoeffs32_200[0], 
-    &firStateF32_chan2B[0], blockSize);
-
-  arm_fir_init_f32(&S_chan1AMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan1AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan1BMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan1BMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2AMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan2AMA[0], blockSize);
-  arm_fir_init_f32(&S_chan2BMA_fil, NUM_TAPS_MA_FIL, 
-    (float *)&firCoeffsMA32[0], &firStateF32_chan2BMA[0], blockSize);
-}
 
 void ppg_config(void){
   if (ppgConfig.isEnabled) {
@@ -1133,7 +970,7 @@ void ppg_bluetooth_fill(uint8_t* bleSendArr){
     // now we write the packet counter
     
   
-  ppg_led_currentUpdate();
+    ppg_led_currentUpdate();
 
 }
 

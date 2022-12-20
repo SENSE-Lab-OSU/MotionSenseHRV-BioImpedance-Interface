@@ -30,6 +30,9 @@ start_collection_date = ""
 file_name = ""
 
 
+use_previous_packet_format = True
+
+
 ''' This is a class for holding information about a single bluetooth attribute.'''
 class MSenseCharacteristic:
 
@@ -218,42 +221,45 @@ def build_uuid_dict(client):
 def ppg_sensor_handle(sender, data:bytes):
     global file_name
     print(sender)
-    Led_ir11 = data[0]
-    Led_ir11 <<= 11
-    Led_ir12 = data[1]
-    Led_ir12 <<= 3
-    Led_ir13 = data[2]
-    Led_ir13 >>= 5
-    Led_ir1 = Led_ir11 + Led_ir12 + Led_ir13
+    if use_previous_packet_format:
+    	pass
+    else:
+    	Led_ir11 = data[0]
+    	Led_ir11 <<= 11
+    	Led_ir12 = data[1]
+    	Led_ir12 <<= 3
+    	Led_ir13 = data[2]
+    	Led_ir13 >>= 5
+    	Led_ir1 = Led_ir11 + Led_ir12 + Led_ir13
 
-    Led_ir21 = data[2]
-    Led_ir21 &= 31
-    Led_ir21 <<= 14
-    Led_ir22 = data[3]
-    Led_ir22 <<= 6
-    Led_ir23 = data[4]
-    Led_ir23 >>= 2
-    Led_ir2 = Led_ir21 + Led_ir22 + Led_ir23
+    	Led_ir21 = data[2]
+    	Led_ir21 &= 31
+    	Led_ir21 <<= 14
+    	Led_ir22 = data[3]
+    	Led_ir22 <<= 6
+    	Led_ir23 = data[4]
+    	Led_ir23 >>= 2
+    	Led_ir2 = Led_ir21 + Led_ir22 + Led_ir23
 
-    Led_g11 = data[4]
-    Led_g11 &= 3
-    Led_g11 <<= 17
-    Led_g12 = data[5]
-    Led_g12 <<= 9
-    Led_g13 = data[6]
-    Led_g13 <<= 1
-    Led_g14 = data[7]
-    Led_g14 >>= 7
-    Led_g15 = Led_g11 + Led_g12+ Led_g13+Led_g14
+    	Led_g11 = data[4]
+    	Led_g11 &= 3
+    	Led_g11 <<= 17
+    	Led_g12 = data[5]
+    	Led_g12 <<= 9
+    	Led_g13 = data[6]
+    	Led_g13 <<= 1
+    	Led_g14 = data[7]
+    	Led_g14 >>= 7
+    	Led_g15 = Led_g11 + Led_g12+ Led_g13+Led_g14
 
-    Led_g21 = data[7]
-    Led_g21 &= 127
-    Led_g21 <<= 12
-    Led_g22 = data[8]
-    Led_g22 <<= 4
-    Led_g23 = data[9]
-    Led_g23 >>= 4
-    Led_g2 = Led_g21 + Led_g22 + Led_g23
+    	Led_g21 = data[7]
+    	Led_g21 &= 127
+    	Led_g21 <<= 12
+    	Led_g22 = data[8]
+    	Led_g22 <<= 4
+    	Led_g23 = data[9]
+    	Led_g23 >>= 4
+    	Led_g2 = Led_g21 + Led_g22 + Led_g23
 
 
     #ledir1_ex = bitarray.bitarray()

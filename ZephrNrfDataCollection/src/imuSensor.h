@@ -2,8 +2,8 @@
 #define IMUSENSOR_H_
 #include <zephyr.h>
 #include <drivers/spi.h>
-#include "DSP/Include/arm_const_structs.h"
-#include "DSP/Include/arm_math.h"
+#include "arm_const_structs.h"
+#include "arm_math.h"
 #include <drivers/spi.h>
 
 #define READMASTER 0x80

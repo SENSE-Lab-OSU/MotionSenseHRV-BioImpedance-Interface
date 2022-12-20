@@ -10,7 +10,7 @@ project(external_lib)
 
 
 # this is a defined k-config
-add_subdirectory_ifdef(CONFIG_CMSIS_DSP        src/DSP)
+# add_subdirectory_ifdef(CONFIG_CMSIS_DSP        src/DSP)
 target_sources(app PRIVATE src/main.cc)
 target_sources(app PRIVATE src/ppgSensor.cc)
 target_sources(app PRIVATE src/batteryMonitor.cc)

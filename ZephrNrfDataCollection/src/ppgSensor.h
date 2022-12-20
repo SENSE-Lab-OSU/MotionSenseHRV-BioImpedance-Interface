@@ -1,7 +1,7 @@
 #ifndef PPGSENSOR_H_
 #define PPGSENSOR_H_
-#include "DSP/Include/arm_const_structs.h"
-#include "DSP/Include/arm_math.h"
+#include "arm_const_structs.h"
+#include "arm_math.h"
 #include <zephyr.h>
 #include <drivers/spi.h>
 #include <fs/fs.h>
@@ -101,7 +101,7 @@
 // FIR Filter Globabl variables
 #define NUM_TAPS  222
 #define BLOCK_SIZE  1 
-#define NUM_TAPS_MA_FIL  2000
+#define NUM_TAPS_MA_FIL  200
 #define FLOAT_CON_16UA   (16000.0/524287.0)
 
 
@@ -137,10 +137,10 @@ float stdChanIR_1;
 float stdChanIR_2;
 float stdChanGreen_1;
 float stdChanGreen_2;
-float green_ch1_buffer[500];
-float green_ch2_buffer[500];
-float infraRed_ch1_buffer[500];
-float infraRed_ch2_buffer[500];
+float green_ch1_buffer[1];
+float green_ch2_buffer[1];
+float infraRed_ch1_buffer[1];
+float infraRed_ch2_buffer[1];
 uint32_t bufferIndex;
 bool dataReadyTF;
 };
