@@ -372,6 +372,8 @@ class MotionSense_device_QWidget(QWidget):
 
 
 
+
+
         # quick example to illustrate custom devices
         elif name == "Custom Device":
 

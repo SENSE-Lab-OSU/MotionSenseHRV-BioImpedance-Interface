@@ -33,6 +33,13 @@ file_name = ""
 use_previous_packet_format = True
 
 
+'''This is a class that holds a Device, consisting of bluetooth characteristics'''
+class MSenseDevice:
+
+    def __init__(self, ):
+        pass
+
+
 ''' This is a class for holding information about a single bluetooth attribute.'''
 class MSenseCharacteristic:
 
@@ -345,7 +352,7 @@ async def connect_address():
         if devi.name == "MotionSenseHRV3":
             addr = devi.address
             motion_sense_devices.append(devi)
-            print("found! with adress", str(devi.address))
+            print("found! with address", str(devi.address))
         print(devi)
         #if the device == MotionSense: get address
         #to do at home
