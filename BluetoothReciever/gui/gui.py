@@ -347,7 +347,7 @@ class MotionSense_device_QWidget(QWidget):
         device_name.setFont(bold_font)
         optionsLayout.addWidget(device_name)
         # here is where we customize the attributes
-        if name == "MotionSenseHRV3":
+        if name == "RightMotionSense2":
             # for every ble characteristic we want to collect from, we set up this 2 element array:
             # the first element of the Array contains a QCheckBox representing an enabled or disabled
             # state in the application, while the other element is a custom class.
@@ -356,14 +356,18 @@ class MotionSense_device_QWidget(QWidget):
             self.check3 = [QCheckBox("Accelorometer")]
             self.check4 = [QCheckBox("Tensorflow")]
 
-
+            #corrected UUID numbers 
 
             self.check1.append(bluetooth_reciver.MSenseCharacteristic("PPG", bluetooth_reciver.ppg_sensor_handle,
-                                                                      "da39c923-1d81-48e2-9c68-d0ae4bbd351f"))
-
+                                                                      "da39c926-1d81-48e2-9c68-d0ae4bbd351f"))
+            
             self.check2.append(bluetooth_reciver.MSenseCharacteristic("Magnometer",
                                                                       bluetooth_reciver.notification_handler_magnometer,
                                                                       "da39c922-1d81-48e2-9c68-d0ae4bbd351f"))
+            self.check2.append(bluetooth_reciver.MSenseCharacteristic("Accelorometer",
+                                                                      bluetooth_reciver.motion_sense_characteristic,
+                                                                      "da39c921-1d81-48e2-9c68-d0ae4bbd351f")) #added the accelerometer handling
+            
             self.options.append(self.check1)
             self.options.append(self.check2)
             self.options.append(self.check3)
