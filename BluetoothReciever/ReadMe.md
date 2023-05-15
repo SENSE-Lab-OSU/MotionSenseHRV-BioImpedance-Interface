@@ -17,9 +17,9 @@ To run this application, follow these steps below.
 
 # Manual Setup (For Windows, Linux and Mac)
 1. Clone this repository
-2. Navigate to this folder, and create a virutal environment
-3. Install the python dependencies (can be done by doing pip install -r requirements.txt)
-4. You can then launch this application by running 'python MotionSense.py' in the terminal
+2. Navigate to this folder, and create a virtual environment
+3. Install the python dependencies (can be done by doing pip install -r requirements.txt) - USE THE requirements.txt VERSION FIRST, if it does not work then you can switch to requirements_stable.txt
+4. You can then launch this application by running 'python MotionSense.py' in the terminal.
 
 
 
