@@ -13,11 +13,17 @@ print(str(datetime.now()))
 
 
 '''This is the UI script for the OSU MotionSense Bluetooth
-device
+device. For more information on how to setup Custom devices, please see device_setup.py
 
 This code is designed to be as dependency free as possible,
 so that making new scripts for data collection can be easily be swapped out by
 replacing singular function calls to collect_data'''
+
+from data_collection import bluetooth_reciver
+
+from data_collection import device_setup
+
+
 
 
 import PyQt5
@@ -40,7 +46,6 @@ from datetime import datetime
 import PyQt5.QtWidgets
 
 import PyQt5.Qt
-from data_collection import bluetooth_reciver
 
 threadpool = QThreadPool()
 
@@ -162,7 +167,7 @@ class MotionSenseApp(QWidget):
     def connect_to_motionsense_handle(self):
         print("button pressed")
 
-        connect_addresses = bluetooth_reciver.non_async_connect()
+        connect_addresses = bluetooth_reciver.non_async_connect(device_setup.all_sensors)
         if len(connect_addresses) != 0:
             self.log_disp.setText("collection will be saved to")
             self.button.setText("connected!")
@@ -172,7 +177,7 @@ class MotionSenseApp(QWidget):
 
             # for every MotionSense ble device found add it to the list of devices
             for count, adress in enumerate(self.addresses):
-                device = MotionSense_device_QWidget(count, adress.address, adress.name)
+                device = MotionSense_device_QWidget(count, adress)
                 self.devices.append(device)
                 self.optionsLayout.addWidget(device)
             path = self.file_line.text() + "\\" + self.file_line2.text()
@@ -228,11 +233,11 @@ class MotionSenseApp(QWidget):
             self.gather_button.setText("Start")
             self.logging_file.close()
 
-            print("trying to close app")
-            for thread in self.threads:
-                thread.close()
+            #print("trying to close app")
+            #for thread in self.threads:
+            #    thread.close()
 
-            print(datetime.now())
+            #print(datetime.now())
             return
         else:
             # need to figure out how to handel async events here
@@ -319,93 +324,38 @@ class MotionSenseApp(QWidget):
 # represents the MotionSense device
 class MotionSense_device_QWidget(QWidget):
 
-    def __init__(self, number, address, name):
+    def __init__(self, number, device:bluetooth_reciver.MSenseDevice):
         super().__init__()
-        print("trying to register " + str(name))
+        print("trying to register " + str(device.name))
         # Create a layout for the sensor option checkboxes
         optionsLayout = QFormLayout()
         self.options = []
         self.characteristics = []
         # every device must have an address, and name
         self.number = number
-        self.address = address
+        self.address = device.address
 
-        if name == None or name == "":
+        if device.name == None or device.name == "":
             print("error registering device")
             return -1
 
-        self.name = name
-
-
-
-
+        self.name = device.name
         #bold font
         #remove this from here and into the log
 
         # Add the checkboxes to the layout
-        device_name = QLabel(name + " Device " + str(address))
+        device_name = QLabel(self.name + " Device " + str(self.address))
         device_name.setFont(bold_font)
         optionsLayout.addWidget(device_name)
         # here is where we customize the attributes
-        if name == "RightMotionSense2":
+        if self.name == "RightMotionSense2":
             # for every ble characteristic we want to collect from, we set up this 2 element array:
             # the first element of the Array contains a QCheckBox representing an enabled or disabled
             # state in the application, while the other element is a custom class.
-            self.check1 = [QCheckBox("PPG collection")]
-            self.check2 = [QCheckBox("Magnometer collection")]
-            self.check3 = [QCheckBox("Accelorometer")]
-            self.check4 = [QCheckBox("Tensorflow")]
-
-            #corrected UUID numbers 
-
-            self.check1.append(bluetooth_reciver.MSenseCharacteristic("PPG", bluetooth_reciver.ppg_sensor_handle,
-                                                                      "da39c926-1d81-48e2-9c68-d0ae4bbd351f"))
-            
-            self.check2.append(bluetooth_reciver.MSenseCharacteristic("Magnometer",
-                                                                      bluetooth_reciver.notification_handler_magnometer,
-                                                                      "da39c922-1d81-48e2-9c68-d0ae4bbd351f"))
-            self.check2.append(bluetooth_reciver.MSenseCharacteristic("Accelorometer",
-                                                                      bluetooth_reciver.motion_sense_characteristic,
-                                                                      "da39c921-1d81-48e2-9c68-d0ae4bbd351f")) #added the accelerometer handling
-            
-            self.options.append(self.check1)
-            self.options.append(self.check2)
-            self.options.append(self.check3)
-            self.options.append(self.check4)
-
-
-
-
-
-
-        # quick example to illustrate custom devices
-        elif name == "Custom Device":
-
-
-            self.check1 = [QCheckBox("Characteristic 1 name")]
-            self.check2 = [QCheckBox("Characteristic 2 name")]
-
-            self.check1.append(bluetooth_reciver.MSenseCharacteristic("Characteristic 1", bluetooth_reciver.ppg_sensor_handle,
-                                                                      "Characteristic1UUID"))
-
-
-            #now, all we need to do is append the MSenseCharacteristic Class containing
-            # the name (can be anything), reciver function, and characteristic UUID
-
-            #self.check4.append(bluetooth_reciver.MSenseCharacteristic("l2"), bluetooth_reciver.notification_handler_magnometer,
-            #                   "da39c922-1d81-48e2-9c68-d0ae4bbd351f")
-
-
-
-
-        # now we will use the 'new' format
-        elif name == "MotionSenseF2":
-            self.check1 = [QCheckBox("accel and ppg")]
-            self.check1.append(bluetooth_reciver.MSenseCharacteristic("accel and ppg", bluetooth_reciver.ppg_sensor_handle,
-                                                                      "da39c923-1d81-48e2-9c68-d0ae4bbd351f"
-                                                                      ))
-
-            self.options.append(self.check1)
+            for characteristic in device.characteristics:
+                current_checkbox = [QCheckBox(characteristic.name + " collection")]
+                current_checkbox.append(characteristic)
+                self.options.append(current_checkbox)
 
 
         for check_widget in self.options:
@@ -430,8 +380,6 @@ class MotionSense_device_QWidget(QWidget):
 
 
 class Collection_Worker(QRunnable):
-
-
 
     def __init__(self, function_handler, address, path, record_length, options=None):
         print("worker starting")

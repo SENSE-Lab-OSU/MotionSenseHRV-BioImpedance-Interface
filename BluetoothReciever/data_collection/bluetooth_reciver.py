@@ -33,11 +33,9 @@ file_name = ""
 use_previous_packet_format = True
 
 
-'''This is a class that holds a Device, consisting of bluetooth characteristics'''
-class MSenseDevice:
+'''This is a class that holds a Device, consisting of bluetooth characteristics
+This is different from the widget class, but the widget class contains it.'''
 
-    def __init__(self, ):
-        pass
 
 
 ''' This is a class for holding information about a single bluetooth attribute.'''
@@ -49,7 +47,12 @@ class MSenseCharacteristic:
         self.function = function
         self.uuid = uuid
 
+class MSenseDevice:
 
+    def __init__(self, name:str, characteristics:list[MSenseCharacteristic]):
+        self.name = name
+        self.address = None
+        self.characteristics = characteristics
 
 
 '''Utility class for what sensor options to generate'''
@@ -343,15 +346,25 @@ def prev_format_accel_HRV(sender, data: bytes):
 def orientation_handler(sender, data):
     pass
 
-async def connect_address():
+async def connect_address(Devices:list[MSenseDevice]=None):
     print("scanning connections")
     addr = None
     motion_sense_devices = []
     devices = await BleakScanner.discover()
+    device_set = dict()
+    if Devices is not None:
+        for device in Devices:
+            device_set[device.name] = device
+    else:
+        device_set["RightMotionSense2"] = MSenseDevice()
+
+
     for devi in devices:
-        if devi.name == "RightMotionSense2":
+        if devi.name in device_set:
+            device_object = device_set[devi.name]
+            device_object.address = devi.address
             addr = devi.address
-            motion_sense_devices.append(devi)
+            motion_sense_devices.append(device_object)
             print("found! with address", str(devi.address))
         print(devi)
         #if the device == MotionSense: get address
@@ -394,7 +407,7 @@ def write_to_file(name: str, data):
         MSense_data.magnometer.append(data)
         MSense_data.magnometer_packet.append(magnometer_packet_information)
 
-async def run(address, debug=True, path=None, data_amount = 30.0, options=None):
+async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None):
     print("starting run function")
     # this has to be global because it is async
     global bleak_device
@@ -431,9 +444,6 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=None):
         uuid_arr = build_uuid_dict(client)
         #l_service = client.services.characteristics[17]
         #l_service is
-
-
-
         bleak_device = client
 
         #l2_service is latent ppg information
@@ -456,8 +466,13 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=None):
 
         current_services = []
         for characteristic in options:
+            try:
 
-            service = client.services.characteristics[uuid_arr[characteristic.uuid]]
+                service = client.services.characteristics[uuid_arr[characteristic.uuid]]
+            except KeyError():
+                error_string = "Error: bluetooth characteristic UUID is invalid for device " + characteristic.name
+                print(error_string)
+                return error_string
 
             #ppg_service = client.services.characteristics[uuid_arr["da39c926-1d81-48e2-9c68-d0ae4bbd351f"]]
 
@@ -465,20 +480,6 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=None):
             #create_csv_file("ppg", path)
             print("starting notify for " + str(characteristic.name))
             ppg_arr = await client.start_notify(service, characteristic.function)
-
-
-
-            #orientation_service = client.services.characteristics[uuid_arr["da39c926-1d81-48e2-9c68-d0ae4bbd351f"]]
-        #await client.start_notify(motion_sense_service, motion_sense_characteristic )
-
-            #motion_sense_service = client.services.characteristics[uuid_arr["da39c924-1d81-48e2-9c68-d0ae4bbd351f"]]
-            #current_services.append(motion_sense_service)
-            #await client.start_notify(motion_sense_service, motion_sense_characteristic)
-
-
-            #magnometer_service = client.services.characteristics[uuid_arr["da39c925-1d81-48e2-9c68-d0ae4bbd351f"]]
-            #current_services.append(magnometer_service)
-            #await client.start_notify(magnometer_service, notification_handler_magnometer)
 
 
         #we need to do the rest of the sensors as well
@@ -493,6 +494,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=None):
         ppg_pack_loss = MSense_data.ppg_packet_loss_counter
 
         magno_pack = MSense_data.magnometer_packet
+        return "Finished Data Collection for "
 
 
 #async def enable_sec():
@@ -519,17 +521,12 @@ def start_background_loop(loop: asyncio.AbstractEventLoop):
     loop.run_forever()
 
 
-def non_async_connect():
+def non_async_connect(devices_to_search=None):
     os.environ["PYTHONASYNCIODEBUG"] = str(1)
     print("System: ", platform.system())
-    address = (
-        ""  # <--- Change to your device's address here if you are using Windows or Linux
-        if platform.system() != "Darwin"
-        else "B9EA5233-37EF-4DD6-87A8-2A875E821C46"  # <--- Change to your device's address here if you are using macOS
-    )
     # B9EA5233-37EF-4DD6-87A8-2A875E821C46
     loop = asyncio.get_event_loop()
-    address = loop.run_until_complete(connect_address())
+    address = loop.run_until_complete(connect_address(devices_to_search))
     return address
 
 
