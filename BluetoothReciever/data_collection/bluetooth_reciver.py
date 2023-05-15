@@ -349,7 +349,7 @@ async def connect_address():
     motion_sense_devices = []
     devices = await BleakScanner.discover()
     for devi in devices:
-        if devi.name == "MotionSenseHRV3":
+        if devi.name == "RightMotionSense2":
             addr = devi.address
             motion_sense_devices.append(devi)
             print("found! with address", str(devi.address))
@@ -459,7 +459,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options=None):
 
             service = client.services.characteristics[uuid_arr[characteristic.uuid]]
 
-            #ppg_service = client.services.characteristics[uuid_arr["da39c923-1d81-48e2-9c68-d0ae4bbd351f"]]
+            #ppg_service = client.services.characteristics[uuid_arr["da39c926-1d81-48e2-9c68-d0ae4bbd351f"]]
 
             current_services.append(service)
             #create_csv_file("ppg", path)
