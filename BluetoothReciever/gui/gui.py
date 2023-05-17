@@ -221,6 +221,9 @@ class MotionSenseApp(QWidget):
     # for future versions to work
     def collect_data(self):
         print("collect button pressed")
+        total_checks = 0
+        if len(self.devices) == 0:
+            return
         # we assume here that address is valid, because this button should be greyed out if there
         # is no connection
 
@@ -242,7 +245,7 @@ class MotionSenseApp(QWidget):
         else:
             # need to figure out how to handel async events here
 
-            path = self.file_line.text() + "\\" + self.file_line2.text()
+
             self.log("trying to start collection...")
             try:
                 record_length = float(self.file_line3.text())
@@ -254,12 +257,14 @@ class MotionSenseApp(QWidget):
 
             self.log("registering devices...")
             # for all MSense devices, get the characteristics that are checked and collect data from them
+
             for device in self.devices:
                 self.log("registering device " + str(device.address))
+                path = self.file_line.text() + "\\" + self.file_line2.text() + "\\" + device.name
                 options = device.get_characteristics()
                 if len(options) == 0:
                     # if the user didn't check any boxes we don't need to run any data
-                    return
+                    continue
                 self.log("got options...")
                 self.log("creating thread...") #data_collection.bluetooth_reciver.non_async_collect
 
@@ -273,8 +278,10 @@ class MotionSenseApp(QWidget):
                 exit_flag = multiprocessing.Value("b")
                 self.log("creating Process...")
                 p = multiprocessing.Process(target=test_function, args=(device.address, path, record_length, options, exit_flag))
-                self.log("attempting to start thread")
+                self.log("attempting to start thread" + str(total_checks))
                 p.start()
+
+                total_checks += 1
 
 
                 #threadpool.start(th_thread)
@@ -284,13 +291,14 @@ class MotionSenseApp(QWidget):
                 #data_collection.bluetooth_reciver.non_async_collect(self.address, path, record_length, options)
             #start logging for files
             self.log("sucessfully registered all devices")
-            self.currently_collecting = True
-            self.log("started data collection")
-            # need to program this to get the data in the future
-            # This is a class of bool values containing what options we would like
-            self.log_disp.setText("Collecting Data and saving to file...")
-            self.gather_button.setText("Stop")
-
+            if total_checks > 0:
+                self.currently_collecting = True
+                self.log("started data collection")
+                # need to program this to get the data in the future
+                # This is a class of bool values containing what options we would like
+                self.log_disp.setText("Collecting Data and saving to file...")
+                self.gather_button.setText("Stop")
+                self.log("started for " + str(total_checks) + "devices")
             print("returning to main menu...")
 
             #self.update()
@@ -312,11 +320,23 @@ class MotionSenseApp(QWidget):
             self.logging_file.write(logging_string)
 
 
+    def refresh_log_file(self):
+        if self.logging_file is not None:
+            self.logging_file.close()
+            self.logging_file.open()
 
     def send_note(self):
         text_to_send = self.th_log.text()
         self.th_log.clear()
         self.log_file(text_to_send)
+
+
+
+
+    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+        self.log("closing app")
+        self.logging_file.close()
+
 
 
 
@@ -348,14 +368,14 @@ class MotionSense_device_QWidget(QWidget):
         device_name.setFont(bold_font)
         optionsLayout.addWidget(device_name)
         # here is where we customize the attributes
-        if self.name == "RightMotionSense2":
+
             # for every ble characteristic we want to collect from, we set up this 2 element array:
             # the first element of the Array contains a QCheckBox representing an enabled or disabled
             # state in the application, while the other element is a custom class.
-            for characteristic in device.characteristics:
-                current_checkbox = [QCheckBox(characteristic.name + " collection")]
-                current_checkbox.append(characteristic)
-                self.options.append(current_checkbox)
+        for characteristic in device.characteristics:
+            current_checkbox = [QCheckBox(characteristic.name + " collection")]
+            current_checkbox.append(characteristic)
+            self.options.append(current_checkbox)
 
 
         for check_widget in self.options:
@@ -408,7 +428,7 @@ def test_function(address, path, record_length, options, test_flag):
         data_collection.bluetooth_reciver.non_async_collect(address, path, record_length, options, test_flag)
 
     except Exception as err:
-        raise
+        print(err)
 
     print("I am done!")
 
@@ -448,11 +468,12 @@ class Window(QMainWindow):
 
 
 
-
+import bleak_winrt.windows.devices.bluetooth
 
 
 
 def start():
+    #bleak_winrt.windows.devices.bluetooth.BluetoothLEPreferredConnectionParametersRequest
     print("starting gui")
     app = QApplication(sys.argv)
     window = Window()

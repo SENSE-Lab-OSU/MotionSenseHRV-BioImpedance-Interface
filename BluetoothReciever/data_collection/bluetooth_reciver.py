@@ -29,8 +29,9 @@ bleak_device = ""
 start_collection_date = ""
 file_name = ""
 
+file_obj = None
 
-use_previous_packet_format = True
+use_previous_packet_format = False
 
 
 '''This is a class that holds a Device, consisting of bluetooth characteristics
@@ -148,41 +149,47 @@ def notification_handler_general(sender, data, num=0, type:str="f", class_vari=N
     return packed_th_data
 
 
+'''Begin Current functionality'''
 
-#this is not actually used
 def motion_sense_characteristic(sender, data):
-    m_service = bleak_device.services.characteristics[30]
+    global file_name
+    #m_service = bleak_device.services.characteristics[30]
     #await bleak_device.read_gatt_char(m_service)
     accelorometer_data = []
     Accelorometer_X = data[0:2]
     print(Accelorometer_X)
     Accelorometer_Y = data[2:4]
     Accelerometer_Z = data[4:6]
-    Angular_velocity_X = data[6:10]
-    Angular_velocity_Y = data[10:14]
-    Angular_velocity_Z = data[14:18]
+    Angular_velocity_X = data[6:8]
+    Angular_velocity_Y = data[8:10]
+    Angular_velocity_Z = data[10:12]
     Accelorometer_X = struct.unpack(">h", Accelorometer_X)
     Accelorometer_Y = struct.unpack(">h", Accelorometer_Y)
     Accelerometer_Z = struct.unpack(">h", Accelerometer_Z)
 
-    Angular_velocity_X = struct.unpack("<f", Angular_velocity_X)
-    Angular_velocity_Y = struct.unpack("<f", Angular_velocity_Y)
-    Angular_velocity_Z = struct.unpack("<f", Angular_velocity_Z)
+    Angular_velocity_X = struct.unpack(">h", Angular_velocity_X)
+    Angular_velocity_Y = struct.unpack(">h", Angular_velocity_Y)
+    Angular_velocity_Z = struct.unpack(">h", Angular_velocity_Z)
+
+    row_array = [Accelorometer_X, Accelorometer_Y, Accelerometer_Z,
+                 Angular_velocity_X, Angular_velocity_Y, Angular_velocity_Y]
+
+    MSense_data.accelorometer_x.append(Accelorometer_X[0])
+    MSense_data.accelorometer_y.append(Accelorometer_Y[0])
+    MSense_data.accelorometer_z.append(Accelerometer_Z[0])
+    MSense_data.angular_velocity_x.append(Angular_velocity_X[0])
+    MSense_data.angular_velocity_y.append(Angular_velocity_Y[0])
+    MSense_data.angular_velocity_z.append(Angular_velocity_Z[0])
 
 
 
-    MSense_data.accelorometer_x = Accelorometer_X
-    MSense_data.accelorometer_y = Accelorometer_Y
-    MSense_data.accelorometer_z = Accelerometer_Z
-    MSense_data.angular_velocity_x = Angular_velocity_X
-    MSense_data.angular_velocity_y = Angular_velocity_Y
-    MSense_data.angular_velocity_z = Angular_velocity_Z
     if MSense_data.print_data_to_files:
         m_file = open("motionsense_data.txt", "a")
 
         info_string = "accelorometer: " + str(Accelorometer_X) + " " + str(Accelorometer_Y) + " " + str(Accelerometer_Z) + " Angular velocity: "
         info_string += str(Angular_velocity_X) + " " + str(Angular_velocity_Y) + " " + str(Angular_velocity_Z)
         m_file.write(info_string + "\n")
+        m_file.close()
     #print(info_string)
     #print(str(Angular_velocity_X))
     #print(str(Angular_velocity_Y))
@@ -232,44 +239,52 @@ def ppg_sensor_handle(sender, data:bytes):
     global file_name
     print(sender)
     if use_previous_packet_format:
-    	pass
+        Led_ir1 = data[0:4]
+        Led_ir2 = data[4:8]
+        Led_g15 = data[12:16]
+        Led_g2 = data[16:20]
+
+        Led_ir1 = struct.unpack("<f", Led_ir1)
+        Led_ir2 = struct.unpack("<f", Led_ir2)
+
+
     else:
-    	Led_ir11 = data[0]
-    	Led_ir11 <<= 11
-    	Led_ir12 = data[1]
-    	Led_ir12 <<= 3
-    	Led_ir13 = data[2]
-    	Led_ir13 >>= 5
-    	Led_ir1 = Led_ir11 + Led_ir12 + Led_ir13
+        Led_ir11 = data[0]
+        Led_ir11 <<= 11
+        Led_ir12 = data[1]
+        Led_ir12 <<= 3
+        Led_ir13 = data[2]
+        Led_ir13 >>= 5
+        Led_ir1 = Led_ir11 + Led_ir12 + Led_ir13
 
-    	Led_ir21 = data[2]
-    	Led_ir21 &= 31
-    	Led_ir21 <<= 14
-    	Led_ir22 = data[3]
-    	Led_ir22 <<= 6
-    	Led_ir23 = data[4]
-    	Led_ir23 >>= 2
-    	Led_ir2 = Led_ir21 + Led_ir22 + Led_ir23
+        Led_ir21 = data[2]
+        Led_ir21 &= 31
+        Led_ir21 <<= 14
+        Led_ir22 = data[3]
+        Led_ir22 <<= 6
+        Led_ir23 = data[4]
+        Led_ir23 >>= 2
+        Led_ir2 = Led_ir21 + Led_ir22 + Led_ir23
 
-    	Led_g11 = data[4]
-    	Led_g11 &= 3
-    	Led_g11 <<= 17
-    	Led_g12 = data[5]
-    	Led_g12 <<= 9
-    	Led_g13 = data[6]
-    	Led_g13 <<= 1
-    	Led_g14 = data[7]
-    	Led_g14 >>= 7
-    	Led_g15 = Led_g11 + Led_g12+ Led_g13+Led_g14
+        Led_g11 = data[4]
+        Led_g11 &= 3
+        Led_g11 <<= 17
+        Led_g12 = data[5]
+        Led_g12 <<= 9
+        Led_g13 = data[6]
+        Led_g13 <<= 1
+        Led_g14 = data[7]
+        Led_g14 >>= 7
+        Led_g15 = Led_g11 + Led_g12+ Led_g13+Led_g14
 
-    	Led_g21 = data[7]
-    	Led_g21 &= 127
-    	Led_g21 <<= 12
-    	Led_g22 = data[8]
-    	Led_g22 <<= 4
-    	Led_g23 = data[9]
-    	Led_g23 >>= 4
-    	Led_g2 = Led_g21 + Led_g22 + Led_g23
+        Led_g21 = data[7]
+        Led_g21 &= 127
+        Led_g21 <<= 12
+        Led_g22 = data[8]
+        Led_g22 <<= 4
+        Led_g23 = data[9]
+        Led_g23 >>= 4
+        Led_g2 = Led_g21 + Led_g22 + Led_g23
 
 
     #ledir1_ex = bitarray.bitarray()
@@ -279,7 +294,7 @@ def ppg_sensor_handle(sender, data:bytes):
     #Led_ir1 += bytes([0])
     #Led_ir1 = bitarray.bitarray(Led_ir1)
 
-    ppg_file = open(file_name + "\\" + start_collection_date + "-ppg.txt", "a")
+    #ppg_file = open(file_name + "\\" + start_collection_date + "-ppg.txt", "a")
 
 
     #print(Led_ir1)
@@ -295,8 +310,8 @@ def ppg_sensor_handle(sender, data:bytes):
     packet_counter = data[10:12]
     print("ppg packet counter: " + str(packet_counter))
     packet_counter = struct.unpack(">h", packet_counter)
-    ppg_file.write(hex_string + "\n")
-    print(packet_counter[0])
+    ##ppg_file.write(hex_string + "\n")
+    ##print(packet_counter[0])
     MSense_data.ppg_led1ir_arr.append(Led_ir1)
     MSense_data.ppg_led2ir_arr.append(Led_ir2)
     MSense_data.ppg_g1_arr.append(Led_g15)
@@ -306,22 +321,13 @@ def ppg_sensor_handle(sender, data:bytes):
                  "ir_2":Led_ir2}
 
 
-    # if this does not work use this forat:
-    mydict = [{'branch': 'COE', 'cgpa': '9.0', 'name': 'Nikhil', 'year': '2'},
-              {'branch': 'COE', 'cgpa': '9.1', 'name': 'Sanchit', 'year': '2'},
-              {'branch': 'IT', 'cgpa': '9.3', 'name': 'Aditya', 'year': '2'},
-              {'branch': 'SE', 'cgpa': '9.5', 'name': 'Sagar', 'year': '1'},
-              {'branch': 'MCE', 'cgpa': '7.8', 'name': 'Prateek', 'year': '3'},
-              {'branch': 'EP', 'cgpa': '9.1', 'name': 'Sahil', 'year': '2'}]
-
-
     # currently, writing to a csv file is not finished yet, so it is commented out for now
     #write_to_csv_file("ppg", file_dict)
     MSense_data.ppg_packet_counter.append(packet_counter[0])
     packets_recived = MSense_data.ppg_packet_counter[len(MSense_data.ppg_packet_counter) - 1] - MSense_data.ppg_packet_counter[
         len(MSense_data.ppg_packet_counter) - 2]
 
-    MSense_data.ppg_packet_loss_counter.append(8-packets_recived)
+    MSense_data.ppg_packet_loss_counter.append(10-packets_recived)
 
     #print(MSense_data.ppg_led1ir_arr)
 
@@ -393,124 +399,153 @@ def make_csv_dict(str, data):
     pass
 
 
-def write_to_file(name: str, data):
-    # we will now create a viewable string that can be used
-
-    for data_idx in data:
-        name += str(data_idx) + " "
-    print(name)
-
-    if name == "magnometer":
-        if MSense_data.print_data_to_files:
-            magnometer_file.write(name + "\n")
-
-        MSense_data.magnometer.append(data)
-        MSense_data.magnometer_packet.append(magnometer_packet_information)
 
 async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None):
-    print("starting run function")
-    # this has to be global because it is async
-    global bleak_device
-    global start_collection_date
-    # just a little check to remember why this is global
-    global file_name
-    print(file_name)
-    start_collection_date += str(datetime.datetime.now())
-    # windows doesn't like colons, so we have to remove them
-    start_collection_date = start_collection_date.replace(":", "")
-    assert options != None
-    assert path != None
-    file_name = path
-    assert len(options) != 0
-    print(type(options[0]))
-    assert type(options[0]) == MSenseCharacteristic
-    #maybe change the parameter to data amount in seconds
-    if debug:
-        import sys
+    try:
+        print("starting run function")
+        # this has to be global because it is async
+        global bleak_device
+        global start_collection_date
+        # just a little check to remember why this is global
+        global file_name
+        print(file_name)
+        global file_obj
+        start_collection_date += str(datetime.datetime.now())
+        # windows doesn't like colons, so we have to remove them
+        start_collection_date = start_collection_date.replace(":", "")
+        assert options != None
+        assert path != None
+        file_name = path
+        assert len(options) != 0
+        print(type(options[0]))
+        assert type(options[0]) == MSenseCharacteristic
+        #maybe change the parameter to data amount in seconds
+        if debug:
+            import sys
 
-        l = logging.getLogger("asyncio")
-        l.setLevel(logging.DEBUG)
-        h = logging.StreamHandler(sys.stdout)
-        h.setLevel(logging.DEBUG)
-        l.addHandler(h)
-        logger.addHandler(h)
+            l = logging.getLogger("asyncio")
+            l.setLevel(logging.DEBUG)
+            h = logging.StreamHandler(sys.stdout)
+            h.setLevel(logging.DEBUG)
+            l.addHandler(h)
+            logger.addHandler(h)
 
-    print("trying to connect with client")
-    async with BleakClient(address) as client:
-        x = await client.is_connected()
-        print("connected to MotionSense!")
-        logger.info("Connected: {0}".format(x))
-        clu = await client.get_services()
-        uuid_arr = build_uuid_dict(client)
-        #l_service = client.services.characteristics[17]
-        #l_service is
-        bleak_device = client
+        print("trying to connect with client")
+        async with BleakClient(address) as client:
+            x = await client.is_connected()
+            print("connected to MotionSense!")
+            logger.info("Connected: {0}".format(x))
+            clu = await client.get_services()
+            uuid_arr = build_uuid_dict(client)
+            #l_service = client.services.characteristics[17]
+            #l_service is
+            bleak_device = client
 
-        #l2_service is latent ppg information
-        #descriptor = l_service.descriptors[0]
-        #o3 = await client.read_gatt_descriptor(19)
-        #print(o3)
+            #l2_service is latent ppg information
+            #descriptor = l_service.descriptors[0]
+            #o3 = await client.read_gatt_descriptor(19)
+            #print(o3)
 
-        write_pi = bytearray([0, 1])
-        #await client.write_gatt_descriptor(19, write_pi)
-        #o3 = await client.read_gatt_descriptor(19)
-        #print(o3)
-        #this should be magnometer service
-        #m_service = bleak_device.services.characteristics[30]
-        #d = await bleak_device.read_gatt_char(m_service)
-        #motion_sense_characteristic()
+            write_pi = bytearray([0, 1])
+            #await client.write_gatt_descriptor(19, write_pi)
+            #o3 = await client.read_gatt_descriptor(19)
+            #print(o3)
+            #this should be magnometer service
+            #m_service = bleak_device.services.characteristics[30]
+            #d = await bleak_device.read_gatt_char(m_service)
+            #motion_sense_characteristic()
 
-        #await client.write_gatt_char()
-        #await client.start
-        #tf_kr_array = await client.start_notify(l2_service, data_adr2)
+            #await client.write_gatt_char()
+            #await client.start
+            #tf_kr_array = await client.start_notify(l2_service, data_adr2)
 
-        current_services = []
-        for characteristic in options:
-            try:
+            current_services = []
+            for characteristic in options:
+                try:
 
-                service = client.services.characteristics[uuid_arr[characteristic.uuid]]
-            except KeyError():
-                error_string = "Error: bluetooth characteristic UUID is invalid for device " + characteristic.name
-                print(error_string)
-                return error_string
+                    service = client.services.characteristics[uuid_arr[characteristic.uuid]]
+                except KeyError():
+                    error_string = "Error: bluetooth characteristic UUID is invalid for device " + characteristic.name
+                    print(error_string)
+                    return error_string
 
-            #ppg_service = client.services.characteristics[uuid_arr["da39c926-1d81-48e2-9c68-d0ae4bbd351f"]]
+                #ppg_service = client.services.characteristics[uuid_arr["da39c926-1d81-48e2-9c68-d0ae4bbd351f"]]
 
-            current_services.append(service)
-            #create_csv_file("ppg", path)
-            print("starting notify for " + str(characteristic.name))
-            ppg_arr = await client.start_notify(service, characteristic.function)
+                current_services.append(service)
 
+                #create_csv_file("ppg", path)
+                print("starting notify for " + str(characteristic.name))
 
-        #we need to do the rest of the sensors as well
-        #collect data
-        await asyncio.sleep(data_amount)
+                status = await client.start_notify(service, characteristic.function)
 
 
-        await close_fies(client, current_services)
+            #we need to do the rest of the sensors as well
+            #collect data
+            await asyncio.sleep(data_amount)
+    except Exception as e:
+        print(e)
+        await disconnect(client, current_services)
+
+    try:
+        write_all_files(file_name)
+    except Exception as e:
+        print(e)
+
+    print("all files written")
+    await disconnect(client, current_services)
 
         #j = MSense_data
-        ppg_pack = MSense_data.ppg_packet_counter
-        ppg_pack_loss = MSense_data.ppg_packet_loss_counter
+    ppg_pack = MSense_data.ppg_packet_counter
+    ppg_pack_loss = MSense_data.ppg_packet_loss_counter
 
-        magno_pack = MSense_data.magnometer_packet
-        return "Finished Data Collection for "
+    magno_pack = MSense_data.magnometer_packet
+    return "Finished Data Collection for "
 
 
 #async def enable_sec():
 
-async def close_fies(client, services:list):
+def write_all_files(file_name):
+    # write accelorometer data
+    if not os.path.exists(file_name):
+        os.mkdir(file_name)
 
 
-    try:
-        MSense_data.ppg_file.close()
-    except:
-        print("file does not exist")
+    MSense_data.accelorometer_file = open(file_name + "//Acelorometer.csv", "w", newline="")
+    csv_writer = csv.writer(MSense_data.accelorometer_file)
+    csv_rows = list()
+    for data_element in range(len(MSense_data.accelorometer_x)):
+        csv_rows.append([MSense_data.accelorometer_x[data_element], MSense_data.accelorometer_y[data_element],
+                         MSense_data.accelorometer_z[data_element], MSense_data.angular_velocity_x[data_element],
+                         MSense_data.angular_velocity_y[data_element], MSense_data.angular_velocity_z[data_element]])
+    csv_writer.writerow(["Acel_X", "Acel_Y", "Acel_Z", "AngVel_X", "AngVel_Y", "AngVel_Z"])
+    csv_writer.writerows(csv_rows)
+    MSense_data.accelorometer_file.close()
 
+    MSense_data.ppg_file = open(file_name + "//PPG.csv", "w", newline="")
+    csv_writer = csv.writer(MSense_data.ppg_file)
+    csv_rows = list()
+    for data_element in range(len(MSense_data.ppg_led1ir_arr)):
+        csv_rows.append([MSense_data.ppg_led1ir_arr[data_element], MSense_data.ppg_led2ir_arr[data_element],
+                         MSense_data.ppg_g1_arr[data_element], MSense_data.ppg_g2_arr[data_element],
+                         MSense_data.ppg_packet_counter[data_element], MSense_data.ppg_packet_loss_counter[data_element]])
+    csv_writer.writerow(["PPG_IR1", "PPG_IR2", "PPG_G1", "PPG_G2", "PacketCounter", "PacketLoss"])
+    csv_writer.writerows(csv_rows)
+    MSense_data.ppg_file.close()
+
+
+
+async def disconnect(client, services:list):
     for service in services:
-        await client.stop_notify(service)
-    await client.disconnect()
-
+        try:
+            await client.stop_notify(service)
+        except Exception as e:
+            print("failed to stop notify")
+            print(e)
+    try:
+        await client.disconnect()
+    except Exception as e:
+        print("failed to disconnect")
+        print(e)
     print('properly disconnected')
 
 
@@ -539,13 +574,13 @@ def non_async_collect(address, path, max_length, collect_options, end_flag):
     #address = "E0:06:E0:EA:CF:77"
     #path = "D:\tfdownload\OSUMotionSenseChip\MotionSenseHRV_v3_private\software\tutorials\AEHR_model_tutorial\bluetooth_data_collection\data"
 
-    max_length = 15.0
     #print(collect_options)
     loop = asyncio.new_event_loop()
     try:
         loop.run_until_complete(run(address, True, path=path, data_amount=max_length, options=collect_options))
-    except bleak.exc.BleakDotNetTaskError():
+    except Exception as e:
         print("bleak client backend bluetooth error")
+        print(e)
 
 
 
