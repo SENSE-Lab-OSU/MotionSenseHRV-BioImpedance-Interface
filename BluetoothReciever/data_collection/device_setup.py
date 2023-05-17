@@ -8,14 +8,14 @@ from data_collection import bluetooth_reciver
 
 A Default Example using the Ohio State SENSE lab devices has been done for you below'''
 
-ppg_sensor = bluetooth_reciver.MSenseCharacteristic("PPG", bluetooth_reciver.ppg_sensor_handle,
+ppg_sensor = bluetooth_reciver.MSenseCharacteristic("PPG", bluetooth_reciver.ppg_handler,
                                                     "da39c925-1d81-48e2-9c68-d0ae4bbd351f")
 magnometer = bluetooth_reciver.MSenseCharacteristic("Magnometer",
                                                     bluetooth_reciver.notification_handler_magnometer,
                                                     "da39c922-1d81-48e2-9c68-d0ae4bbd351f")
 
 accelorometer = bluetooth_reciver.MSenseCharacteristic("Accelorometer",
-                                                       bluetooth_reciver.motion_sense_characteristic,
+                                                       bluetooth_reciver.motionsense_handler,
                                                        "da39c921-1d81-48e2-9c68-d0ae4bbd351f")
 
 RightSensor = bluetooth_reciver.MSenseDevice("RightMotionSense2", [ppg_sensor, magnometer, accelorometer])

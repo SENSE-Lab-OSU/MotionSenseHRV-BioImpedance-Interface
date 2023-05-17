@@ -266,6 +266,8 @@ class MotionSenseApp(QWidget):
                     # if the user didn't check any boxes we don't need to run any data
                     continue
                 self.log("got options...")
+                self.log("options for device: " + device.name)
+                self.log(str(options))
                 self.log("creating thread...") #data_collection.bluetooth_reciver.non_async_collect
 
                 th_thread = Collection_Worker(bluetooth_reciver.non_async_collect, device.address,
@@ -333,7 +335,7 @@ class MotionSenseApp(QWidget):
 
 
 
-    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+    def closeEvent(self, a0) -> None:
         self.log("closing app")
         self.logging_file.close()
 

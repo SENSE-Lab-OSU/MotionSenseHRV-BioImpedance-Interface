@@ -34,9 +34,6 @@ file_obj = None
 use_previous_packet_format = False
 
 
-'''This is a class that holds a Device, consisting of bluetooth characteristics
-This is different from the widget class, but the widget class contains it.'''
-
 
 
 ''' This is a class for holding information about a single bluetooth attribute.'''
@@ -48,12 +45,22 @@ class MSenseCharacteristic:
         self.function = function
         self.uuid = uuid
 
+
+    def __str__(self):
+        return self.name
+
+'''This is a class that holds a Device, consisting of bluetooth characteristics
+This is different from the widget class, but the widget class contains it.'''
 class MSenseDevice:
 
     def __init__(self, name:str, characteristics:list[MSenseCharacteristic]):
         self.name = name
         self.address = None
         self.characteristics = characteristics
+
+        #TODO: Implement
+        self.battery_level = None
+        self.connection_strength = None
 
 
 '''Utility class for what sensor options to generate'''
@@ -87,6 +94,8 @@ class MSense_data:
 
 
     accelorometer_data = []
+    accelorometer_packet_counter = []
+    accelorometer_packet_loss = []
     accelorometer_x = []
     accelorometer_y = []
     accelorometer_z = []
@@ -102,11 +111,6 @@ class MSense_data:
 
 
 
-
-async def disconnect_from_clients():
-    if type(bleak_device) == BleakClient:
-        await bleak_device.disconnect()
-
 def notification_handler(sender, data):
     """Simple notification handler which prints the data received."""
     print("{0}: {1}".format(sender, data))
@@ -118,8 +122,6 @@ def notification_handler(sender, data):
     packet_counter = struct.unpack("<h", packet_counter)
     #print(nk_data)
     counter = 0
-
-
     flt_arr2 = []
     for x in data:
 
@@ -151,7 +153,7 @@ def notification_handler_general(sender, data, num=0, type:str="f", class_vari=N
 
 '''Begin Current functionality'''
 
-def motion_sense_characteristic(sender, data):
+def motionsense_handler(sender, data):
     global file_name
     #m_service = bleak_device.services.characteristics[30]
     #await bleak_device.read_gatt_char(m_service)
@@ -171,9 +173,6 @@ def motion_sense_characteristic(sender, data):
     Angular_velocity_Y = struct.unpack(">h", Angular_velocity_Y)
     Angular_velocity_Z = struct.unpack(">h", Angular_velocity_Z)
 
-    row_array = [Accelorometer_X, Accelorometer_Y, Accelerometer_Z,
-                 Angular_velocity_X, Angular_velocity_Y, Angular_velocity_Y]
-
     MSense_data.accelorometer_x.append(Accelorometer_X[0])
     MSense_data.accelorometer_y.append(Accelorometer_Y[0])
     MSense_data.accelorometer_z.append(Accelerometer_Z[0])
@@ -181,61 +180,19 @@ def motion_sense_characteristic(sender, data):
     MSense_data.angular_velocity_y.append(Angular_velocity_Y[0])
     MSense_data.angular_velocity_z.append(Angular_velocity_Z[0])
 
+    packet_counter = data[12:14]
+    print("ppg packet counter: " + str(packet_counter))
+    packet_counter = struct.unpack(">h", packet_counter)
+    MSense_data.accelorometer_packet_counter.append(packet_counter[0])
 
-
-    if MSense_data.print_data_to_files:
-        m_file = open("motionsense_data.txt", "a")
-
-        info_string = "accelorometer: " + str(Accelorometer_X) + " " + str(Accelorometer_Y) + " " + str(Accelerometer_Z) + " Angular velocity: "
-        info_string += str(Angular_velocity_X) + " " + str(Angular_velocity_Y) + " " + str(Angular_velocity_Z)
-        m_file.write(info_string + "\n")
-        m_file.close()
-    #print(info_string)
-    #print(str(Angular_velocity_X))
-    #print(str(Angular_velocity_Y))
-    #print(str(Angular_velocity_Z))
-
-   
+    packets_recived = MSense_data.accelorometer_packet_counter[len(MSense_data.accelorometer_packet_counter) - 1] - \
+                      MSense_data.accelorometer_packet_counter[
+                          len(MSense_data.accelorometer_packet_counter) - 2]
+    MSense_data.accelorometer_packet_loss.append(packets_recived)
 
 
 
-def notification_handler_magnometer(sender, data):
-    magnometer_ints = data[0:6]
-    print("unpacking magnometer data")
-    nk_data = struct.unpack("<hhh", magnometer_ints)
-    #print(nk_data)
-    magnometer_packet_information = data[6:8]
-
-    magnometer_file = open(file_name + "\\" + start_collection_date + "-magnometer.txt", "a")
-
-    magnometer_packet_information = struct.unpack(">h", magnometer_packet_information)
-
-
-    m_string = "magnometer: "
-    magnometer_file.write(magnometer_packet_information)
-
-
-
-
-
-def get_data_obj_from_uuid(uuid, clinet_list):
-    for attr in clinet_list:
-        pass
-
-
-
-
-def build_uuid_dict(client):
-    characteristics = client.services.characteristics.values()
-    characteristics = list(characteristics)
-    uuid_arr = {}
-    for characteristic in characteristics:
-        uuid_arr[characteristic.uuid] = characteristic.handle
-
-    return uuid_arr
-
-
-def ppg_sensor_handle(sender, data:bytes):
+def ppg_handler(sender, data:bytes):
     global file_name
     print(sender)
     if use_previous_packet_format:
@@ -246,8 +203,6 @@ def ppg_sensor_handle(sender, data:bytes):
 
         Led_ir1 = struct.unpack("<f", Led_ir1)
         Led_ir2 = struct.unpack("<f", Led_ir2)
-
-
     else:
         Led_ir11 = data[0]
         Led_ir11 <<= 11
@@ -286,50 +241,27 @@ def ppg_sensor_handle(sender, data:bytes):
         Led_g23 >>= 4
         Led_g2 = Led_g21 + Led_g22 + Led_g23
 
-
-    #ledir1_ex = bitarray.bitarray()
-    #ledir1_ex.frombytes(bytes([data[2]]))
-    #ledir1_ex >>= 5
-    #Led_ir1 += ledir1_ex.tobytes()
-    #Led_ir1 += bytes([0])
-    #Led_ir1 = bitarray.bitarray(Led_ir1)
-
-    #ppg_file = open(file_name + "\\" + start_collection_date + "-ppg.txt", "a")
-
-
-    #print(Led_ir1)
     arr = bytearray(data)
     hex_string = ''
     for x in arr:
         hex_string += hex(x) + " "
     #Led_ir1 = struct.unpack("<l", Led_ir1)
     hex_string += " interpreted value: Led IR1:" + str(Led_ir1) + " LED IR2 " + str(Led_ir2) + " LED G1 " + str(Led_g15) + " LED G2 " + str(Led_g2)
-    #Led_ir2 = struct.unpack("<l", data[3:6].rjust(4, bytes(1)))
-    #Led_g1 = struct.unpack("<l", data[6:9].rjust(4, bytes(1)))
-    #Led_g2 = struct.unpack("<l", data[9:12].rjust(4, bytes(1)))
     packet_counter = data[10:12]
     print("ppg packet counter: " + str(packet_counter))
     packet_counter = struct.unpack(">h", packet_counter)
-    ##ppg_file.write(hex_string + "\n")
-    ##print(packet_counter[0])
+
     MSense_data.ppg_led1ir_arr.append(Led_ir1)
     MSense_data.ppg_led2ir_arr.append(Led_ir2)
     MSense_data.ppg_g1_arr.append(Led_g15)
     MSense_data.ppg_g2_arr.append(Led_g2)
 
-    file_dict = {"green_1": Led_g15, "green_2": Led_g2, "ir_1":Led_ir1,
-                 "ir_2":Led_ir2}
-
-
-    # currently, writing to a csv file is not finished yet, so it is commented out for now
-    #write_to_csv_file("ppg", file_dict)
+    # packet counter logic calculation
     MSense_data.ppg_packet_counter.append(packet_counter[0])
     packets_recived = MSense_data.ppg_packet_counter[len(MSense_data.ppg_packet_counter) - 1] - MSense_data.ppg_packet_counter[
         len(MSense_data.ppg_packet_counter) - 2]
 
     MSense_data.ppg_packet_loss_counter.append(10-packets_recived)
-
-    #print(MSense_data.ppg_led1ir_arr)
 
 
 def prev_format_accel_HRV(sender, data: bytes):
@@ -347,10 +279,31 @@ def prev_format_accel_HRV(sender, data: bytes):
     ppg_file.write(hex_string + "\n")
 
 
+def notification_handler_magnometer(sender, data):
+    magnometer_ints = data[0:6]
+    print("unpacking magnometer data")
+    nk_data = struct.unpack("<hhh", magnometer_ints)
+    #print(nk_data)
+    magnometer_packet_information = data[6:8]
 
+    magnometer_file = open(file_name + "\\" + start_collection_date + "-magnometer.txt", "a")
+
+    magnometer_packet_information = struct.unpack(">h", magnometer_packet_information)
 
 def orientation_handler(sender, data):
     pass
+
+
+def build_uuid_dict(client):
+    characteristics = client.services.characteristics.values()
+    characteristics = list(characteristics)
+    uuid_arr = {}
+    for characteristic in characteristics:
+        uuid_arr[characteristic.uuid] = characteristic.handle
+
+    return uuid_arr
+
+
 
 async def connect_address(Devices:list[MSenseDevice]=None):
     print("scanning connections")
@@ -482,6 +435,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             #we need to do the rest of the sensors as well
             #collect data
             await asyncio.sleep(data_amount)
+
     except Exception as e:
         print(e)
         await disconnect(client, current_services)
@@ -516,8 +470,9 @@ def write_all_files(file_name):
     for data_element in range(len(MSense_data.accelorometer_x)):
         csv_rows.append([MSense_data.accelorometer_x[data_element], MSense_data.accelorometer_y[data_element],
                          MSense_data.accelorometer_z[data_element], MSense_data.angular_velocity_x[data_element],
-                         MSense_data.angular_velocity_y[data_element], MSense_data.angular_velocity_z[data_element]])
-    csv_writer.writerow(["Acel_X", "Acel_Y", "Acel_Z", "AngVel_X", "AngVel_Y", "AngVel_Z"])
+                         MSense_data.angular_velocity_y[data_element], MSense_data.angular_velocity_z[data_element],
+                         MSense_data.accelorometer_packet_counter[data_element], MSense_data.accelorometer_packet_loss[data_element]])
+    csv_writer.writerow(["Acel_X", "Acel_Y", "Acel_Z", "AngVel_X", "AngVel_Y", "AngVel_Z", "PacketCounter", "PacketLoss"])
     csv_writer.writerows(csv_rows)
     MSense_data.accelorometer_file.close()
 
@@ -548,9 +503,6 @@ async def disconnect(client, services:list):
         print(e)
     print('properly disconnected')
 
-
-
-
 def start_background_loop(loop: asyncio.AbstractEventLoop):
     asyncio.set_event_loop(loop)
     loop.run_forever()
@@ -571,10 +523,6 @@ def non_async_collect(address, path, max_length, collect_options, end_flag):
     print("address: " + address)
     print("path: " + path)
     print("collection options: " + str(collect_options))
-    #address = "E0:06:E0:EA:CF:77"
-    #path = "D:\tfdownload\OSUMotionSenseChip\MotionSenseHRV_v3_private\software\tutorials\AEHR_model_tutorial\bluetooth_data_collection\data"
-
-    #print(collect_options)
     loop = asyncio.new_event_loop()
     try:
         loop.run_until_complete(run(address, True, path=path, data_amount=max_length, options=collect_options))
@@ -588,7 +536,7 @@ def non_async_collect(address, path, max_length, collect_options, end_flag):
 async def collect_with_adress(address):
     loop = asyncio.get_event_loop()
     address = loop.run_until_complete(connect_address())
-    loop.run_until_complete(run(address, True, notification_handler, data_amount=record_length))
+    loop.run_until_complete(run(address, True, notification_handler, data_amount=10))
 
     return True
 
