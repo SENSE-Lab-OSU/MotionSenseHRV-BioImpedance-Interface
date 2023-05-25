@@ -1,7 +1,7 @@
 # MotionSenseHRV3-AD5940-Integration
 
 
-Welcome to the MotionSenseHRV3 Bluetooth Data Collection Repository! This Repo contains both projects for Zephr-based Data Collection (in multiple formats) for both MotionSense 2 and 3, as well as a python based data collection gui application.
+Welcome to the MotionSenseHRV3 Bluetooth Data Collection Repository! This Repo contains both projects for Zephr-based Data Collection (in multiple formats) for both MotionSense 2 and 3, as well as a python based data collection gui application that works as a standalone and Lab Streaming Layer interface.
 
 # Getting Started
 
