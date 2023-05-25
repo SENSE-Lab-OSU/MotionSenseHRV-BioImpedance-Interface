@@ -456,7 +456,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
     return "Finished Data Collection for "
 
 
-#async def enable_sec():
+
 
 def write_all_files(file_name):
     # write accelorometer data
@@ -531,16 +531,12 @@ def non_async_collect(address, path, max_length, collect_options, end_flag):
         print(e)
 
 
-
-
 async def collect_with_adress(address):
     loop = asyncio.get_event_loop()
     address = loop.run_until_complete(connect_address())
     loop.run_until_complete(run(address, True, notification_handler, data_amount=10))
 
     return True
-
-
 
 
 def turn_on(data_function=notification_handler, record_length = 300):

@@ -7,6 +7,8 @@ from PyQt5.QtCore import QRunnable, QThreadPool
 import PyQt5.QtCore
 import multiprocessing
 from PyQt5.QtCore import pyqtSlot
+
+
 from datetime import datetime
 
 print(str(datetime.now()))
@@ -70,6 +72,11 @@ class MotionSenseApp(QWidget):
         self.devices = []
         self.addresses = []
 
+        self.timer = PyQt5.QtCore.QTimer()
+        self.timer.setInterval(1000)
+        self.timer.timeout.connect(self.update_timer)
+
+        self.timer.start()
 
 
         # initialize all of the components of the UI - The Checkboxs, Line Edits, Logo, Text, what have you not
@@ -215,7 +222,8 @@ class MotionSenseApp(QWidget):
         QApplication.processEvents()
 
 
-
+    def update_timer(self):
+        print("updating...")
 
     # this is device/implementation specific, and may require some modifications
     # for future versions to work
@@ -473,6 +481,9 @@ class Window(QMainWindow):
 import bleak_winrt.windows.devices.bluetooth
 
 
+def update(param):
+    print("hello")
+
 
 def start():
     #bleak_winrt.windows.devices.bluetooth.BluetoothLEPreferredConnectionParametersRequest
@@ -480,6 +491,10 @@ def start():
     app = QApplication(sys.argv)
     window = Window()
     window.show()
+
+
+
+
     print("gui launched!")
     sys.exit(app.exec_())
 
