@@ -5,7 +5,8 @@
 import logging
 import asyncio
 import platform
-
+import time
+import atexit
 import bleak.exc
 import numpy
 from bleak import BleakClient
@@ -14,6 +15,7 @@ import struct
 import csv
 import threading
 import os
+import sys
 import datetime
 
 
@@ -33,7 +35,7 @@ file_obj = None
 
 use_previous_packet_format = False
 
-
+from data_collection import lsl_transmission
 
 
 ''' This is a class for holding information about a single bluetooth attribute.'''
@@ -303,7 +305,16 @@ def build_uuid_dict(client):
 
     return uuid_arr
 
-
+def disconnect_callback(client):
+    print("error: device disconnected")
+    # wait for 5 seconds to make sure the device doesn't reconnect, as per ble protocol?
+    time.sleep(10)
+    if not client.is_connected:
+        global file_name
+        write_all_files(file_name)
+        sys.exit()
+    else:
+        print("device reconnected")
 
 async def connect_address(Devices:list[MSenseDevice]=None):
     print("scanning connections")
@@ -384,8 +395,8 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             logger.addHandler(h)
 
         print("trying to connect with client")
-        async with BleakClient(address) as client:
-            x = await client.is_connected()
+        async with BleakClient(address, disconnect_callback) as client:
+            x = client.is_connected
             print("connected to MotionSense!")
             logger.info("Connected: {0}".format(x))
             clu = await client.get_services()
@@ -441,6 +452,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
         await disconnect(client, current_services)
 
     try:
+        print("trying to write to files")
         write_all_files(file_name)
     except Exception as e:
         print(e)
@@ -463,7 +475,6 @@ def write_all_files(file_name):
     if not os.path.exists(file_name):
         os.mkdir(file_name)
 
-
     MSense_data.accelorometer_file = open(file_name + "//Acelorometer.csv", "w", newline="")
     csv_writer = csv.writer(MSense_data.accelorometer_file)
     csv_rows = list()
@@ -474,6 +485,7 @@ def write_all_files(file_name):
                          MSense_data.accelorometer_packet_counter[data_element], MSense_data.accelorometer_packet_loss[data_element]])
     csv_writer.writerow(["Acel_X", "Acel_Y", "Acel_Z", "AngVel_X", "AngVel_Y", "AngVel_Z", "PacketCounter", "PacketLoss"])
     csv_writer.writerows(csv_rows)
+    print("closing accelorometer file")
     MSense_data.accelorometer_file.close()
 
     MSense_data.ppg_file = open(file_name + "//PPG.csv", "w", newline="")
@@ -485,6 +497,7 @@ def write_all_files(file_name):
                          MSense_data.ppg_packet_counter[data_element], MSense_data.ppg_packet_loss_counter[data_element]])
     csv_writer.writerow(["PPG_IR1", "PPG_IR2", "PPG_G1", "PPG_G2", "PacketCounter", "PacketLoss"])
     csv_writer.writerows(csv_rows)
+    print("closing ppg file")
     MSense_data.ppg_file.close()
 
 

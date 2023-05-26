@@ -1,4 +1,5 @@
 python == 3.10.5
 PyQt5 == 5.15.9
 bleak == 0.20.2
+pylsl
 numpy == 1.24.3

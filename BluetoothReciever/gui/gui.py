@@ -35,6 +35,7 @@ from PyQt5.QtWidgets import (
     QFormLayout,
     QLineEdit,
     QVBoxLayout,
+    QHBoxLayout,
     QWidget,
     QLabel,
     QScrollArea,
@@ -68,12 +69,14 @@ class MotionSenseApp(QWidget):
         # a logging file for notes and documentation.
         # is given a file once data collection starts
         self.logging_file = None
+        self.path = None
+        self.update_modulus = 0
         #
         self.devices = []
         self.addresses = []
 
         self.timer = PyQt5.QtCore.QTimer()
-        self.timer.setInterval(1000)
+        self.timer.setInterval(5000)
         self.timer.timeout.connect(self.update_timer)
 
         self.timer.start()
@@ -116,10 +119,10 @@ class MotionSenseApp(QWidget):
 
         # we create a counter for max length
         self.file_line3 = QLineEdit()
-        self.file_line3.setText(str(180.0))
+        self.file_line3.setText(str(1.0))
         topLayout.addRow("Save Location:", self.file_line)
         topLayout.addRow("Folder Name:", self.file_line2)
-        topLayout.addRow("Stop Recording Data after: (sec)", self.file_line3)
+        topLayout.addRow("Stop Recording Data after: (min)", self.file_line3)
 
         self.enable_csv = QCheckBox()
         topLayout.addRow("Convert to CSV after collection", self.enable_csv)
@@ -132,11 +135,28 @@ class MotionSenseApp(QWidget):
         self.gather_button = PyQt5.QtWidgets.QPushButton("Start data_collection")
         self.gather_button.setDisabled(True)
 
+        logging_header = QLabel("Logging Options")
+        logging_header.setFont(font)
+        Option1 = QLoggingOptions(lambda: self.log("Option1 Started"), "Log Option1")
+        Option2 = QLoggingOptions(lambda: self.log("Option2 Started"), "Log Option2")
+        Option3 = QLoggingOptions(lambda: self.log("Option3 Started"), "Log Option3")
+        Options = QHBoxLayout()
+        collections_layout.addWidget(logging_header)
+        Options.addWidget(Option1)
+        Options.addWidget(Option2)
+        Options.addWidget(Option3)
+        collections_layout.addRow(Options)
+
+
 
         self.th_log = QLineEdit()
-        self.log_button = PyQt5.QtWidgets.QPushButton("log text to file:")
+        self.log_button = PyQt5.QtWidgets.QPushButton("log custom message:")
         self.log_button.clicked.connect(self.send_note)
         collections_layout.addRow(self.log_button, self.th_log)
+        collections_layout.addWidget(QLabel(" "))
+        data_label = QLabel("Data Collection:")
+        data_label.setFont(font)
+        collections_layout.addWidget(data_label)
         collections_layout.addWidget(self.button)
         collections_layout.addWidget(self.gather_button)
 
@@ -187,22 +207,22 @@ class MotionSenseApp(QWidget):
                 device = MotionSense_device_QWidget(count, adress)
                 self.devices.append(device)
                 self.optionsLayout.addWidget(device)
-            path = self.file_line.text() + "\\" + self.file_line2.text()
-            print(path)
+            self.path = self.file_line.text() + "\\" + self.file_line2.text()
+            print(self.path)
 
             # try and create the directory for storing data
             self.log("making directories..")
             try:
-                os.mkdir(path)
+                os.mkdir(self.path)
             except FileExistsError:
                 self.log("directory already exists, keeping old")
             except:
-                self.log("Could not create the directory! " + str(path) + " is invalid.")
+                self.log("Could not create the directory! " + str(self.path) + " is invalid.")
                 return
             finally:
                 self.log("moving on")
             self.log("sucessfully created directories!")
-            self.logging_file = open(path + "\\" + "log.txt", "w")
+            self.logging_file = open(self.path + "\\" + "log.txt", "a")
             self.log("created and activated log file...")
 
         else:
@@ -224,11 +244,32 @@ class MotionSenseApp(QWidget):
 
     def update_timer(self):
         print("updating...")
+        debug_string = "Current Collecting Devices: " + str(len(self.threads)) + "\n"
+        disconnected_devices = 0
+        if self.threads is not None:
+            for thread in self.threads:
+                process = thread[0]
+                if process.is_alive():
+                    pass
+                else:
+                    disconnected_devices += 1
+
+            debug_string += "disconnected_devices = " + str(disconnected_devices)
+            if self.update_modulus % 4 == 0 and self.currently_collecting:
+                self.log(debug_string)
+            self.update_modulus += 1
+            if len(self.threads) != 0 and disconnected_devices < len(self.threads) and self.currently_collecting:
+
+                self.collect_data()
+                self.log("a connection to a devices was lost, terminating collection")
+                self.threads.clear()
+
+
 
     # this is device/implementation specific, and may require some modifications
     # for future versions to work
     def collect_data(self):
-        print("collect button pressed")
+        self.log("collect button pressed")
         total_checks = 0
         if len(self.devices) == 0:
             return
@@ -241,14 +282,21 @@ class MotionSenseApp(QWidget):
             self.log("Stopped data collection")
             self.gather_button.setText("Saved!")
             self.log_disp.setText("Stopping Collection and saving to file...")
-            self.gather_button.setText("Start")
-            self.logging_file.close()
+            self.log("trying to terminate existing bluetooth data collection...")
 
-            #print("trying to close app")
-            #for thread in self.threads:
-            #    thread.close()
+
+
+            print("trying to close app")
+            self.refresh_log_file()
+            for thread in self.threads:
+                thread[0].terminate()
+                thread[0].join()
+            self.threads.clear()
+
 
             #print(datetime.now())
+            self.gather_button.setText("Start")
+
             return
         else:
             # need to figure out how to handel async events here
@@ -256,7 +304,7 @@ class MotionSenseApp(QWidget):
 
             self.log("trying to start collection...")
             try:
-                record_length = float(self.file_line3.text())
+                record_length = float(self.file_line3.text())*60
             except ValueError:
                 record_length = 180.0
                 self.log_disp.setText("record length input invalid, defaulting to 180.0")
@@ -309,7 +357,7 @@ class MotionSenseApp(QWidget):
                 self.log_disp.setText("Collecting Data and saving to file...")
                 self.gather_button.setText("Stop")
                 self.log("started for " + str(total_checks) + "devices")
-            print("returning to main menu...")
+            #self.log("returning to main menu...")
 
             #self.update()
 
@@ -317,35 +365,50 @@ class MotionSenseApp(QWidget):
 
 
 
-    def log(self, text):
+    def log(self, text, user_message=False):
         self.log_disp.setText(text)
         print(text)
-        self.log_file("[LOG]: " + text)
+        if user_message:
+            info_string = "[USER INFO]: "
+        else:
+            info_string = "[LOG]: "
+        self.log_file(info_string + text)
 
 
 
     def log_file(self, text):
-        if self.logging_file is not None:
+        if self.logging_file is not None and not self.logging_file.closed:
             logging_string = str(datetime.now()) + ":  " + text + "\n"
             self.logging_file.write(logging_string)
+        else:
+            print("error writing to log file")
 
 
     def refresh_log_file(self):
-        if self.logging_file is not None:
+        if self.logging_file is not None and self.path is not None:
             self.logging_file.close()
-            self.logging_file.open()
+            self.logging_file = open(self.path + "\\" + "log.txt", "a")
 
     def send_note(self):
         text_to_send = self.th_log.text()
         self.th_log.clear()
-        self.log_file(text_to_send)
+        self.log(text_to_send, True)
 
 
 
 
-    def closeEvent(self, a0) -> None:
-        self.log("closing app")
-        self.logging_file.close()
+
+
+
+
+class QLoggingOptions(PyQt5.QtWidgets.QPushButton):
+
+    def __init__(self, function, text):
+        super().__init__()
+        self.clicked.connect(function)
+        self.setText(text)
+
+
 
 
 
@@ -477,6 +540,14 @@ class Window(QMainWindow):
         return
 
 
+    def closeEvent(self, a0) -> None:
+        self.widget.log("closing app")
+        try:
+            self.widget.logging_file.close()
+        except Exception as e:
+            print(e)
+
+
 
 import bleak_winrt.windows.devices.bluetooth
 
@@ -496,7 +567,9 @@ def start():
 
 
     print("gui launched!")
-    sys.exit(app.exec_())
+    app.exec_()
+
+    sys.exit()
 
 
 if __name__ == "__main__":
