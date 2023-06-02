@@ -20,7 +20,7 @@ import datetime
 
 
 
-use_lsl = True
+use_lsl = False
 if use_lsl:
     from data_collection import lsl_transmission
     stream_outlet = None
@@ -40,7 +40,7 @@ file_obj = None
 
 use_previous_packet_format = False
 
-from data_collection import lsl_transmission
+
 
 
 ''' This is a class for holding information about a single bluetooth attribute.'''
@@ -570,7 +570,7 @@ def turn_on(data_function=notification_handler, record_length = 300):
         raise Exception("could not find MotionSense! Make sure device is turned on and flashing")
     print("address: to connect: " + address)
     print("attempting to connect to MotionSense...\n")  # loop.set_debug(True)
-    loop.run_until_complete(run(address, True, notification_handler, data_amount=record_length))
+    loop.run_until_complete(run(address, True, notification_handler, data_amount = record_length))
 
 
 if __name__ =='__main__':
