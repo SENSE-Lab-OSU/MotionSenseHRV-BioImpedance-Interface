@@ -20,7 +20,7 @@ import datetime
 
 
 
-use_lsl = False
+use_lsl = True
 if use_lsl:
     from data_collection import lsl_transmission
     stream_outlet = None
@@ -410,9 +410,11 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
         print("trying to connect with client")
         async with BleakClient(address, disconnect_callback) as client:
             x = client.is_connected
+            client.__str__()
             print("connected to MotionSense!")
             logger.info("Connected: {0}".format(x))
             clu = await client.get_services()
+
             uuid_arr = build_uuid_dict(client)
             bleak_device = client
 

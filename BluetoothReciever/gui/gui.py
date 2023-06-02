@@ -4,6 +4,7 @@ import time
 import atexit
 import PyQt5.QtBluetooth
 from PyQt5.QtCore import QRunnable, QThreadPool
+from PyQt5.Qt import QLinearGradient
 import PyQt5.QtCore
 import multiprocessing
 from PyQt5.QtCore import pyqtSlot
@@ -95,7 +96,7 @@ class MotionSenseApp(QWidget):
 
         #try to add OSU logo image
         image = QLabel(self)
-        pixmap = QPixmap('gui/OSU.png')
+        pixmap = QPixmap('gui/newOSU2.png')
         pixmap.scaled(6, 6)
         image.setPixmap(pixmap)
         image.setAlignment(Qt.AlignCenter)
@@ -125,7 +126,7 @@ class MotionSenseApp(QWidget):
         topLayout.addRow("Stop Recording Data after: (min)", self.file_line3)
 
         self.enable_csv = QCheckBox()
-        topLayout.addRow("Convert to CSV after collection", self.enable_csv)
+        topLayout.addRow("Open LSL Connection during Streaming", self.enable_csv)
 
 
         # layout for connecting to motionsense UI, with a button to connect
@@ -243,6 +244,7 @@ class MotionSenseApp(QWidget):
 
 
     def update_timer(self):
+
         print("updating...")
         debug_string = "Current Collecting Devices: " + str(len(self.threads)) + "\n"
         disconnected_devices = 0
@@ -258,7 +260,7 @@ class MotionSenseApp(QWidget):
             if self.update_modulus % 4 == 0 and self.currently_collecting:
                 self.log(debug_string)
             self.update_modulus += 1
-            if len(self.threads) != 0 and disconnected_devices < len(self.threads) and self.currently_collecting:
+            if len(self.threads) != 0 and disconnected_devices < len(self.threads) and disconnected_devices > 0 and self.currently_collecting:
 
                 self.collect_data()
                 self.log("a connection to a devices was lost, terminating collection")
@@ -513,6 +515,19 @@ class Window(QMainWindow):
         super().__init__()
         self.setWindowTitle("MotionSense Bluetooth GUI")
         self.initUI()
+        p = self.palette()
+
+        test_gradient = QLinearGradient()
+
+        test_gradient.setStart(self.width() / 2, 0.0)
+        test_gradient.setFinalStop(self.width() / 2, self.height())
+        test_gradient.setColorAt(1.0, PyQt5.Qt.QColor(200, 200, 200,255))
+        test_gradient.setColorAt(0.0, PyQt5.Qt.QColor(255, 150, 150, 255))
+
+        p.setBrush(self.backgroundRole(), PyQt5.Qt.QBrush(test_gradient))
+        self.setPalette(p)
+
+
 
     def initUI(self):
         self.scroll = QScrollArea()  # Scroll Area which contains the widgets, set as the centralWidget

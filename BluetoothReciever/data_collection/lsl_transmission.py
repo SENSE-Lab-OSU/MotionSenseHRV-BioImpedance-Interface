@@ -47,8 +47,8 @@ def demo():
         time.sleep(0.01)
 
 
-def register_outlet(channel_num):
-    info = StreamInfo('BioSemi', 'EEG', channel_num, 100, 'float32', 'myuid2424')
+def register_outlet(channel_num, name = "MotionSense", hz=25):
+    info = StreamInfo(name, 'EEG', channel_num, hz, 'float32', 'myuid2424')
 
     # append some meta-data
     info.desc().append_child_value("manufacturer", "BioSemi")

@@ -884,3 +884,116 @@ disconnected_devices = 0
 2023-06-02 17:12:34.020026:  [LOG]: trying to terminate existing bluetooth data collection...
 2023-06-02 17:12:34.045994:  [LOG]: a connection to a devices was lost, terminating collection
 2023-06-02 17:13:07.934215:  [LOG]: closing app
+2023-06-02 17:49:38.352361:  [LOG]: created and activated log file...
+2023-06-02 17:49:46.019779:  [LOG]: collect button pressed
+2023-06-02 17:49:46.019779:  [LOG]: trying to start collection...
+2023-06-02 17:49:46.019779:  [LOG]: registering devices...
+2023-06-02 17:49:46.019779:  [LOG]: registering device C2:23:01:DB:0B:C1
+2023-06-02 17:49:46.019779:  [LOG]: got options...
+2023-06-02 17:49:46.019779:  [LOG]: options for device: RightMotionSense2
+2023-06-02 17:49:46.019779:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000028499AD7AC0>]
+2023-06-02 17:49:46.019779:  [LOG]: creating thread...
+2023-06-02 17:49:46.020782:  [LOG]: creating child shared memory flag for end
+2023-06-02 17:49:46.025784:  [LOG]: creating Process...
+2023-06-02 17:49:46.025784:  [LOG]: attempting to start thread0
+2023-06-02 17:49:46.032783:  [LOG]: adding thread to list
+2023-06-02 17:49:46.033302:  [LOG]: registering device D4:82:69:C4:86:2E
+2023-06-02 17:49:46.033302:  [LOG]: sucessfully registered all devices
+2023-06-02 17:49:46.033338:  [LOG]: started data collection
+2023-06-02 17:49:46.033338:  [LOG]: started for 1devices
+2023-06-02 17:49:56.881176:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 17:50:16.880880:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 17:50:36.881815:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 17:50:56.881791:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 17:51:11.739689:  [LOG]: collect button pressed
+2023-06-02 17:51:11.739689:  [LOG]: Stopped data collection
+2023-06-02 17:51:11.739689:  [LOG]: trying to terminate existing bluetooth data collection...
+2023-06-02 17:51:20.330718:  [LOG]: collect button pressed
+2023-06-02 17:51:20.330718:  [LOG]: trying to start collection...
+2023-06-02 17:51:20.330718:  [LOG]: registering devices...
+2023-06-02 17:51:20.330718:  [LOG]: registering device C2:23:01:DB:0B:C1
+2023-06-02 17:51:20.330718:  [LOG]: got options...
+2023-06-02 17:51:20.330718:  [LOG]: options for device: RightMotionSense2
+2023-06-02 17:51:20.330718:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000028499AD7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000028499AD7AC0>]
+2023-06-02 17:51:20.330718:  [LOG]: creating thread...
+2023-06-02 17:51:20.330718:  [LOG]: creating child shared memory flag for end
+2023-06-02 17:51:20.331718:  [LOG]: creating Process...
+2023-06-02 17:51:20.331718:  [LOG]: attempting to start thread0
+2023-06-02 17:51:20.336282:  [LOG]: adding thread to list
+2023-06-02 17:51:20.336282:  [LOG]: registering device D4:82:69:C4:86:2E
+2023-06-02 17:51:20.336848:  [LOG]: sucessfully registered all devices
+2023-06-02 17:51:20.336848:  [LOG]: started data collection
+2023-06-02 17:51:20.336848:  [LOG]: started for 1devices
+2023-06-02 17:51:36.881276:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 17:51:56.878717:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 17:52:16.881796:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 17:52:36.880757:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 17:52:56.878640:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 17:53:16.879006:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 17:53:36.878877:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 17:53:56.881845:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 17:54:16.879991:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 17:54:36.879485:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 17:54:56.880907:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 17:55:16.880645:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 17:55:36.882332:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 17:55:47.276052:  [LOG]: closing app
+2023-06-02 18:01:10.202697:  [LOG]: created and activated log file...
+2023-06-02 18:02:06.266953:  [LOG]: collect button pressed
+2023-06-02 18:02:06.266953:  [LOG]: trying to start collection...
+2023-06-02 18:02:06.266953:  [LOG]: registering devices...
+2023-06-02 18:02:06.266953:  [LOG]: registering device D4:82:69:C4:86:2E
+2023-06-02 18:02:06.266953:  [LOG]: registering device C2:23:01:DB:0B:C1
+2023-06-02 18:02:06.266953:  [LOG]: got options...
+2023-06-02 18:02:06.266953:  [LOG]: options for device: RightMotionSense2
+2023-06-02 18:02:06.266953:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000024DCDFC7AC0>]
+2023-06-02 18:02:06.266953:  [LOG]: creating thread...
+2023-06-02 18:02:06.266953:  [LOG]: creating child shared memory flag for end
+2023-06-02 18:02:06.272571:  [LOG]: creating Process...
+2023-06-02 18:02:06.273572:  [LOG]: attempting to start thread0
+2023-06-02 18:02:06.280285:  [LOG]: adding thread to list
+2023-06-02 18:02:06.280285:  [LOG]: sucessfully registered all devices
+2023-06-02 18:02:06.280285:  [LOG]: started data collection
+2023-06-02 18:02:06.280285:  [LOG]: started for 1devices
+2023-06-02 18:02:09.334895:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 18:02:29.333780:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 18:02:49.331620:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 18:03:09.336722:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 18:03:29.334557:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 18:03:49.332201:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 18:04:09.333390:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 18:04:29.334033:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 18:04:49.335003:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 18:05:09.335956:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 0
+2023-06-02 18:05:29.336069:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 18:05:49.332550:  [LOG]: Current Collecting Devices: 1
+disconnected_devices = 1
+2023-06-02 18:06:08.946767:  [LOG]: closing app
