@@ -16,7 +16,7 @@ def demo():
     # last value would be the serial number of the device or some other more or
     # less locally unique identifier for the stream as far as available (you
     # could also omit it but interrupted connections wouldn't auto-recover).
-    info = StreamInfo('BioSemi', 'EEG', 8, 100, 'float32', 'myuid2424')
+    info = StreamInfo('CustomTest', 'EEG', 8, 100, 'float32', 'myuid2424')
 
     # append some meta-data
     info.desc().append_child_value("manufacturer", "BioSemi")
@@ -47,8 +47,8 @@ def demo():
         time.sleep(0.01)
 
 
-def register_outlet():
-    info = StreamInfo('BioSemi', 'EEG', 8, 100, 'float32', 'myuid2424')
+def register_outlet(channel_num):
+    info = StreamInfo('BioSemi', 'EEG', channel_num, 100, 'float32', 'myuid2424')
 
     # append some meta-data
     info.desc().append_child_value("manufacturer", "BioSemi")
@@ -62,18 +62,25 @@ def register_outlet():
     # next make an outlet; we set the transmission chunk size to 32 (4*8) samples and
     # the outgoing buffer size to 360 seconds (max.)
     outlet = StreamOutlet(info, 32, 360)
-
-    print("now sending data...")
+    print("now ready to sending data...")
+    return outlet
 
 def send_data(outlet, data):
     print("now sending data...")
     # make a new random 8-channel sample; this is converted into a
     # pylsl.vectorf (the data type that is expected by push_sample)
-    mysample = [random.random(), random.random(), random.random(),
-                    random.random(), random.random(), random.random(),
-                    random.random(), random.random()]
+    mysample = []
+    for counter, sample in enumerate(data):
+        mysample.append(sample)
+
+
     # get a time stamp in seconds (we pretend that our samples are actually
     # 125ms old, e.g., as if coming from some external hardware)
     stamp = local_clock()-0.125
     # now send it and wait for a bit
     outlet.push_sample(mysample, stamp)
+
+
+
+if __name__ == "__main__":
+    demo()

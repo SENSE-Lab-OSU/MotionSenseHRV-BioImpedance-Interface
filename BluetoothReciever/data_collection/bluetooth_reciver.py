@@ -20,6 +20,11 @@ import datetime
 
 
 
+use_lsl = True
+if use_lsl:
+    from data_collection import lsl_transmission
+    stream_outlet = None
+
 
 from bleak import BleakScanner
 
@@ -266,6 +271,12 @@ def ppg_handler(sender, data:bytes):
     MSense_data.ppg_packet_loss_counter.append(10-packets_recived)
 
 
+    horizontal_array = [Led_ir1, Led_ir2, Led_g15, Led_g2, packet_counter[0], 10-packets_recived]
+    if use_lsl:
+        global stream_outlet
+        lsl_transmission.send_data(stream_outlet, horizontal_array)
+
+
 def prev_format_accel_HRV(sender, data: bytes):
     global file_name
     print(sender)
@@ -393,7 +404,9 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             h.setLevel(logging.DEBUG)
             l.addHandler(h)
             logger.addHandler(h)
-
+        if use_lsl:
+            global stream_outlet
+            stream_outlet = lsl_transmission.register_outlet(6)
         print("trying to connect with client")
         async with BleakClient(address, disconnect_callback) as client:
             x = client.is_connected
@@ -401,19 +414,9 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             logger.info("Connected: {0}".format(x))
             clu = await client.get_services()
             uuid_arr = build_uuid_dict(client)
-            #l_service = client.services.characteristics[17]
-            #l_service is
             bleak_device = client
 
-            #l2_service is latent ppg information
-            #descriptor = l_service.descriptors[0]
-            #o3 = await client.read_gatt_descriptor(19)
-            #print(o3)
-
             write_pi = bytearray([0, 1])
-            #await client.write_gatt_descriptor(19, write_pi)
-            #o3 = await client.read_gatt_descriptor(19)
-            #print(o3)
             #this should be magnometer service
             #m_service = bleak_device.services.characteristics[30]
             #d = await bleak_device.read_gatt_char(m_service)
