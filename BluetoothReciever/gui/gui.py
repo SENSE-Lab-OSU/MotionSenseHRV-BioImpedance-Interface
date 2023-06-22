@@ -141,6 +141,7 @@ class MotionSenseApp(QWidget):
         Option1 = QLoggingOptions(lambda: self.log("Option1 Started"), "Log Option1")
         Option2 = QLoggingOptions(lambda: self.log("Option2 Started"), "Log Option2")
         Option3 = QLoggingOptions(lambda: self.log("Option3 Started"), "Log Option3")
+
         Options = QHBoxLayout()
         collections_layout.addWidget(logging_header)
         Options.addWidget(Option1)
