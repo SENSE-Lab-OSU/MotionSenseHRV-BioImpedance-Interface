@@ -116,6 +116,11 @@ class MSense_data:
     magnometer_packet = []
     magnometer_file = None
 
+    BioImpedanceMag = []
+    BioImpedancePhase = []
+    BioImpedancePacketCounter = []
+    BioImpedanceFile = None
+
 
 
 def notification_handler(sender, data):
@@ -305,6 +310,30 @@ def notification_handler_magnometer(sender, data):
 
 def orientation_handler(sender, data):
     pass
+
+
+### BioImpedance functions definitions ###
+
+
+
+def BioImpedanceHandle(sender, data):
+
+    ImpedanceMagRaw = data[0:4]
+    ImpedanceMag = struct.unpack("<f", ImpedanceMagRaw)
+
+    ImpedancePhaseRaw = data[4:8]
+    ImpedancePhase = struct.unpack("<f", ImpedancePhaseRaw)
+
+    ImpedanceCounter = struct.unpack("<i", data[8])
+
+    MSense_data.BioImpedanceMag.append(ImpedanceMag)
+    MSense_data.BioImpedancePhase.append(ImpedancePhase)
+    MSense_data.BioImpedancePacketCounter.append(ImpedanceCounter)
+
+
+
+
+
 
 
 def build_uuid_dict(client):
@@ -504,6 +533,19 @@ def write_all_files(file_name):
     csv_writer.writerows(csv_rows)
     print("closing ppg file")
     MSense_data.ppg_file.close()
+    print("begin BioImpedance Processing")
+    MSense_data.BioImpedanceFile = open(file_name + "//PPG.csv", "w", newline="")
+    csv_writer = csv.writer(MSense_data.BioImpedanceFile)
+    csv_rows = list()
+    for data_element in range(len(MSense_data.BioImpedancePhase)):
+        csv_rows.append([MSense_data.BioImpedanceMag[data_element],MSense_data.BioImpedancePhase[data_element],
+                         MSense_data.BioImpedancePacketCounter[data_element]])
+    csv_writer.writerow(["BioImpMagnitude", "BioImpPhase", "PacketCounter", ])
+    csv_writer.writerows(csv_rows)
+    print("closing ppg file")
+    MSense_data.BioImpedanceFile.close()
+
+
 
 
 

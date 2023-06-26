@@ -18,8 +18,25 @@ accelorometer = bluetooth_reciver.MSenseCharacteristic("Accelorometer",
                                                        bluetooth_reciver.motionsense_handler,
                                                        "da39c921-1d81-48e2-9c68-d0ae4bbd351f")
 
+
+
+
 RightSensor = bluetooth_reciver.MSenseDevice("RightMotionSense2", [ppg_sensor, magnometer, accelorometer])
 
 LeftSensor = bluetooth_reciver.MSenseDevice("LeftMotionSense2", [ppg_sensor, magnometer, accelorometer])
 
-all_sensors = [RightSensor, LeftSensor]
+
+
+# Start BioImpedance Setup
+
+MagnitudeImpedance = bluetooth_reciver.MSenseCharacteristic("BioImpedance", bluetooth_reciver.BioImpedanceHandle, "DA39C9241D8148E29C68D0AE4BBD351F")
+
+LBioZSensor = bluetooth_reciver.MSenseDevice("LBIOZ", [MagnitudeImpedance])
+
+RBioZSensor = bluetooth_reciver.MSenseDevice("RBIOZ", [MagnitudeImpedance])
+
+
+
+all_sensors = [RightSensor, LeftSensor, LBioZSensor, RBioZSensor]
+
+

@@ -62,6 +62,7 @@ bold_font.setPointSize(12)
 # for device or bluetooth backend specific functionalities, modify the functions
 # for connecting and updating
 class MotionSenseApp(QWidget):
+
     def __init__(self):
 
         super().__init__()

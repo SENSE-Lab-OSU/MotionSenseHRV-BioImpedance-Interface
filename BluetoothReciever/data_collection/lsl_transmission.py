@@ -16,6 +16,7 @@ def demo():
     # last value would be the serial number of the device or some other more or
     # less locally unique identifier for the stream as far as available (you
     # could also omit it but interrupted connections wouldn't auto-recover).
+
     info = StreamInfo('CustomTest', 'EEG', 8, 100, 'float32', 'myuid2424')
 
     # append some meta-data

@@ -997,3 +997,5 @@ disconnected_devices = 1
 2023-06-02 18:05:49.332550:  [LOG]: Current Collecting Devices: 1
 disconnected_devices = 1
 2023-06-02 18:06:08.946767:  [LOG]: closing app
+2023-06-22 18:49:47.761541:  [LOG]: created and activated log file...
+2023-06-22 18:49:53.219309:  [LOG]: closing app
