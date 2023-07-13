@@ -29,7 +29,7 @@ LeftSensor = bluetooth_reciver.MSenseDevice("LeftMotionSense2", [ppg_sensor, mag
 
 # Start BioImpedance Setup
 
-MagnitudeImpedance = bluetooth_reciver.MSenseCharacteristic("BioImpedance", bluetooth_reciver.BioImpedanceHandle, "DA39C9241D8148E29C68D0AE4BBD351F")
+MagnitudeImpedance = bluetooth_reciver.MSenseCharacteristic("BioImpedance", bluetooth_reciver.BioImpedanceHandle, "DA39C924-1D81-48E2-9C68-D0AE4BBD351F")
 
 LBioZSensor = bluetooth_reciver.MSenseDevice("LBIOZ", [MagnitudeImpedance])
 

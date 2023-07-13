@@ -78,12 +78,12 @@ class MotionSenseApp(QWidget):
         self.addresses = []
 
         self.timer = PyQt5.QtCore.QTimer()
-        self.timer.setInterval(5000)
+        self.timer.setInterval(2000)
         self.timer.timeout.connect(self.update_timer)
 
         self.timer.start()
 
-
+        self.record_length = 180.0
         # initialize all of the components of the UI - The Checkboxs, Line Edits, Logo, Text, what have you not
 
         # Create an outer layout
@@ -157,9 +157,13 @@ class MotionSenseApp(QWidget):
         self.log_button.clicked.connect(self.send_note)
         collections_layout.addRow(self.log_button, self.th_log)
         collections_layout.addWidget(QLabel(" "))
+        # progress bar
+        self.progress_bar = PyQt5.QtWidgets.QProgressBar()
+
         data_label = QLabel("Data Collection:")
         data_label.setFont(font)
         collections_layout.addWidget(data_label)
+        collections_layout.addRow(QLabel("Collection Progress"), self.progress_bar)
         collections_layout.addWidget(self.button)
         collections_layout.addWidget(self.gather_button)
 
@@ -248,6 +252,7 @@ class MotionSenseApp(QWidget):
     def update_timer(self):
 
         print("updating...")
+
         debug_string = "Current Collecting Devices: " + str(len(self.threads)) + "\n"
         disconnected_devices = 0
         if self.threads is not None:
@@ -259,14 +264,20 @@ class MotionSenseApp(QWidget):
                     disconnected_devices += 1
 
             debug_string += "disconnected_devices = " + str(disconnected_devices)
-            if self.update_modulus % 4 == 0 and self.currently_collecting:
-                self.log(debug_string)
-            self.update_modulus += 1
-            if len(self.threads) != 0 and disconnected_devices < len(self.threads) and disconnected_devices > 0 and self.currently_collecting:
+            if self.currently_collecting:
+                if self.update_modulus % 4 == 0:
+                    self.log(debug_string)
+                self.update_modulus += 1
+                # this timer is updating every 2 seconds, so we multiply by 2 to get the true time
+                progress_value = int(((self.update_modulus*2)/self.record_length)*100)
+                if progress_value >= 100:
+                    progress_value = 98
+                self.progress_bar.setValue(progress_value)
+                if len(self.threads) != 0 and disconnected_devices == len(self.threads) and disconnected_devices > 0:
 
-                self.collect_data()
-                self.log("a connection to a devices was lost, terminating collection")
-                self.threads.clear()
+                    self.collect_data()
+                    self.log("a connection to a device was lost, terminating collection")
+
 
 
 
@@ -274,6 +285,8 @@ class MotionSenseApp(QWidget):
     # for future versions to work
     def collect_data(self):
         self.log("collect button pressed")
+        self.update_modulus = 0
+        self.progress_bar.setValue(0)
         total_checks = 0
         if len(self.devices) == 0:
             return
@@ -308,9 +321,9 @@ class MotionSenseApp(QWidget):
 
             self.log("trying to start collection...")
             try:
-                record_length = float(self.file_line3.text())*60
+                self.record_length = float(self.file_line3.text())*60
             except ValueError:
-                record_length = 180.0
+                self.record_length = 180.0
                 self.log_disp.setText("record length input invalid, defaulting to 180.0")
 
 
@@ -331,7 +344,7 @@ class MotionSenseApp(QWidget):
                 self.log("creating thread...") #data_collection.bluetooth_reciver.non_async_collect
 
                 th_thread = Collection_Worker(bluetooth_reciver.non_async_collect, device.address,
-                                              path, record_length, options)
+                                              path, self.record_length, options)
 
 
                 # a bit of a messy solution. For more compatibility options,
@@ -339,7 +352,7 @@ class MotionSenseApp(QWidget):
                 self.log("creating child shared memory flag for end")
                 exit_flag = multiprocessing.Value("b")
                 self.log("creating Process...")
-                p = multiprocessing.Process(target=test_function, args=(device.address, path, record_length, options, exit_flag))
+                p = multiprocessing.Process(target=test_function, args=(device.address, path, self.record_length, options, exit_flag))
                 self.log("attempting to start thread" + str(total_checks))
                 p.start()
 

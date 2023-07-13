@@ -1,1001 +1,168 @@
-2023-05-26 18:38:14.138002:  [LOG]: created and activated log file...
-2023-05-26 18:38:14.148148:  [LOG]: Current Collecting Devices: 0
+2023-07-13 18:43:10.508771:  [LOG]: created and activated log file...
+2023-07-13 18:43:13.642666:  [LOG]: collect button pressed
+2023-07-13 18:43:13.642666:  [LOG]: trying to start collection...
+2023-07-13 18:43:13.642666:  [LOG]: registering devices...
+2023-07-13 18:43:13.643120:  [LOG]: registering device C9:99:9C:59:FC:09
+2023-07-13 18:43:13.643120:  [LOG]: registering device C2:23:01:DB:0B:C1
+2023-07-13 18:43:13.643120:  [LOG]: got options...
+2023-07-13 18:43:13.643120:  [LOG]: options for device: RightMotionSense2
+2023-07-13 18:43:13.643120:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001D6EA1928F0>]
+2023-07-13 18:43:13.643614:  [LOG]: creating thread...
+2023-07-13 18:43:13.645413:  [LOG]: creating child shared memory flag for end
+2023-07-13 18:43:13.673063:  [LOG]: creating Process...
+2023-07-13 18:43:13.673063:  [LOG]: attempting to start thread0
+2023-07-13 18:43:13.691937:  [LOG]: adding thread to list
+2023-07-13 18:43:13.691937:  [LOG]: registering device C1:64:3F:6C:13:30
+2023-07-13 18:43:13.691937:  [LOG]: registering device D4:82:69:C4:86:2E
+2023-07-13 18:43:13.691937:  [LOG]: sucessfully registered all devices
+2023-07-13 18:43:13.691937:  [LOG]: started data collection
+2023-07-13 18:43:13.691937:  [LOG]: started for 1devices
+2023-07-13 18:43:17.587232:  [LOG]: Current Collecting Devices: 1
 disconnected_devices = 0
-2023-05-26 18:38:19.597225:  [LOG]: collect button pressed
-2023-05-26 18:38:19.597225:  [LOG]: trying to start collection...
-2023-05-26 18:38:19.597225:  [LOG]: registering devices...
-2023-05-26 18:38:19.597225:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-05-26 18:38:19.597225:  [LOG]: got options...
-2023-05-26 18:38:19.597225:  [LOG]: options for device: RightMotionSense2
-2023-05-26 18:38:19.597225:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x00000111D0B27AC0>]
-2023-05-26 18:38:19.597225:  [LOG]: creating thread...
-2023-05-26 18:38:19.597225:  [LOG]: creating child shared memory flag for end
-2023-05-26 18:38:19.605188:  [LOG]: creating Process...
-2023-05-26 18:38:19.605188:  [LOG]: attempting to start thread0
-2023-05-26 18:38:19.614188:  [LOG]: adding thread to list
-2023-05-26 18:38:19.614188:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-05-26 18:38:19.614188:  [LOG]: got options...
-2023-05-26 18:38:19.614188:  [LOG]: options for device: LeftMotionSense2
-2023-05-26 18:38:19.614188:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x00000111D0B27AC0>]
-2023-05-26 18:38:19.614188:  [LOG]: creating thread...
-2023-05-26 18:38:19.614188:  [LOG]: creating child shared memory flag for end
-2023-05-26 18:38:19.615049:  [LOG]: creating Process...
-2023-05-26 18:38:19.615049:  [LOG]: attempting to start thread1
-2023-05-26 18:38:19.621140:  [LOG]: adding thread to list
-2023-05-26 18:38:19.622149:  [LOG]: sucessfully registered all devices
-2023-05-26 18:38:19.622149:  [LOG]: started data collection
-2023-05-26 18:38:19.622149:  [LOG]: started for 2devices
-2023-05-26 18:38:32.791126:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:43:42.585756:  [LOG]: Current Collecting Devices: 1
 disconnected_devices = 0
-2023-05-26 18:38:52.789233:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:44:02.583286:  [LOG]: Current Collecting Devices: 1
 disconnected_devices = 0
-2023-05-26 18:39:12.788809:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:44:22.588113:  [LOG]: Current Collecting Devices: 1
 disconnected_devices = 0
-2023-05-26 18:39:32.789799:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:44:32.587662:  [LOG]: collect button pressed
+2023-07-13 18:44:32.587662:  [LOG]: Stopped data collection
+2023-07-13 18:44:32.587662:  [LOG]: trying to terminate existing bluetooth data collection...
+2023-07-13 18:47:37.093713:  [LOG]: created and activated log file...
+2023-07-13 18:47:48.639207:  [LOG]: collect button pressed
+2023-07-13 18:47:48.639712:  [LOG]: trying to start collection...
+2023-07-13 18:47:48.639712:  [LOG]: registering devices...
+2023-07-13 18:47:48.639712:  [LOG]: registering device C1:64:3F:6C:13:30
+2023-07-13 18:47:48.639712:  [LOG]: got options...
+2023-07-13 18:47:48.639712:  [LOG]: options for device: RBIOZ
+2023-07-13 18:47:48.639712:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001A0FF2636A0>]
+2023-07-13 18:47:48.640200:  [LOG]: creating thread...
+2023-07-13 18:47:48.642195:  [LOG]: creating child shared memory flag for end
+2023-07-13 18:47:48.672045:  [LOG]: creating Process...
+2023-07-13 18:47:48.672493:  [LOG]: attempting to start thread0
+2023-07-13 18:47:48.697433:  [LOG]: adding thread to list
+2023-07-13 18:47:48.697433:  [LOG]: registering device C9:99:9C:59:FC:09
+2023-07-13 18:47:48.697433:  [LOG]: got options...
+2023-07-13 18:47:48.697433:  [LOG]: options for device: LBIOZ
+2023-07-13 18:47:48.697433:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001A0FF2636A0>]
+2023-07-13 18:47:48.697433:  [LOG]: creating thread...
+2023-07-13 18:47:48.697433:  [LOG]: creating child shared memory flag for end
+2023-07-13 18:47:48.697930:  [LOG]: creating Process...
+2023-07-13 18:47:48.697930:  [LOG]: attempting to start thread1
+2023-07-13 18:47:48.711392:  [LOG]: adding thread to list
+2023-07-13 18:47:48.711392:  [LOG]: registering device D4:82:69:C4:86:2E
+2023-07-13 18:47:48.711600:  [LOG]: got options...
+2023-07-13 18:47:48.711600:  [LOG]: options for device: LeftMotionSense2
+2023-07-13 18:47:48.711701:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001A0FF2628C0>]
+2023-07-13 18:47:48.711744:  [LOG]: creating thread...
+2023-07-13 18:47:48.711814:  [LOG]: creating child shared memory flag for end
+2023-07-13 18:47:48.711832:  [LOG]: creating Process...
+2023-07-13 18:47:48.711832:  [LOG]: attempting to start thread2
+2023-07-13 18:47:48.722759:  [LOG]: adding thread to list
+2023-07-13 18:47:48.722759:  [LOG]: registering device C2:23:01:DB:0B:C1
+2023-07-13 18:47:48.723256:  [LOG]: got options...
+2023-07-13 18:47:48.723256:  [LOG]: options for device: RightMotionSense2
+2023-07-13 18:47:48.723256:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001A0FF2628C0>]
+2023-07-13 18:47:48.723256:  [LOG]: creating thread...
+2023-07-13 18:47:48.723256:  [LOG]: creating child shared memory flag for end
+2023-07-13 18:47:48.723752:  [LOG]: creating Process...
+2023-07-13 18:47:48.723752:  [LOG]: attempting to start thread3
+2023-07-13 18:47:48.735678:  [LOG]: adding thread to list
+2023-07-13 18:47:48.735678:  [LOG]: sucessfully registered all devices
+2023-07-13 18:47:48.735678:  [LOG]: started data collection
+2023-07-13 18:47:48.735678:  [LOG]: started for 4devices
+2023-07-13 18:47:50.179861:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:39:52.792026:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:47:58.180715:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:40:12.790286:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:48:06.177715:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:40:32.789967:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:48:14.177600:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:40:52.789944:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:48:22.178050:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:41:12.789287:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:48:30.178435:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:41:32.788910:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:48:38.182306:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:41:38.485913:  [LOG]: closing app
-2023-05-26 18:50:58.318401:  [LOG]: created and activated log file...
-2023-05-26 18:50:58.330351:  [LOG]: Current Collecting Devices: 0
+2023-07-13 18:48:46.180338:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:51:04.755811:  [LOG]: collect button pressed
-2023-05-26 18:51:04.755811:  [LOG]: trying to start collection...
-2023-05-26 18:51:04.755811:  [LOG]: registering devices...
-2023-05-26 18:51:04.756805:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-05-26 18:51:04.756805:  [LOG]: got options...
-2023-05-26 18:51:04.756805:  [LOG]: options for device: LeftMotionSense2
-2023-05-26 18:51:04.756805:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000016614C67AC0>]
-2023-05-26 18:51:04.756805:  [LOG]: creating thread...
-2023-05-26 18:51:04.756805:  [LOG]: creating child shared memory flag for end
-2023-05-26 18:51:04.763806:  [LOG]: creating Process...
-2023-05-26 18:51:04.763806:  [LOG]: attempting to start thread0
-2023-05-26 18:51:04.772805:  [LOG]: adding thread to list
-2023-05-26 18:51:04.772805:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-05-26 18:51:04.772805:  [LOG]: got options...
-2023-05-26 18:51:04.772805:  [LOG]: options for device: RightMotionSense2
-2023-05-26 18:51:04.772805:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000016614C67AC0>]
-2023-05-26 18:51:04.772805:  [LOG]: creating thread...
-2023-05-26 18:51:04.772805:  [LOG]: creating child shared memory flag for end
-2023-05-26 18:51:04.772805:  [LOG]: creating Process...
-2023-05-26 18:51:04.772805:  [LOG]: attempting to start thread1
-2023-05-26 18:51:04.779386:  [LOG]: adding thread to list
-2023-05-26 18:51:04.779386:  [LOG]: sucessfully registered all devices
-2023-05-26 18:51:04.779386:  [LOG]: started data collection
-2023-05-26 18:51:04.779386:  [LOG]: started for 2devices
-2023-05-26 18:51:16.712183:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:48:54.179772:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:51:36.712083:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:49:02.177837:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:51:56.710887:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:49:08.180270:  [LOG]: collect button pressed
+2023-07-13 18:49:08.180270:  [LOG]: Stopped data collection
+2023-07-13 18:49:08.180767:  [LOG]: trying to terminate existing bluetooth data collection...
+2023-07-13 18:49:08.183259:  [LOG]: a connection to a device was lost, terminating collection
+2023-07-13 18:56:17.652183:  [LOG]: closing app
+2023-07-13 18:57:19.783364:  [LOG]: created and activated log file...
+2023-07-13 18:58:54.876387:  [LOG]: collect button pressed
+2023-07-13 18:58:54.876839:  [LOG]: trying to start collection...
+2023-07-13 18:58:54.876839:  [LOG]: registering devices...
+2023-07-13 18:58:54.876839:  [LOG]: registering device C9:99:9C:59:FC:09
+2023-07-13 18:58:54.876839:  [LOG]: got options...
+2023-07-13 18:58:54.876839:  [LOG]: options for device: LBIOZ
+2023-07-13 18:58:54.876839:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000026D4F9436A0>]
+2023-07-13 18:58:54.877337:  [LOG]: creating thread...
+2023-07-13 18:58:54.878822:  [LOG]: creating child shared memory flag for end
+2023-07-13 18:58:54.919945:  [LOG]: creating Process...
+2023-07-13 18:58:54.919945:  [LOG]: attempting to start thread0
+2023-07-13 18:58:54.947754:  [LOG]: adding thread to list
+2023-07-13 18:58:54.947754:  [LOG]: registering device C1:64:3F:6C:13:30
+2023-07-13 18:58:54.947754:  [LOG]: got options...
+2023-07-13 18:58:54.947754:  [LOG]: options for device: RBIOZ
+2023-07-13 18:58:54.949107:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000026D4F9436A0>]
+2023-07-13 18:58:54.949143:  [LOG]: creating thread...
+2023-07-13 18:58:54.949143:  [LOG]: creating child shared memory flag for end
+2023-07-13 18:58:54.949436:  [LOG]: creating Process...
+2023-07-13 18:58:54.949436:  [LOG]: attempting to start thread1
+2023-07-13 18:58:54.961176:  [LOG]: adding thread to list
+2023-07-13 18:58:54.961365:  [LOG]: registering device C2:23:01:DB:0B:C1
+2023-07-13 18:58:54.961440:  [LOG]: got options...
+2023-07-13 18:58:54.961440:  [LOG]: options for device: RightMotionSense2
+2023-07-13 18:58:54.961440:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000026D4F9428C0>]
+2023-07-13 18:58:54.961440:  [LOG]: creating thread...
+2023-07-13 18:58:54.961440:  [LOG]: creating child shared memory flag for end
+2023-07-13 18:58:54.961658:  [LOG]: creating Process...
+2023-07-13 18:58:54.961658:  [LOG]: attempting to start thread2
+2023-07-13 18:58:54.970102:  [LOG]: adding thread to list
+2023-07-13 18:58:54.970102:  [LOG]: registering device D4:82:69:C4:86:2E
+2023-07-13 18:58:54.970102:  [LOG]: got options...
+2023-07-13 18:58:54.970102:  [LOG]: options for device: LeftMotionSense2
+2023-07-13 18:58:54.970102:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000026D4F9428C0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000026D4F942F80>]
+2023-07-13 18:58:54.970102:  [LOG]: creating thread...
+2023-07-13 18:58:54.970102:  [LOG]: creating child shared memory flag for end
+2023-07-13 18:58:54.970599:  [LOG]: creating Process...
+2023-07-13 18:58:54.970599:  [LOG]: attempting to start thread3
+2023-07-13 18:58:54.980541:  [LOG]: adding thread to list
+2023-07-13 18:58:54.980541:  [LOG]: sucessfully registered all devices
+2023-07-13 18:58:54.980541:  [LOG]: started data collection
+2023-07-13 18:58:54.980541:  [LOG]: started for 4devices
+2023-07-13 18:58:55.571067:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:52:16.711083:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:59:03.572496:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:52:36.714070:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:59:11.570500:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:52:56.709218:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:59:19.571272:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:53:16.713501:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:59:27.572395:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:53:36.710108:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:59:35.571442:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:53:56.712012:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:59:43.572837:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:54:11.712360:  [LOG]: all connections to devices lost, terminating collection
-2023-05-26 18:54:11.712881:  [LOG]: collect button pressed
-2023-05-26 18:54:11.712881:  [LOG]: Stopped data collection
-2023-05-26 18:54:11.712881:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-05-26 18:58:41.826549:  [LOG]: created and activated log file...
-2023-05-26 18:58:41.835498:  [LOG]: Current Collecting Devices: 0
+2023-07-13 18:59:51.568876:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:58:47.650001:  [LOG]: collect button pressed
-2023-05-26 18:58:47.650001:  [LOG]: trying to start collection...
-2023-05-26 18:58:47.650001:  [LOG]: registering devices...
-2023-05-26 18:58:47.650001:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-05-26 18:58:47.650001:  [LOG]: got options...
-2023-05-26 18:58:47.650001:  [LOG]: options for device: RightMotionSense2
-2023-05-26 18:58:47.650001:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000020755097AC0>]
-2023-05-26 18:58:47.650995:  [LOG]: creating thread...
-2023-05-26 18:58:47.650995:  [LOG]: creating child shared memory flag for end
-2023-05-26 18:58:47.657996:  [LOG]: creating Process...
-2023-05-26 18:58:47.657996:  [LOG]: attempting to start thread0
-2023-05-26 18:58:47.666997:  [LOG]: adding thread to list
-2023-05-26 18:58:47.666997:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-05-26 18:58:47.666997:  [LOG]: got options...
-2023-05-26 18:58:47.666997:  [LOG]: options for device: LeftMotionSense2
-2023-05-26 18:58:47.668004:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000020755097AC0>]
-2023-05-26 18:58:47.668004:  [LOG]: creating thread...
-2023-05-26 18:58:47.668004:  [LOG]: creating child shared memory flag for end
-2023-05-26 18:58:47.668004:  [LOG]: creating Process...
-2023-05-26 18:58:47.668004:  [LOG]: attempting to start thread1
-2023-05-26 18:58:47.674714:  [LOG]: adding thread to list
-2023-05-26 18:58:47.674714:  [LOG]: sucessfully registered all devices
-2023-05-26 18:58:47.674714:  [LOG]: started data collection
-2023-05-26 18:58:47.674714:  [LOG]: started for 2devices
-2023-05-26 18:58:59.257017:  [LOG]: Current Collecting Devices: 2
+2023-07-13 18:59:59.570234:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:59:19.257950:  [LOG]: Current Collecting Devices: 2
+2023-07-13 19:00:07.568809:  [LOG]: Current Collecting Devices: 4
 disconnected_devices = 0
-2023-05-26 18:59:39.256994:  [LOG]: Current Collecting Devices: 2
-disconnected_devices = 1
-2023-05-26 18:59:59.260246:  [LOG]: Current Collecting Devices: 2
-disconnected_devices = 1
-2023-05-26 19:00:19.260084:  [LOG]: Current Collecting Devices: 2
-disconnected_devices = 1
-2023-05-26 19:00:39.257072:  [LOG]: Current Collecting Devices: 2
-disconnected_devices = 1
-2023-05-26 19:00:59.258091:  [LOG]: Current Collecting Devices: 2
-disconnected_devices = 1
-2023-05-26 19:01:19.256019:  [LOG]: Current Collecting Devices: 2
-disconnected_devices = 1
-2023-05-26 19:01:39.261730:  [LOG]: Current Collecting Devices: 2
-disconnected_devices = 1
-2023-05-26 19:01:44.834825:  [LOG]: collect button pressed
-2023-05-26 19:01:44.834825:  [LOG]: Stopped data collection
-2023-05-26 19:01:44.834825:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-05-26 19:01:59.259166:  [LOG]: Current Collecting Devices: 0
-disconnected_devices = 0
-2023-05-26 19:02:19.258195:  [LOG]: Current Collecting Devices: 0
-disconnected_devices = 0
-2023-05-26 19:02:39.259254:  [LOG]: Current Collecting Devices: 0
-disconnected_devices = 0
-2023-05-26 19:02:59.258060:  [LOG]: Current Collecting Devices: 0
-disconnected_devices = 0
-2023-05-26 19:03:19.261225:  [LOG]: Current Collecting Devices: 0
-disconnected_devices = 0
-2023-05-26 19:03:39.256082:  [LOG]: Current Collecting Devices: 0
-disconnected_devices = 0
-2023-05-26 19:03:59.257213:  [LOG]: Current Collecting Devices: 0
-disconnected_devices = 0
-2023-05-26 19:04:19.256135:  [LOG]: Current Collecting Devices: 0
-disconnected_devices = 0
-2023-05-26 19:04:33.843910:  [LOG]: closing app
-2023-05-26 19:04:46.257821:  [LOG]: created and activated log file...
-2023-05-26 19:04:55.851898:  [LOG]: collect button pressed
-2023-05-26 19:04:55.851898:  [LOG]: trying to start collection...
-2023-05-26 19:04:55.851898:  [LOG]: registering devices...
-2023-05-26 19:04:55.851898:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-05-26 19:04:55.851898:  [LOG]: got options...
-2023-05-26 19:04:55.851898:  [LOG]: options for device: LeftMotionSense2
-2023-05-26 19:04:55.851898:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>]
-2023-05-26 19:04:55.851898:  [LOG]: creating thread...
-2023-05-26 19:04:55.851898:  [LOG]: creating child shared memory flag for end
-2023-05-26 19:04:55.859960:  [LOG]: creating Process...
-2023-05-26 19:04:55.859960:  [LOG]: attempting to start thread0
-2023-05-26 19:04:55.869899:  [LOG]: adding thread to list
-2023-05-26 19:04:55.869899:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-05-26 19:04:55.869899:  [LOG]: got options...
-2023-05-26 19:04:55.869899:  [LOG]: options for device: RightMotionSense2
-2023-05-26 19:04:55.869899:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>]
-2023-05-26 19:04:55.869899:  [LOG]: creating thread...
-2023-05-26 19:04:55.869899:  [LOG]: creating child shared memory flag for end
-2023-05-26 19:04:55.869899:  [LOG]: creating Process...
-2023-05-26 19:04:55.869899:  [LOG]: attempting to start thread1
-2023-05-26 19:04:55.877292:  [LOG]: adding thread to list
-2023-05-26 19:04:55.877292:  [LOG]: sucessfully registered all devices
-2023-05-26 19:04:55.877292:  [LOG]: started data collection
-2023-05-26 19:04:55.877292:  [LOG]: started for 2devices
-2023-05-26 19:04:57.617067:  [LOG]: collect button pressed
-2023-05-26 19:04:57.617067:  [LOG]: Stopped data collection
-2023-05-26 19:04:57.617581:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-05-26 19:04:57.785033:  [LOG]: collect button pressed
-2023-05-26 19:04:57.785033:  [LOG]: trying to start collection...
-2023-05-26 19:04:57.785033:  [LOG]: registering devices...
-2023-05-26 19:04:57.785033:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-05-26 19:04:57.785033:  [LOG]: got options...
-2023-05-26 19:04:57.785033:  [LOG]: options for device: LeftMotionSense2
-2023-05-26 19:04:57.786087:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>]
-2023-05-26 19:04:57.786087:  [LOG]: creating thread...
-2023-05-26 19:04:57.786087:  [LOG]: creating child shared memory flag for end
-2023-05-26 19:04:57.786087:  [LOG]: creating Process...
-2023-05-26 19:04:57.786087:  [LOG]: attempting to start thread0
-2023-05-26 19:04:57.791145:  [LOG]: adding thread to list
-2023-05-26 19:04:57.791145:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-05-26 19:04:57.791145:  [LOG]: got options...
-2023-05-26 19:04:57.791145:  [LOG]: options for device: RightMotionSense2
-2023-05-26 19:04:57.791145:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>]
-2023-05-26 19:04:57.791145:  [LOG]: creating thread...
-2023-05-26 19:04:57.792127:  [LOG]: creating child shared memory flag for end
-2023-05-26 19:04:57.792127:  [LOG]: creating Process...
-2023-05-26 19:04:57.792127:  [LOG]: attempting to start thread1
-2023-05-26 19:04:57.798227:  [LOG]: adding thread to list
-2023-05-26 19:04:57.798227:  [LOG]: sucessfully registered all devices
-2023-05-26 19:04:57.798227:  [LOG]: started data collection
-2023-05-26 19:04:57.798227:  [LOG]: started for 2devices
-2023-05-26 19:04:57.975784:  [LOG]: a connection to a devices was lost, terminating collection
-2023-05-26 19:04:57.975784:  [LOG]: collect button pressed
-2023-05-26 19:04:57.975784:  [LOG]: Stopped data collection
-2023-05-26 19:04:57.975784:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-05-26 19:04:58.498171:  [LOG]: collect button pressed
-2023-05-26 19:04:58.498171:  [LOG]: trying to start collection...
-2023-05-26 19:04:58.498171:  [LOG]: registering devices...
-2023-05-26 19:04:58.498171:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-05-26 19:04:58.498171:  [LOG]: got options...
-2023-05-26 19:04:58.498171:  [LOG]: options for device: LeftMotionSense2
-2023-05-26 19:04:58.498171:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>]
-2023-05-26 19:04:58.498171:  [LOG]: creating thread...
-2023-05-26 19:04:58.498171:  [LOG]: creating child shared memory flag for end
-2023-05-26 19:04:58.498171:  [LOG]: creating Process...
-2023-05-26 19:04:58.498171:  [LOG]: attempting to start thread0
-2023-05-26 19:04:58.503000:  [LOG]: adding thread to list
-2023-05-26 19:04:58.503000:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-05-26 19:04:58.503000:  [LOG]: got options...
-2023-05-26 19:04:58.503000:  [LOG]: options for device: RightMotionSense2
-2023-05-26 19:04:58.504039:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027D924D7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027DB0ED8DC0>]
-2023-05-26 19:04:58.504039:  [LOG]: creating thread...
-2023-05-26 19:04:58.504039:  [LOG]: creating child shared memory flag for end
-2023-05-26 19:04:58.504039:  [LOG]: creating Process...
-2023-05-26 19:04:58.504039:  [LOG]: attempting to start thread1
-2023-05-26 19:04:58.510001:  [LOG]: adding thread to list
-2023-05-26 19:04:58.510001:  [LOG]: sucessfully registered all devices
-2023-05-26 19:04:58.510992:  [LOG]: started data collection
-2023-05-26 19:04:58.510992:  [LOG]: started for 2devices
-2023-05-26 19:05:00.248973:  [LOG]: collect button pressed
-2023-05-26 19:05:00.248973:  [LOG]: Stopped data collection
-2023-05-26 19:05:00.248973:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-05-26 19:05:07.107977:  [LOG]: closing app
-2023-05-26 19:08:59.088058:  [LOG]: created and activated log file...
-2023-05-26 19:09:04.490078:  [LOG]: collect button pressed
-2023-05-26 19:09:04.490078:  [LOG]: trying to start collection...
-2023-05-26 19:09:04.490078:  [LOG]: registering devices...
-2023-05-26 19:09:04.490078:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-05-26 19:09:04.490078:  [LOG]: got options...
-2023-05-26 19:09:04.490078:  [LOG]: options for device: RightMotionSense2
-2023-05-26 19:09:04.490078:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000026FC9D77AC0>]
-2023-05-26 19:09:04.490078:  [LOG]: creating thread...
-2023-05-26 19:09:04.491080:  [LOG]: creating child shared memory flag for end
-2023-05-26 19:09:04.497945:  [LOG]: creating Process...
-2023-05-26 19:09:04.497945:  [LOG]: attempting to start thread0
-2023-05-26 19:09:04.507113:  [LOG]: adding thread to list
-2023-05-26 19:09:04.507113:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-05-26 19:09:04.508067:  [LOG]: got options...
-2023-05-26 19:09:04.508067:  [LOG]: options for device: LeftMotionSense2
-2023-05-26 19:09:04.508067:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000026FC9D77AC0>]
-2023-05-26 19:09:04.508067:  [LOG]: creating thread...
-2023-05-26 19:09:04.508067:  [LOG]: creating child shared memory flag for end
-2023-05-26 19:09:04.508067:  [LOG]: creating Process...
-2023-05-26 19:09:04.508067:  [LOG]: attempting to start thread1
-2023-05-26 19:09:04.514683:  [LOG]: adding thread to list
-2023-05-26 19:09:04.514683:  [LOG]: sucessfully registered all devices
-2023-05-26 19:09:04.514683:  [LOG]: started data collection
-2023-05-26 19:09:04.514683:  [LOG]: started for 2devices
-2023-05-26 19:09:09.210053:  [LOG]: Current Collecting Devices: 2
-disconnected_devices = 0
-2023-05-26 19:09:09.210053:  [LOG]: a connection to a devices was lost, terminating collection
-2023-05-26 19:09:09.210053:  [LOG]: collect button pressed
-2023-05-26 19:09:09.210053:  [LOG]: Stopped data collection
-2023-05-26 19:09:09.210053:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-05-26 19:13:00.584775:  [LOG]: closing app
-2023-06-02 15:59:02.096360:  [LOG]: created and activated log file...
-2023-06-02 16:00:08.471470:  [LOG]: collect button pressed
-2023-06-02 16:00:08.471470:  [LOG]: trying to start collection...
-2023-06-02 16:00:08.471470:  [LOG]: registering devices...
-2023-06-02 16:00:08.471470:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:00:08.472522:  [LOG]: got options...
-2023-06-02 16:00:08.472522:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:00:08.472522:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>]
-2023-06-02 16:00:08.472522:  [LOG]: creating thread...
-2023-06-02 16:00:08.472522:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:00:08.487923:  [LOG]: creating Process...
-2023-06-02 16:00:08.487923:  [LOG]: attempting to start thread0
-2023-06-02 16:00:08.496367:  [LOG]: adding thread to list
-2023-06-02 16:00:08.496367:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:00:08.496367:  [LOG]: got options...
-2023-06-02 16:00:08.496367:  [LOG]: options for device: RightMotionSense2
-2023-06-02 16:00:08.496367:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>]
-2023-06-02 16:00:08.496367:  [LOG]: creating thread...
-2023-06-02 16:00:08.496367:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:00:08.497370:  [LOG]: creating Process...
-2023-06-02 16:00:08.497370:  [LOG]: attempting to start thread1
-2023-06-02 16:00:08.501351:  [LOG]: adding thread to list
-2023-06-02 16:00:08.501351:  [LOG]: sucessfully registered all devices
-2023-06-02 16:00:08.501351:  [LOG]: started data collection
-2023-06-02 16:00:08.501351:  [LOG]: started for 2devices
-2023-06-02 16:00:10.751497:  [LOG]: collect button pressed
-2023-06-02 16:00:10.751497:  [LOG]: Stopped data collection
-2023-06-02 16:00:10.751497:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:00:10.816305:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:00:45.112348:  [LOG]: collect button pressed
-2023-06-02 16:00:45.112348:  [LOG]: trying to start collection...
-2023-06-02 16:00:45.112348:  [LOG]: registering devices...
-2023-06-02 16:00:45.112348:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:00:45.112348:  [LOG]: got options...
-2023-06-02 16:00:45.112348:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:00:45.112348:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>]
-2023-06-02 16:00:45.112348:  [LOG]: creating thread...
-2023-06-02 16:00:45.112348:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:00:45.112348:  [LOG]: creating Process...
-2023-06-02 16:00:45.112348:  [LOG]: attempting to start thread0
-2023-06-02 16:00:45.117332:  [LOG]: adding thread to list
-2023-06-02 16:00:45.117332:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:00:45.117332:  [LOG]: got options...
-2023-06-02 16:00:45.117332:  [LOG]: options for device: RightMotionSense2
-2023-06-02 16:00:45.117332:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>]
-2023-06-02 16:00:45.117332:  [LOG]: creating thread...
-2023-06-02 16:00:45.117332:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:00:45.117332:  [LOG]: creating Process...
-2023-06-02 16:00:45.117332:  [LOG]: attempting to start thread1
-2023-06-02 16:00:45.122314:  [LOG]: adding thread to list
-2023-06-02 16:00:45.122314:  [LOG]: sucessfully registered all devices
-2023-06-02 16:00:45.122314:  [LOG]: started data collection
-2023-06-02 16:00:45.122314:  [LOG]: started for 2devices
-2023-06-02 16:00:45.750572:  [LOG]: collect button pressed
-2023-06-02 16:00:45.750572:  [LOG]: Stopped data collection
-2023-06-02 16:00:45.750572:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:00:45.761539:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:00:48.375469:  [LOG]: collect button pressed
-2023-06-02 16:00:48.375469:  [LOG]: trying to start collection...
-2023-06-02 16:00:48.375469:  [LOG]: registering devices...
-2023-06-02 16:00:48.375469:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:00:48.375469:  [LOG]: got options...
-2023-06-02 16:00:48.375469:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:00:48.375469:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>]
-2023-06-02 16:00:48.375469:  [LOG]: creating thread...
-2023-06-02 16:00:48.375469:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:00:48.375469:  [LOG]: creating Process...
-2023-06-02 16:00:48.375469:  [LOG]: attempting to start thread0
-2023-06-02 16:00:48.380447:  [LOG]: adding thread to list
-2023-06-02 16:00:48.380447:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:00:48.380447:  [LOG]: got options...
-2023-06-02 16:00:48.380447:  [LOG]: options for device: RightMotionSense2
-2023-06-02 16:00:48.380447:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001DE6CAC7AC0>]
-2023-06-02 16:00:48.380447:  [LOG]: creating thread...
-2023-06-02 16:00:48.380447:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:00:48.380447:  [LOG]: creating Process...
-2023-06-02 16:00:48.380447:  [LOG]: attempting to start thread1
-2023-06-02 16:00:48.385435:  [LOG]: adding thread to list
-2023-06-02 16:00:48.385435:  [LOG]: sucessfully registered all devices
-2023-06-02 16:00:48.385435:  [LOG]: started data collection
-2023-06-02 16:00:48.385435:  [LOG]: started for 2devices
-2023-06-02 16:00:50.752433:  [LOG]: collect button pressed
-2023-06-02 16:00:50.752433:  [LOG]: Stopped data collection
-2023-06-02 16:00:50.752433:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:00:50.801387:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:01:09.508452:  [LOG]: closing app
-2023-06-02 16:06:01.871413:  [LOG]: created and activated log file...
-2023-06-02 16:08:44.871406:  [LOG]: collect button pressed
-2023-06-02 16:08:44.871406:  [LOG]: trying to start collection...
-2023-06-02 16:08:44.871406:  [LOG]: registering devices...
-2023-06-02 16:08:44.871406:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:08:44.871406:  [LOG]: got options...
-2023-06-02 16:08:44.871406:  [LOG]: options for device: RightMotionSense2
-2023-06-02 16:08:44.871406:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001371FCB0D60>]
-2023-06-02 16:08:44.871406:  [LOG]: creating thread...
-2023-06-02 16:08:44.871406:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:08:44.875397:  [LOG]: creating Process...
-2023-06-02 16:08:44.875397:  [LOG]: attempting to start thread0
-2023-06-02 16:08:44.879384:  [LOG]: adding thread to list
-2023-06-02 16:08:44.879384:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:08:44.879384:  [LOG]: sucessfully registered all devices
-2023-06-02 16:08:44.879384:  [LOG]: started data collection
-2023-06-02 16:08:44.879384:  [LOG]: started for 1devices
-2023-06-02 16:08:49.330406:  [LOG]: collect button pressed
-2023-06-02 16:08:49.330406:  [LOG]: Stopped data collection
-2023-06-02 16:08:49.330406:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:08:49.339376:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:09:00.223377:  [LOG]: collect button pressed
-2023-06-02 16:09:00.223377:  [LOG]: trying to start collection...
-2023-06-02 16:09:00.223377:  [LOG]: registering devices...
-2023-06-02 16:09:00.223377:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:09:00.223377:  [LOG]: got options...
-2023-06-02 16:09:00.223377:  [LOG]: options for device: RightMotionSense2
-2023-06-02 16:09:00.223377:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001371FCB0D60>]
-2023-06-02 16:09:00.223377:  [LOG]: creating thread...
-2023-06-02 16:09:00.223377:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:09:00.223377:  [LOG]: creating Process...
-2023-06-02 16:09:00.223377:  [LOG]: attempting to start thread0
-2023-06-02 16:09:00.226369:  [LOG]: adding thread to list
-2023-06-02 16:09:00.226369:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:09:00.226369:  [LOG]: got options...
-2023-06-02 16:09:00.226369:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:09:00.226369:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001371FCB0D60>]
-2023-06-02 16:09:00.226369:  [LOG]: creating thread...
-2023-06-02 16:09:00.226369:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:09:00.226369:  [LOG]: creating Process...
-2023-06-02 16:09:00.226369:  [LOG]: attempting to start thread1
-2023-06-02 16:09:00.229359:  [LOG]: adding thread to list
-2023-06-02 16:09:00.229359:  [LOG]: sucessfully registered all devices
-2023-06-02 16:09:00.229359:  [LOG]: started data collection
-2023-06-02 16:09:00.229359:  [LOG]: started for 2devices
-2023-06-02 16:09:04.333506:  [LOG]: collect button pressed
-2023-06-02 16:09:04.333506:  [LOG]: Stopped data collection
-2023-06-02 16:09:04.333506:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:09:04.349456:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:10:28.719878:  [LOG]: collect button pressed
-2023-06-02 16:10:28.719878:  [LOG]: trying to start collection...
-2023-06-02 16:10:28.719878:  [LOG]: registering devices...
-2023-06-02 16:10:28.719878:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:10:28.719878:  [LOG]: got options...
-2023-06-02 16:10:28.719878:  [LOG]: options for device: RightMotionSense2
-2023-06-02 16:10:28.719878:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001371FCB0D60>]
-2023-06-02 16:10:28.719878:  [LOG]: creating thread...
-2023-06-02 16:10:28.719878:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:10:28.719878:  [LOG]: creating Process...
-2023-06-02 16:10:28.719878:  [LOG]: attempting to start thread0
-2023-06-02 16:10:28.722882:  [LOG]: adding thread to list
-2023-06-02 16:10:28.722882:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:10:28.722882:  [LOG]: got options...
-2023-06-02 16:10:28.722882:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:10:28.722882:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001371FCB0D60>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001371FCB0D60>]
-2023-06-02 16:10:28.722882:  [LOG]: creating thread...
-2023-06-02 16:10:28.722882:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:10:28.723869:  [LOG]: creating Process...
-2023-06-02 16:10:28.723869:  [LOG]: attempting to start thread1
-2023-06-02 16:10:28.725870:  [LOG]: adding thread to list
-2023-06-02 16:10:28.725870:  [LOG]: sucessfully registered all devices
-2023-06-02 16:10:28.725870:  [LOG]: started data collection
-2023-06-02 16:10:28.725870:  [LOG]: started for 2devices
-2023-06-02 16:10:29.332107:  [LOG]: collect button pressed
-2023-06-02 16:10:29.332107:  [LOG]: Stopped data collection
-2023-06-02 16:10:29.332107:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:10:29.349047:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:10:33.727069:  [LOG]: collect button pressed
-2023-06-02 16:10:33.727069:  [LOG]: trying to start collection...
-2023-06-02 16:10:33.727069:  [LOG]: registering devices...
-2023-06-02 16:10:33.727069:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:10:33.727069:  [LOG]: got options...
-2023-06-02 16:10:33.727069:  [LOG]: options for device: RightMotionSense2
-2023-06-02 16:10:33.727069:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001371FCB0D60>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001371FCB0D60>]
-2023-06-02 16:10:33.727069:  [LOG]: creating thread...
-2023-06-02 16:10:33.727069:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:10:33.727069:  [LOG]: creating Process...
-2023-06-02 16:10:33.727069:  [LOG]: attempting to start thread0
-2023-06-02 16:10:33.730060:  [LOG]: adding thread to list
-2023-06-02 16:10:33.730060:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:10:33.730060:  [LOG]: got options...
-2023-06-02 16:10:33.730060:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:10:33.730060:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001371FCB0D60>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001371FCB0D60>]
-2023-06-02 16:10:33.730060:  [LOG]: creating thread...
-2023-06-02 16:10:33.730060:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:10:33.731056:  [LOG]: creating Process...
-2023-06-02 16:10:33.731056:  [LOG]: attempting to start thread1
-2023-06-02 16:10:33.733049:  [LOG]: adding thread to list
-2023-06-02 16:10:33.733049:  [LOG]: sucessfully registered all devices
-2023-06-02 16:10:33.733049:  [LOG]: started data collection
-2023-06-02 16:10:33.733049:  [LOG]: started for 2devices
-2023-06-02 16:10:34.332543:  [LOG]: collect button pressed
-2023-06-02 16:10:34.332543:  [LOG]: Stopped data collection
-2023-06-02 16:10:34.332543:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:10:34.348494:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:10:37.143612:  [LOG]: closing app
-2023-06-02 16:10:59.915608:  [LOG]: created and activated log file...
-2023-06-02 16:11:04.759134:  [LOG]: collect button pressed
-2023-06-02 16:11:04.759134:  [LOG]: trying to start collection...
-2023-06-02 16:11:04.759134:  [LOG]: registering devices...
-2023-06-02 16:11:04.759134:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:11:04.759134:  [LOG]: got options...
-2023-06-02 16:11:04.759134:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:11:04.759134:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001B3DF6498A0>]
-2023-06-02 16:11:04.759134:  [LOG]: creating thread...
-2023-06-02 16:11:04.760135:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:11:04.766115:  [LOG]: creating Process...
-2023-06-02 16:11:04.766115:  [LOG]: attempting to start thread0
-2023-06-02 16:11:04.773093:  [LOG]: adding thread to list
-2023-06-02 16:11:04.773093:  [LOG]: sucessfully registered all devices
-2023-06-02 16:11:04.773093:  [LOG]: started data collection
-2023-06-02 16:11:04.773093:  [LOG]: started for 1devices
-2023-06-02 16:11:05.721929:  [LOG]: collect button pressed
-2023-06-02 16:11:05.721929:  [LOG]: Stopped data collection
-2023-06-02 16:11:05.721929:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:11:05.739869:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:11:15.103734:  [LOG]: closing app
-2023-06-02 16:11:30.071135:  [LOG]: created and activated log file...
-2023-06-02 16:11:38.238395:  [LOG]: collect button pressed
-2023-06-02 16:11:38.238395:  [LOG]: trying to start collection...
-2023-06-02 16:11:38.238395:  [LOG]: registering devices...
-2023-06-02 16:11:38.238395:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:11:38.239390:  [LOG]: got options...
-2023-06-02 16:11:38.239390:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:11:38.239390:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000023D328A1000>]
-2023-06-02 16:11:38.239390:  [LOG]: creating thread...
-2023-06-02 16:11:38.239390:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:11:38.245375:  [LOG]: creating Process...
-2023-06-02 16:11:38.245375:  [LOG]: attempting to start thread0
-2023-06-02 16:11:38.252352:  [LOG]: adding thread to list
-2023-06-02 16:11:38.252352:  [LOG]: sucessfully registered all devices
-2023-06-02 16:11:38.252352:  [LOG]: started data collection
-2023-06-02 16:11:38.252352:  [LOG]: started for 1devices
-2023-06-02 16:11:41.815245:  [LOG]: collect button pressed
-2023-06-02 16:11:41.815245:  [LOG]: Stopped data collection
-2023-06-02 16:11:41.815245:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:12:17.448221:  [LOG]: created and activated log file...
-2023-06-02 16:12:25.831186:  [LOG]: collect button pressed
-2023-06-02 16:12:25.831186:  [LOG]: trying to start collection...
-2023-06-02 16:12:25.831186:  [LOG]: registering devices...
-2023-06-02 16:12:25.831186:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:12:25.831186:  [LOG]: got options...
-2023-06-02 16:12:25.831186:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:12:25.831186:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>]
-2023-06-02 16:12:25.831186:  [LOG]: creating thread...
-2023-06-02 16:12:25.832186:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:12:25.838164:  [LOG]: creating Process...
-2023-06-02 16:12:25.838164:  [LOG]: attempting to start thread0
-2023-06-02 16:12:25.846137:  [LOG]: adding thread to list
-2023-06-02 16:12:25.846137:  [LOG]: sucessfully registered all devices
-2023-06-02 16:12:25.846137:  [LOG]: started data collection
-2023-06-02 16:12:25.846137:  [LOG]: started for 1devices
-2023-06-02 16:12:30.628115:  [LOG]: collect button pressed
-2023-06-02 16:12:30.628115:  [LOG]: Stopped data collection
-2023-06-02 16:12:30.628115:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:12:30.637043:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:16:38.070452:  [LOG]: collect button pressed
-2023-06-02 16:16:38.070452:  [LOG]: trying to start collection...
-2023-06-02 16:16:38.070452:  [LOG]: registering devices...
-2023-06-02 16:16:38.070452:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:16:38.070452:  [LOG]: got options...
-2023-06-02 16:16:38.070452:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:16:38.070452:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>]
-2023-06-02 16:16:38.070452:  [LOG]: creating thread...
-2023-06-02 16:16:38.070452:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:16:38.071447:  [LOG]: creating Process...
-2023-06-02 16:16:38.071447:  [LOG]: attempting to start thread0
-2023-06-02 16:16:38.076427:  [LOG]: adding thread to list
-2023-06-02 16:16:38.076427:  [LOG]: sucessfully registered all devices
-2023-06-02 16:16:38.076427:  [LOG]: started data collection
-2023-06-02 16:16:38.076427:  [LOG]: started for 1devices
-2023-06-02 16:16:40.628680:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 16:16:40.628680:  [LOG]: collect button pressed
-2023-06-02 16:16:40.628680:  [LOG]: Stopped data collection
-2023-06-02 16:16:40.628680:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:16:40.661574:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:17:08.079478:  [LOG]: collect button pressed
-2023-06-02 16:17:08.079478:  [LOG]: trying to start collection...
-2023-06-02 16:17:08.079478:  [LOG]: registering devices...
-2023-06-02 16:17:08.079478:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:17:08.079478:  [LOG]: got options...
-2023-06-02 16:17:08.079478:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:17:08.079478:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>]
-2023-06-02 16:17:08.079478:  [LOG]: creating thread...
-2023-06-02 16:17:08.079478:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:17:08.079478:  [LOG]: creating Process...
-2023-06-02 16:17:08.079478:  [LOG]: attempting to start thread0
-2023-06-02 16:17:08.084460:  [LOG]: adding thread to list
-2023-06-02 16:17:08.084460:  [LOG]: sucessfully registered all devices
-2023-06-02 16:17:08.084460:  [LOG]: started data collection
-2023-06-02 16:17:08.084460:  [LOG]: started for 1devices
-2023-06-02 16:17:10.626303:  [LOG]: collect button pressed
-2023-06-02 16:17:10.626303:  [LOG]: Stopped data collection
-2023-06-02 16:17:10.626303:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:17:10.645263:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:17:17.639215:  [LOG]: collect button pressed
-2023-06-02 16:17:17.639215:  [LOG]: trying to start collection...
-2023-06-02 16:17:17.639215:  [LOG]: registering devices...
-2023-06-02 16:17:17.639215:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:17:17.639215:  [LOG]: got options...
-2023-06-02 16:17:17.639215:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:17:17.639215:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>]
-2023-06-02 16:17:17.639215:  [LOG]: creating thread...
-2023-06-02 16:17:17.639215:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:17:17.639215:  [LOG]: creating Process...
-2023-06-02 16:17:17.639215:  [LOG]: attempting to start thread0
-2023-06-02 16:17:17.644199:  [LOG]: adding thread to list
-2023-06-02 16:17:17.644199:  [LOG]: sucessfully registered all devices
-2023-06-02 16:17:17.644199:  [LOG]: started data collection
-2023-06-02 16:17:17.644199:  [LOG]: started for 1devices
-2023-06-02 16:17:20.628662:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 16:17:20.628662:  [LOG]: collect button pressed
-2023-06-02 16:17:20.628662:  [LOG]: Stopped data collection
-2023-06-02 16:17:20.628662:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:17:20.660646:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:17:52.886621:  [LOG]: collect button pressed
-2023-06-02 16:17:52.886621:  [LOG]: trying to start collection...
-2023-06-02 16:17:52.886621:  [LOG]: registering devices...
-2023-06-02 16:17:52.886621:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:17:52.886621:  [LOG]: got options...
-2023-06-02 16:17:52.886621:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:17:52.886621:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>]
-2023-06-02 16:17:52.886621:  [LOG]: creating thread...
-2023-06-02 16:17:52.886621:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:17:52.886621:  [LOG]: creating Process...
-2023-06-02 16:17:52.886621:  [LOG]: attempting to start thread0
-2023-06-02 16:17:52.892601:  [LOG]: adding thread to list
-2023-06-02 16:17:52.892601:  [LOG]: sucessfully registered all devices
-2023-06-02 16:17:52.892601:  [LOG]: started data collection
-2023-06-02 16:17:52.892601:  [LOG]: started for 1devices
-2023-06-02 16:17:55.628709:  [LOG]: collect button pressed
-2023-06-02 16:17:55.628709:  [LOG]: Stopped data collection
-2023-06-02 16:17:55.628709:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:17:55.658610:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:18:08.814778:  [LOG]: collect button pressed
-2023-06-02 16:18:08.814778:  [LOG]: trying to start collection...
-2023-06-02 16:18:08.814778:  [LOG]: registering devices...
-2023-06-02 16:18:08.814778:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:18:08.814778:  [LOG]: got options...
-2023-06-02 16:18:08.814778:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:18:08.814778:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>]
-2023-06-02 16:18:08.814778:  [LOG]: creating thread...
-2023-06-02 16:18:08.814778:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:18:08.814778:  [LOG]: creating Process...
-2023-06-02 16:18:08.814778:  [LOG]: attempting to start thread0
-2023-06-02 16:18:08.819761:  [LOG]: adding thread to list
-2023-06-02 16:18:08.819761:  [LOG]: sucessfully registered all devices
-2023-06-02 16:18:08.819761:  [LOG]: started data collection
-2023-06-02 16:18:08.819761:  [LOG]: started for 1devices
-2023-06-02 16:18:10.630105:  [LOG]: collect button pressed
-2023-06-02 16:18:10.630105:  [LOG]: Stopped data collection
-2023-06-02 16:18:10.630105:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:18:10.658007:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:18:33.598296:  [LOG]: collect button pressed
-2023-06-02 16:18:33.598296:  [LOG]: trying to start collection...
-2023-06-02 16:18:33.598296:  [LOG]: registering devices...
-2023-06-02 16:18:33.598296:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:18:33.598296:  [LOG]: got options...
-2023-06-02 16:18:33.598296:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:18:33.598296:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>]
-2023-06-02 16:18:33.598296:  [LOG]: creating thread...
-2023-06-02 16:18:33.599297:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:18:33.599297:  [LOG]: creating Process...
-2023-06-02 16:18:33.599297:  [LOG]: attempting to start thread0
-2023-06-02 16:18:33.603280:  [LOG]: adding thread to list
-2023-06-02 16:18:33.603280:  [LOG]: sucessfully registered all devices
-2023-06-02 16:18:33.603280:  [LOG]: started data collection
-2023-06-02 16:18:33.603280:  [LOG]: started for 1devices
-2023-06-02 16:18:35.629075:  [LOG]: collect button pressed
-2023-06-02 16:18:35.629075:  [LOG]: Stopped data collection
-2023-06-02 16:18:35.629075:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:18:35.641034:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:19:04.191451:  [LOG]: collect button pressed
-2023-06-02 16:19:04.191451:  [LOG]: trying to start collection...
-2023-06-02 16:19:04.191451:  [LOG]: registering devices...
-2023-06-02 16:19:04.191451:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:19:04.191451:  [LOG]: got options...
-2023-06-02 16:19:04.191451:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:19:04.191451:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002773350D000>]
-2023-06-02 16:19:04.191451:  [LOG]: creating thread...
-2023-06-02 16:19:04.191451:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:19:04.191451:  [LOG]: creating Process...
-2023-06-02 16:19:04.191451:  [LOG]: attempting to start thread0
-2023-06-02 16:19:04.196434:  [LOG]: adding thread to list
-2023-06-02 16:19:04.196434:  [LOG]: sucessfully registered all devices
-2023-06-02 16:19:04.196434:  [LOG]: started data collection
-2023-06-02 16:19:04.196434:  [LOG]: started for 1devices
-2023-06-02 16:19:05.627016:  [LOG]: collect button pressed
-2023-06-02 16:19:05.627016:  [LOG]: Stopped data collection
-2023-06-02 16:19:05.627016:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:19:05.985920:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:19:40.151457:  [LOG]: closing app
-2023-06-02 16:20:10.634359:  [LOG]: created and activated log file...
-2023-06-02 16:20:28.079433:  [LOG]: collect button pressed
-2023-06-02 16:20:28.079433:  [LOG]: trying to start collection...
-2023-06-02 16:20:28.079433:  [LOG]: registering devices...
-2023-06-02 16:20:28.079433:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:20:28.079433:  [LOG]: got options...
-2023-06-02 16:20:28.079433:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:20:28.079433:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000015E7CFD1000>]
-2023-06-02 16:20:28.079433:  [LOG]: creating thread...
-2023-06-02 16:20:28.079433:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:20:28.085419:  [LOG]: creating Process...
-2023-06-02 16:20:28.085419:  [LOG]: attempting to start thread0
-2023-06-02 16:20:28.093392:  [LOG]: adding thread to list
-2023-06-02 16:20:28.093392:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:20:28.093392:  [LOG]: sucessfully registered all devices
-2023-06-02 16:20:28.093392:  [LOG]: started data collection
-2023-06-02 16:20:28.093392:  [LOG]: started for 1devices
-2023-06-02 16:20:32.314433:  [LOG]: collect button pressed
-2023-06-02 16:20:32.314433:  [LOG]: Stopped data collection
-2023-06-02 16:20:32.314433:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:20:32.335529:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:20:39.263449:  [LOG]: collect button pressed
-2023-06-02 16:20:39.263449:  [LOG]: trying to start collection...
-2023-06-02 16:20:39.263449:  [LOG]: registering devices...
-2023-06-02 16:20:39.263449:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:20:39.263449:  [LOG]: got options...
-2023-06-02 16:20:39.263449:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:20:39.263449:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000015E7CFD1000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000015E7CFD1000>]
-2023-06-02 16:20:39.263449:  [LOG]: creating thread...
-2023-06-02 16:20:39.263449:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:20:39.263449:  [LOG]: creating Process...
-2023-06-02 16:20:39.263449:  [LOG]: attempting to start thread0
-2023-06-02 16:20:39.268455:  [LOG]: adding thread to list
-2023-06-02 16:20:39.268455:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:20:39.268455:  [LOG]: sucessfully registered all devices
-2023-06-02 16:20:39.268455:  [LOG]: started data collection
-2023-06-02 16:20:39.268455:  [LOG]: started for 1devices
-2023-06-02 16:20:42.314022:  [LOG]: collect button pressed
-2023-06-02 16:20:42.314022:  [LOG]: Stopped data collection
-2023-06-02 16:20:42.314022:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:20:42.345920:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 16:21:16.265176:  [LOG]: closing app
-2023-06-02 16:44:36.681253:  [LOG]: created and activated log file...
-2023-06-02 16:45:36.273892:  [LOG]: collect button pressed
-2023-06-02 16:45:36.273892:  [LOG]: trying to start collection...
-2023-06-02 16:45:36.273892:  [LOG]: registering devices...
-2023-06-02 16:45:36.273892:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:45:36.273892:  [LOG]: got options...
-2023-06-02 16:45:36.273892:  [LOG]: options for device: RightMotionSense2
-2023-06-02 16:45:36.273892:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001ACD22ED000>]
-2023-06-02 16:45:36.273892:  [LOG]: creating thread...
-2023-06-02 16:45:36.273892:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:45:36.287190:  [LOG]: creating Process...
-2023-06-02 16:45:36.287190:  [LOG]: attempting to start thread0
-2023-06-02 16:45:36.295846:  [LOG]: adding thread to list
-2023-06-02 16:45:36.295846:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:45:36.295846:  [LOG]: got options...
-2023-06-02 16:45:36.295846:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 16:45:36.295846:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000001ACD22ED000>]
-2023-06-02 16:45:36.295846:  [LOG]: creating thread...
-2023-06-02 16:45:36.295846:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:45:36.295846:  [LOG]: creating Process...
-2023-06-02 16:45:36.296716:  [LOG]: attempting to start thread1
-2023-06-02 16:45:36.300682:  [LOG]: adding thread to list
-2023-06-02 16:45:36.300682:  [LOG]: sucessfully registered all devices
-2023-06-02 16:45:36.300682:  [LOG]: started data collection
-2023-06-02 16:45:36.300682:  [LOG]: started for 2devices
-2023-06-02 16:45:40.269130:  [LOG]: collect button pressed
-2023-06-02 16:45:40.269130:  [LOG]: Stopped data collection
-2023-06-02 16:45:40.269130:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:49:57.777372:  [LOG]: created and activated log file...
-2023-06-02 16:50:01.048994:  [LOG]: collect button pressed
-2023-06-02 16:50:01.048994:  [LOG]: trying to start collection...
-2023-06-02 16:50:01.048994:  [LOG]: registering devices...
-2023-06-02 16:50:01.048994:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:50:01.048994:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:50:01.048994:  [LOG]: sucessfully registered all devices
-2023-06-02 16:50:04.777955:  [LOG]: collect button pressed
-2023-06-02 16:50:04.777955:  [LOG]: trying to start collection...
-2023-06-02 16:50:04.777955:  [LOG]: registering devices...
-2023-06-02 16:50:04.777955:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:50:04.777955:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:50:04.777955:  [LOG]: got options...
-2023-06-02 16:50:04.777955:  [LOG]: options for device: RightMotionSense2
-2023-06-02 16:50:04.777955:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000025185701000>]
-2023-06-02 16:50:04.777955:  [LOG]: creating thread...
-2023-06-02 16:50:04.777955:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:50:04.784402:  [LOG]: creating Process...
-2023-06-02 16:50:04.784402:  [LOG]: attempting to start thread0
-2023-06-02 16:50:04.791340:  [LOG]: adding thread to list
-2023-06-02 16:50:04.791410:  [LOG]: sucessfully registered all devices
-2023-06-02 16:50:04.791410:  [LOG]: started data collection
-2023-06-02 16:50:04.791410:  [LOG]: started for 1devices
-2023-06-02 16:50:09.724961:  [LOG]: collect button pressed
-2023-06-02 16:50:09.724961:  [LOG]: Stopped data collection
-2023-06-02 16:50:09.725055:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 16:50:37.868431:  [LOG]: created and activated log file...
-2023-06-02 16:50:42.386413:  [LOG]: collect button pressed
-2023-06-02 16:50:42.386413:  [LOG]: trying to start collection...
-2023-06-02 16:50:42.386413:  [LOG]: registering devices...
-2023-06-02 16:50:42.386413:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 16:50:42.386413:  [LOG]: got options...
-2023-06-02 16:50:42.386413:  [LOG]: options for device: RightMotionSense2
-2023-06-02 16:50:42.386413:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x000002352BB31000>]
-2023-06-02 16:50:42.386413:  [LOG]: creating thread...
-2023-06-02 16:50:42.386413:  [LOG]: creating child shared memory flag for end
-2023-06-02 16:50:42.392948:  [LOG]: creating Process...
-2023-06-02 16:50:42.392948:  [LOG]: attempting to start thread0
-2023-06-02 16:50:42.400674:  [LOG]: adding thread to list
-2023-06-02 16:50:42.400732:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 16:50:42.400732:  [LOG]: sucessfully registered all devices
-2023-06-02 16:50:42.400732:  [LOG]: started data collection
-2023-06-02 16:50:42.400732:  [LOG]: started for 1devices
-2023-06-02 16:50:45.630999:  [LOG]: collect button pressed
-2023-06-02 16:50:45.630999:  [LOG]: Stopped data collection
-2023-06-02 16:50:45.630999:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 17:11:16.368752:  [LOG]: created and activated log file...
-2023-06-02 17:11:19.495980:  [LOG]: collect button pressed
-2023-06-02 17:11:19.495980:  [LOG]: trying to start collection...
-2023-06-02 17:11:19.495980:  [LOG]: registering devices...
-2023-06-02 17:11:19.495980:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 17:11:19.495980:  [LOG]: got options...
-2023-06-02 17:11:19.495980:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 17:11:19.495980:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>]
-2023-06-02 17:11:19.495980:  [LOG]: creating thread...
-2023-06-02 17:11:19.495980:  [LOG]: creating child shared memory flag for end
-2023-06-02 17:11:19.501465:  [LOG]: creating Process...
-2023-06-02 17:11:19.501465:  [LOG]: attempting to start thread0
-2023-06-02 17:11:19.509492:  [LOG]: adding thread to list
-2023-06-02 17:11:19.509492:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 17:11:19.509492:  [LOG]: sucessfully registered all devices
-2023-06-02 17:11:19.509492:  [LOG]: started data collection
-2023-06-02 17:11:19.509492:  [LOG]: started for 1devices
-2023-06-02 17:11:24.020002:  [LOG]: collect button pressed
-2023-06-02 17:11:24.020002:  [LOG]: Stopped data collection
-2023-06-02 17:11:24.020002:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 17:11:24.046677:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 17:11:45.207470:  [LOG]: collect button pressed
-2023-06-02 17:11:45.207470:  [LOG]: trying to start collection...
-2023-06-02 17:11:45.207470:  [LOG]: registering devices...
-2023-06-02 17:11:45.207470:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 17:11:45.207470:  [LOG]: got options...
-2023-06-02 17:11:45.207470:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 17:11:45.207470:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>]
-2023-06-02 17:11:45.207470:  [LOG]: creating thread...
-2023-06-02 17:11:45.207470:  [LOG]: creating child shared memory flag for end
-2023-06-02 17:11:45.207470:  [LOG]: creating Process...
-2023-06-02 17:11:45.207470:  [LOG]: attempting to start thread0
-2023-06-02 17:11:45.212534:  [LOG]: adding thread to list
-2023-06-02 17:11:45.212534:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 17:11:45.212534:  [LOG]: sucessfully registered all devices
-2023-06-02 17:11:45.212534:  [LOG]: started data collection
-2023-06-02 17:11:45.212534:  [LOG]: started for 1devices
-2023-06-02 17:11:49.021029:  [LOG]: collect button pressed
-2023-06-02 17:11:49.021029:  [LOG]: Stopped data collection
-2023-06-02 17:11:49.021029:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 17:11:49.045561:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 17:12:12.535993:  [LOG]: collect button pressed
-2023-06-02 17:12:12.535993:  [LOG]: trying to start collection...
-2023-06-02 17:12:12.535993:  [LOG]: registering devices...
-2023-06-02 17:12:12.535993:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 17:12:12.535993:  [LOG]: got options...
-2023-06-02 17:12:12.535993:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 17:12:12.535993:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>]
-2023-06-02 17:12:12.535993:  [LOG]: creating thread...
-2023-06-02 17:12:12.535993:  [LOG]: creating child shared memory flag for end
-2023-06-02 17:12:12.535993:  [LOG]: creating Process...
-2023-06-02 17:12:12.535993:  [LOG]: attempting to start thread0
-2023-06-02 17:12:12.540667:  [LOG]: adding thread to list
-2023-06-02 17:12:12.540667:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 17:12:12.540667:  [LOG]: sucessfully registered all devices
-2023-06-02 17:12:12.540667:  [LOG]: started data collection
-2023-06-02 17:12:12.540667:  [LOG]: started for 1devices
-2023-06-02 17:12:14.019974:  [LOG]: collect button pressed
-2023-06-02 17:12:14.019974:  [LOG]: Stopped data collection
-2023-06-02 17:12:14.019974:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 17:12:14.046761:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 17:12:28.918908:  [LOG]: collect button pressed
-2023-06-02 17:12:28.918908:  [LOG]: trying to start collection...
-2023-06-02 17:12:28.918908:  [LOG]: registering devices...
-2023-06-02 17:12:28.918908:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 17:12:28.918908:  [LOG]: got options...
-2023-06-02 17:12:28.918908:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 17:12:28.918908:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>]
-2023-06-02 17:12:28.918908:  [LOG]: creating thread...
-2023-06-02 17:12:28.918908:  [LOG]: creating child shared memory flag for end
-2023-06-02 17:12:28.919907:  [LOG]: creating Process...
-2023-06-02 17:12:28.920181:  [LOG]: attempting to start thread0
-2023-06-02 17:12:28.924672:  [LOG]: adding thread to list
-2023-06-02 17:12:28.924672:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 17:12:28.925393:  [LOG]: sucessfully registered all devices
-2023-06-02 17:12:28.925393:  [LOG]: started data collection
-2023-06-02 17:12:28.925393:  [LOG]: started for 1devices
-2023-06-02 17:12:29.020460:  [LOG]: collect button pressed
-2023-06-02 17:12:29.020460:  [LOG]: Stopped data collection
-2023-06-02 17:12:29.020460:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 17:12:29.022235:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 17:12:30.047904:  [LOG]: collect button pressed
-2023-06-02 17:12:30.047904:  [LOG]: trying to start collection...
-2023-06-02 17:12:30.047904:  [LOG]: registering devices...
-2023-06-02 17:12:30.047904:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 17:12:30.047904:  [LOG]: got options...
-2023-06-02 17:12:30.047904:  [LOG]: options for device: LeftMotionSense2
-2023-06-02 17:12:30.047904:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000027906571000>]
-2023-06-02 17:12:30.047904:  [LOG]: creating thread...
-2023-06-02 17:12:30.047904:  [LOG]: creating child shared memory flag for end
-2023-06-02 17:12:30.047904:  [LOG]: creating Process...
-2023-06-02 17:12:30.047904:  [LOG]: attempting to start thread0
-2023-06-02 17:12:30.052904:  [LOG]: adding thread to list
-2023-06-02 17:12:30.052904:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 17:12:30.052904:  [LOG]: sucessfully registered all devices
-2023-06-02 17:12:30.052904:  [LOG]: started data collection
-2023-06-02 17:12:30.052904:  [LOG]: started for 1devices
-2023-06-02 17:12:34.020026:  [LOG]: collect button pressed
-2023-06-02 17:12:34.020026:  [LOG]: Stopped data collection
-2023-06-02 17:12:34.020026:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 17:12:34.045994:  [LOG]: a connection to a devices was lost, terminating collection
-2023-06-02 17:13:07.934215:  [LOG]: closing app
-2023-06-02 17:49:38.352361:  [LOG]: created and activated log file...
-2023-06-02 17:49:46.019779:  [LOG]: collect button pressed
-2023-06-02 17:49:46.019779:  [LOG]: trying to start collection...
-2023-06-02 17:49:46.019779:  [LOG]: registering devices...
-2023-06-02 17:49:46.019779:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 17:49:46.019779:  [LOG]: got options...
-2023-06-02 17:49:46.019779:  [LOG]: options for device: RightMotionSense2
-2023-06-02 17:49:46.019779:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000028499AD7AC0>]
-2023-06-02 17:49:46.019779:  [LOG]: creating thread...
-2023-06-02 17:49:46.020782:  [LOG]: creating child shared memory flag for end
-2023-06-02 17:49:46.025784:  [LOG]: creating Process...
-2023-06-02 17:49:46.025784:  [LOG]: attempting to start thread0
-2023-06-02 17:49:46.032783:  [LOG]: adding thread to list
-2023-06-02 17:49:46.033302:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 17:49:46.033302:  [LOG]: sucessfully registered all devices
-2023-06-02 17:49:46.033338:  [LOG]: started data collection
-2023-06-02 17:49:46.033338:  [LOG]: started for 1devices
-2023-06-02 17:49:56.881176:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 17:50:16.880880:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 17:50:36.881815:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 17:50:56.881791:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 17:51:11.739689:  [LOG]: collect button pressed
-2023-06-02 17:51:11.739689:  [LOG]: Stopped data collection
-2023-06-02 17:51:11.739689:  [LOG]: trying to terminate existing bluetooth data collection...
-2023-06-02 17:51:20.330718:  [LOG]: collect button pressed
-2023-06-02 17:51:20.330718:  [LOG]: trying to start collection...
-2023-06-02 17:51:20.330718:  [LOG]: registering devices...
-2023-06-02 17:51:20.330718:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 17:51:20.330718:  [LOG]: got options...
-2023-06-02 17:51:20.330718:  [LOG]: options for device: RightMotionSense2
-2023-06-02 17:51:20.330718:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000028499AD7AC0>, <data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000028499AD7AC0>]
-2023-06-02 17:51:20.330718:  [LOG]: creating thread...
-2023-06-02 17:51:20.330718:  [LOG]: creating child shared memory flag for end
-2023-06-02 17:51:20.331718:  [LOG]: creating Process...
-2023-06-02 17:51:20.331718:  [LOG]: attempting to start thread0
-2023-06-02 17:51:20.336282:  [LOG]: adding thread to list
-2023-06-02 17:51:20.336282:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 17:51:20.336848:  [LOG]: sucessfully registered all devices
-2023-06-02 17:51:20.336848:  [LOG]: started data collection
-2023-06-02 17:51:20.336848:  [LOG]: started for 1devices
-2023-06-02 17:51:36.881276:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 17:51:56.878717:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 17:52:16.881796:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 17:52:36.880757:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 17:52:56.878640:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 17:53:16.879006:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 17:53:36.878877:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 17:53:56.881845:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 17:54:16.879991:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 17:54:36.879485:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 17:54:56.880907:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 17:55:16.880645:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 17:55:36.882332:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 17:55:47.276052:  [LOG]: closing app
-2023-06-02 18:01:10.202697:  [LOG]: created and activated log file...
-2023-06-02 18:02:06.266953:  [LOG]: collect button pressed
-2023-06-02 18:02:06.266953:  [LOG]: trying to start collection...
-2023-06-02 18:02:06.266953:  [LOG]: registering devices...
-2023-06-02 18:02:06.266953:  [LOG]: registering device D4:82:69:C4:86:2E
-2023-06-02 18:02:06.266953:  [LOG]: registering device C2:23:01:DB:0B:C1
-2023-06-02 18:02:06.266953:  [LOG]: got options...
-2023-06-02 18:02:06.266953:  [LOG]: options for device: RightMotionSense2
-2023-06-02 18:02:06.266953:  [LOG]: [<data_collection.bluetooth_reciver.MSenseCharacteristic object at 0x0000024DCDFC7AC0>]
-2023-06-02 18:02:06.266953:  [LOG]: creating thread...
-2023-06-02 18:02:06.266953:  [LOG]: creating child shared memory flag for end
-2023-06-02 18:02:06.272571:  [LOG]: creating Process...
-2023-06-02 18:02:06.273572:  [LOG]: attempting to start thread0
-2023-06-02 18:02:06.280285:  [LOG]: adding thread to list
-2023-06-02 18:02:06.280285:  [LOG]: sucessfully registered all devices
-2023-06-02 18:02:06.280285:  [LOG]: started data collection
-2023-06-02 18:02:06.280285:  [LOG]: started for 1devices
-2023-06-02 18:02:09.334895:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 18:02:29.333780:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 18:02:49.331620:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 18:03:09.336722:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 18:03:29.334557:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 18:03:49.332201:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 18:04:09.333390:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 18:04:29.334033:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 18:04:49.335003:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 18:05:09.335956:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 0
-2023-06-02 18:05:29.336069:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 18:05:49.332550:  [LOG]: Current Collecting Devices: 1
-disconnected_devices = 1
-2023-06-02 18:06:08.946767:  [LOG]: closing app
-2023-06-22 18:49:47.761541:  [LOG]: created and activated log file...
-2023-06-22 18:49:53.219309:  [LOG]: closing app
+2023-07-13 19:00:15.572006:  [LOG]: Current Collecting Devices: 4
+disconnected_devices = 3
+2023-07-13 19:00:17.572057:  [LOG]: collect button pressed
+2023-07-13 19:00:17.572057:  [LOG]: Stopped data collection
+2023-07-13 19:00:17.572545:  [LOG]: trying to terminate existing bluetooth data collection...
+2023-07-13 19:00:17.575038:  [LOG]: a connection to a device was lost, terminating collection
+2023-07-13 19:11:39.395280:  [LOG]: closing app
