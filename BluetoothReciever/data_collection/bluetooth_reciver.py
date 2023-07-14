@@ -18,7 +18,7 @@ import os
 import sys
 import datetime
 
-
+debug_print_updates = False
 
 use_lsl = False
 if use_lsl:
@@ -175,7 +175,6 @@ def motionsense_handler(sender, data):
     #await bleak_device.read_gatt_char(m_service)
     accelorometer_data = []
     Accelorometer_X = data[0:2]
-    print(Accelorometer_X)
     Accelorometer_Y = data[2:4]
     Accelerometer_Z = data[4:6]
     Angular_velocity_X = data[6:8]
@@ -197,7 +196,8 @@ def motionsense_handler(sender, data):
     MSense_data.angular_velocity_z.append(Angular_velocity_Z[0])
 
     packet_counter = data[12:14]
-    print("ppg packet counter: " + str(packet_counter))
+    if debug_print_updates:
+        print("accelorometer packet counter: " + str(packet_counter))
     packet_counter = struct.unpack(">h", packet_counter)
     MSense_data.accelorometer_packet_counter.append(packet_counter[0])
 
@@ -205,13 +205,13 @@ def motionsense_handler(sender, data):
                       MSense_data.accelorometer_packet_counter[
                           len(MSense_data.accelorometer_packet_counter) - 2]
     MSense_data.accelorometer_packet_loss.append(packets_recived)
-    MSense_data.accelorometer_timestamp.append(datetime.datetime.now())
+    MSense_data.accelorometer_timestamp.append(str(datetime.datetime.now().time()))
 
 
 
 def ppg_handler(sender, data:bytes):
     global file_name
-    print(sender)
+    #print(sender)
     if use_previous_packet_format:
         Led_ir1 = data[0:4]
         Led_ir2 = data[4:8]
@@ -265,7 +265,8 @@ def ppg_handler(sender, data:bytes):
     #Led_ir1 = struct.unpack("<l", Led_ir1)
     hex_string += " interpreted value: Led IR1:" + str(Led_ir1) + " LED IR2 " + str(Led_ir2) + " LED G1 " + str(Led_g15) + " LED G2 " + str(Led_g2)
     packet_counter = data[10:12]
-    print("ppg packet counter: " + str(packet_counter))
+    if debug_print_updates:
+        print("ppg packet counter: " + str(packet_counter))
     packet_counter = struct.unpack(">h", packet_counter)
 
     MSense_data.ppg_led1ir_arr.append(Led_ir1)
@@ -280,6 +281,8 @@ def ppg_handler(sender, data:bytes):
 
     MSense_data.ppg_packet_loss_counter.append(10-packets_recived)
 
+    time_string = str(datetime.datetime.now().time())
+    MSense_data.ppg_date_time.append(time_string)
 
     horizontal_array = [Led_ir1, Led_ir2, Led_g15, Led_g2, packet_counter[0], 10-packets_recived]
     if use_lsl:
@@ -322,7 +325,8 @@ def orientation_handler(sender, data):
 
 
 def BioImpedanceHandle(sender, data):
-    print("collecting data")
+    if debug_print_updates:
+        print("collecting data")
     ImpedanceMagRaw = data[0:4]
     ImpedanceMag = struct.unpack(">f", ImpedanceMagRaw)
 
@@ -336,6 +340,7 @@ def BioImpedanceHandle(sender, data):
     MSense_data.BioImpedanceMag.append(ImpedanceMag)
     MSense_data.BioImpedancePhase.append(ImpedancePhase)
     MSense_data.BioImpedancePacketCounter.append(ImpedanceCounter)
+    MSense_data.BioImpedanceTimeStamp.append(str(datetime.datetime.now().time()))
 
 
 
@@ -355,13 +360,15 @@ def build_uuid_dict(client):
 def disconnect_callback(client):
     print("error: device disconnected")
     # wait for 5 seconds to make sure the device doesn't reconnect, as per ble protocol?
-    time.sleep(10)
+    time.sleep(6)
     if not client.is_connected:
         global file_name
         write_all_files(file_name)
         sys.exit()
     else:
         print("device reconnected")
+
+
 
 async def connect_address(Devices:list[MSenseDevice]=None):
     print("scanning connections")
@@ -519,46 +526,59 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
 
 
 
-def write_all_files(file_name):
+def write_all_files(path = None):
+    
+    if path is None:
+        global file_name
+    else:
+        file_name = path
     # write accelorometer data
     if not os.path.exists(file_name):
         os.mkdir(file_name)
     time_stamp = datetime.datetime.now().strftime("%d-%m-%Y-at%H-%M")
-    MSense_data.accelorometer_file = open(file_name + "//Acelorometer" + time_stamp + ".csv", "w", newline="")
-    csv_writer = csv.writer(MSense_data.accelorometer_file)
+    
     csv_rows = list()
     for data_element in range(len(MSense_data.accelorometer_x)):
         csv_rows.append([MSense_data.accelorometer_x[data_element], MSense_data.accelorometer_y[data_element],
                          MSense_data.accelorometer_z[data_element], MSense_data.angular_velocity_x[data_element],
                          MSense_data.angular_velocity_y[data_element], MSense_data.angular_velocity_z[data_element],
-                         MSense_data.accelorometer_packet_counter[data_element], MSense_data.accelorometer_packet_loss[data_element]])
-    csv_writer.writerow(["Acel_X", "Acel_Y", "Acel_Z", "AngVel_X", "AngVel_Y", "AngVel_Z", "PacketCounter", "PacketLoss"])
-    csv_writer.writerows(csv_rows)
-    print("closing accelorometer file")
-    MSense_data.accelorometer_file.close()
+                         MSense_data.accelorometer_packet_counter[data_element], MSense_data.accelorometer_packet_loss[data_element],
+                         MSense_data.accelorometer_timestamp[data_element]])
+    if len(csv_rows) != 0:
+        MSense_data.accelorometer_file = open(file_name + "//Acelorometer" + time_stamp + ".csv", "w", newline="")
+        csv_writer = csv.writer(MSense_data.accelorometer_file)
+        csv_writer.writerow(["Acel_X", "Acel_Y", "Acel_Z", "AngVel_X", "AngVel_Y", "AngVel_Z", "PacketCounter", "PacketLoss", "Timestamp"])
+        csv_writer.writerows(csv_rows)
+        print("closing accelorometer file")
+        MSense_data.accelorometer_file.close()
 
-    MSense_data.ppg_file = open(file_name + "//PPG" + time_stamp + ".csv", "w", newline="")
-    csv_writer = csv.writer(MSense_data.ppg_file)
+    
     csv_rows = list()
     for data_element in range(len(MSense_data.ppg_led1ir_arr)):
         csv_rows.append([MSense_data.ppg_led1ir_arr[data_element], MSense_data.ppg_led2ir_arr[data_element],
                          MSense_data.ppg_g1_arr[data_element], MSense_data.ppg_g2_arr[data_element],
-                         MSense_data.ppg_packet_counter[data_element], MSense_data.ppg_packet_loss_counter[data_element]])
-    csv_writer.writerow(["PPG_IR1", "PPG_IR2", "PPG_G1", "PPG_G2", "PacketCounter", "PacketLoss"])
-    csv_writer.writerows(csv_rows)
-    print("closing ppg file")
-    MSense_data.ppg_file.close()
+                         MSense_data.ppg_packet_counter[data_element], MSense_data.ppg_packet_loss_counter[data_element],
+                        MSense_data.ppg_date_time[data_element]])
+    if len(csv_rows) != 0:    
+        MSense_data.ppg_file = open(file_name + "//PPG" + time_stamp + ".csv", "w", newline="")
+        csv_writer = csv.writer(MSense_data.ppg_file)
+        csv_writer.writerow(["PPG_IR1", "PPG_IR2", "PPG_G1", "PPG_G2", "PacketCounter", "PacketLoss", "Timestamp"])
+        csv_writer.writerows(csv_rows)
+        print("closing ppg file")
+        MSense_data.ppg_file.close()
+
     print("begin BioImpedance Processing")
-    MSense_data.BioImpedanceFile = open(file_name + "//BioImpedance" + time_stamp +".csv", "w", newline="")
-    csv_writer = csv.writer(MSense_data.BioImpedanceFile)
     csv_rows = list()
     for data_element in range(len(MSense_data.BioImpedancePhase)):
         csv_rows.append([MSense_data.BioImpedanceMag[data_element],MSense_data.BioImpedancePhase[data_element],
-                         MSense_data.BioImpedancePacketCounter[data_element]])
-    csv_writer.writerow(["BioImpReal", "BioImpImaginary", "PacketCounter", ])
-    csv_writer.writerows(csv_rows)
-    print("closing ppg file")
-    MSense_data.BioImpedanceFile.close()
+                         MSense_data.BioImpedancePacketCounter[data_element], MSense_data.BioImpedanceTimeStamp[data_element]])
+    if len(csv_rows) != 0:
+        MSense_data.BioImpedanceFile = open(file_name + "//BioImpedance" + time_stamp +".csv", "w", newline="")
+        csv_writer = csv.writer(MSense_data.BioImpedanceFile)    
+        csv_writer.writerow(["BioImpReal", "BioImpImaginary", "PacketCounter", "TimeStamp"])
+        csv_writer.writerows(csv_rows)
+        print("closing BioImpedance file")
+        MSense_data.BioImpedanceFile.close()
 
 
 
@@ -631,6 +651,7 @@ def turn_on(data_function=notification_handler, record_length = 300):
     print("attempting to connect to MotionSense...\n")  # loop.set_debug(True)
     loop.run_until_complete(run(address, True, notification_handler, data_amount = record_length))
 
+atexit.register(write_all_files)
 
 if __name__ =='__main__':
     turn_on(record_length=30)

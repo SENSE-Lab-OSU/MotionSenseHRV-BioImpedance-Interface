@@ -253,8 +253,9 @@ class MotionSenseApp(QWidget):
 
         print("updating...")
 
-        debug_string = "Current Collecting Devices: " + str(len(self.threads)) + "\n"
+        
         disconnected_devices = 0
+        
         if self.threads is not None:
             for thread in self.threads:
                 process = thread[0]
@@ -262,21 +263,24 @@ class MotionSenseApp(QWidget):
                     pass
                 else:
                     disconnected_devices += 1
-
+            debug_string = "Current Collecting Devices: " + str(len(self.threads)- disconnected_devices) + "\n"
             debug_string += "disconnected_devices = " + str(disconnected_devices)
             if self.currently_collecting:
-                if self.update_modulus % 4 == 0:
-                    self.log(debug_string)
-                self.update_modulus += 1
                 # this timer is updating every 2 seconds, so we multiply by 2 to get the true time
                 progress_value = int(((self.update_modulus*2)/self.record_length)*100)
                 if progress_value >= 100:
                     progress_value = 98
+                    debug_string = "Collection Finished, Disconnecting Devices..."
                 self.progress_bar.setValue(progress_value)
+                if self.update_modulus % 2 == 0:
+                    self.log(debug_string)
+                self.update_modulus += 1
+                
+                
                 if len(self.threads) != 0 and disconnected_devices == len(self.threads) and disconnected_devices > 0:
 
                     self.collect_data()
-                    self.log("a connection to a device was lost, terminating collection")
+                    self.log("all devices have been disconnected, terminating collection")
 
 
 

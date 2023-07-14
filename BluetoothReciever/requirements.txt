@@ -3,3 +3,4 @@ bleak
 numpy
 pylsl
 pandas
+matplotlib
