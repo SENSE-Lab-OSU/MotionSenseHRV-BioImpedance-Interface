@@ -8,6 +8,7 @@ import platform
 import time
 import atexit
 import bleak.exc
+import matplotlib.pyplot as plt
 import numpy
 from bleak import BleakClient
 from bleak import _logger as logger
@@ -19,7 +20,7 @@ import sys
 import datetime
 
 debug_print_updates = False
-
+show_matplotlib_graphs = True
 use_lsl = False
 if use_lsl:
     from data_collection import lsl_transmission
@@ -413,9 +414,6 @@ def create_csv_file(name:str, path):
         MSense_data.ppg_file = csv.DictWriter(th_csv_file, fieldnames=field_names)
         MSense_data.ppg_file.writeheader()
 
-def make_csv_dict(str, data):
-    pass
-
 
 
 async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None):
@@ -552,6 +550,8 @@ def write_all_files(path = None):
         print("closing accelorometer file")
         MSense_data.accelorometer_file.close()
 
+
+
     
     csv_rows = list()
     for data_element in range(len(MSense_data.ppg_led1ir_arr)):
@@ -581,6 +581,48 @@ def write_all_files(path = None):
         MSense_data.BioImpedanceFile.close()
 
 
+def write_files(file_name:str, type:str, time_stamp:str, file_obj,
+                csv_categories, csv_rows):
+    if len(csv_rows) != 0:
+        with open(file_name + type + time_stamp +".csv", "w", newline="") as file_obj:
+            csv_writer = csv.writer(file_obj)    
+            csv_writer.writerow(csv_categories)
+            csv_writer.writerows(csv_rows)
+            print("closing file")
+
+
+def show_graph(title, data):
+    # by just using plt, it now comes with auto zoom features which I somehow missed.
+
+    # create random data
+    xdata = numpy.random.random([2, 10])
+
+    # split the data into two parts
+    xdata1 = xdata[0, :]
+    xdata2 = xdata[1, :]
+
+    ydata1 = xdata1 ** 2
+    ydata2 = 1 - xdata2 ** 3
+
+    # plot the data
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.plot(xdata1, ydata1, color='tab:blue')
+    ax.plot(xdata2, ydata2, color='tab:orange')
+    
+
+    # set the limits
+    ax.set_xlim([0, 1])
+    ax.set_ylim([0, 1])
+
+    ax.set_title(title)
+
+    # display the plot
+
+    # this may cause issues because we are supposed to shutdown this process after data
+    # collection is done, which will shutdown this graph even if block=False.
+    plt.show(block=False)
+        
 
 
 
