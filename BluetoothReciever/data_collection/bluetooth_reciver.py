@@ -568,8 +568,10 @@ def write_all_files(path = None):
         csv_writer.writerows(csv_rows)
         print("closing ppg file")
         MSense_data.ppg_file.close()
-        show_graph("ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
+        show_graph(file_name + "filtered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
                                  MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], True)
+        show_graph(file_name + "unfiltered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
+                                 MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], False)
 
     print("begin BioImpedance Processing")
     csv_rows = list()
@@ -629,12 +631,12 @@ def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
         real_y_data = data[data_element]
         if ppg_filter_passthrough:
             real_y_data = scipy.signal.filtfilt(b, 1, real_y_data, axis=-1, padtype=None)
-            ax.plot(real_x_data, real_y_data, label=labels[data_element])
+        ax.plot(real_x_data, real_y_data, label=labels[data_element])
     
     ax.legend()
     # set the limits
     #ax.set_xlim([0, 1])
-    ax.set_ylim([-1000, 1000])
+    #ax.set_ylim([-1000, 1000])
     
     ax.set_title(title)
 
