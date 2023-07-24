@@ -4,3 +4,4 @@ bleak == 0.20.2
 pylsl
 numpy == 1.24.3
 matplotlib
+scipy

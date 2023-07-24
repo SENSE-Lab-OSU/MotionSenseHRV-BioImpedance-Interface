@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import numpy
 from bleak import BleakClient
 from bleak import _logger as logger
+import scipy
 import struct
 import csv
 import threading
@@ -40,6 +41,7 @@ file_name = ""
 file_obj = None
 
 use_previous_packet_format = False
+sucessful_file_write = False
 
 
 
@@ -347,8 +349,6 @@ def BioImpedanceHandle(sender, data):
 
 
 
-
-
 def build_uuid_dict(client):
     characteristics = client.services.characteristics.values()
     characteristics = list(characteristics)
@@ -525,7 +525,9 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
 
 
 def write_all_files(path = None):
-    
+    global sucessful_file_write
+    if sucessful_file_write:
+        return
     if path is None:
         global file_name
     else:
@@ -566,6 +568,8 @@ def write_all_files(path = None):
         csv_writer.writerows(csv_rows)
         print("closing ppg file")
         MSense_data.ppg_file.close()
+        show_graph("ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
+                                 MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], True)
 
     print("begin BioImpedance Processing")
     csv_rows = list()
@@ -579,6 +583,7 @@ def write_all_files(path = None):
         csv_writer.writerows(csv_rows)
         print("closing BioImpedance file")
         MSense_data.BioImpedanceFile.close()
+    sucessful_file_write = True
 
 
 def write_files(file_name:str, type:str, time_stamp:str, file_obj,
@@ -589,11 +594,12 @@ def write_files(file_name:str, type:str, time_stamp:str, file_obj,
             csv_writer.writerow(csv_categories)
             csv_writer.writerows(csv_rows)
             print("closing file")
+            
 
 
-def show_graph(title, data):
+def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
     # by just using plt, it now comes with auto zoom features which I somehow missed.
-
+    
     # create random data
     xdata = numpy.random.random([2, 10])
 
@@ -607,24 +613,55 @@ def show_graph(title, data):
     # plot the data
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    ax.plot(xdata1, ydata1, color='tab:blue')
-    ax.plot(xdata2, ydata2, color='tab:orange')
     
+    #ax.plot(xdata1, ydata1, color='tab:blue')
+    #ax.plot(xdata2, ydata2, color='tab:orange')
+    Fs = 25 # sampling rate of PPG
+    b = scipy.signal.firls(numtaps=33,bands= numpy.array([0,0.2,0.5,2.5,2.8,Fs/2])
+                  , desired = numpy.array([0,0,1,1,0,0]),
+                  weight = numpy.array([2000,100,1000]),
+                  fs = Fs) # fit a filter
 
+
+    for data_element in range(len(data)):
+        row = len(data[data_element])
+        real_x_data = numpy.arange(row)
+        real_y_data = data[data_element]
+        if ppg_filter_passthrough:
+            real_y_data = scipy.signal.filtfilt(b, 1, real_y_data, axis=-1, padtype=None)
+            ax.plot(real_x_data, real_y_data, label=labels[data_element])
+    
+    ax.legend()
     # set the limits
-    ax.set_xlim([0, 1])
-    ax.set_ylim([0, 1])
-
+    #ax.set_xlim([0, 1])
+    ax.set_ylim([-1000, 1000])
+    
     ax.set_title(title)
 
     # display the plot
 
     # this may cause issues because we are supposed to shutdown this process after data
     # collection is done, which will shutdown this graph even if block=False.
-    plt.show(block=False)
+    plt.show(block=True)
         
-
-
+def construct_graph_from_csv(title, file):
+    all_rows = []
+    # should have used pandas here, but oh well
+    # pandas implementation for reference:
+    # a = pd.read_csv()
+    # all_columns = numpy.transpose(all_rows)
+    with open(file_name, "r", newline="") as file_obj:
+            csv_reader = csv.reader(file_obj)    
+            for index, row in enumerate(csv_reader):
+                if index == 0:
+                    titles = row
+                else:
+                    all_rows.append(row)
+            
+    print("closing file")
+    all_columns = numpy.transpose(all_rows)
+    show_graph(title, all_columns, titles)
+        
 
 async def disconnect(client, services:list):
     for service in services:
@@ -666,7 +703,7 @@ def non_async_collect(address, path, max_length, collect_options, end_flag):
     except Exception as e:
         print("bleak client backend bluetooth error")
         print(e)
-
+        
 
 async def collect_with_adress(address):
     loop = asyncio.get_event_loop()

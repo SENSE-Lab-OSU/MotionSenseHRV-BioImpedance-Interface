@@ -2,5 +2,5 @@ PyQt5
 bleak
 numpy
 pylsl
-pandas
 matplotlib
+scipy

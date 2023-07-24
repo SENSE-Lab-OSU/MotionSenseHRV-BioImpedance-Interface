@@ -469,6 +469,7 @@ class MotionSense_device_QWidget(QWidget):
         for characteristic in device.characteristics:
             current_checkbox = [QCheckBox(characteristic.name + " collection")]
             current_checkbox.append(characteristic)
+            current_checkbox[0].setChecked(True)
             self.options.append(current_checkbox)
 
 
