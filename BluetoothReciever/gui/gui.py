@@ -10,9 +10,9 @@ import multiprocessing
 from PyQt5.QtCore import pyqtSlot
 
 
-from datetime import datetime
+import datetime
 
-print(str(datetime.now()))
+print(str(datetime.datetime.now()))
 
 
 '''This is the UI script for the OSU MotionSense Bluetooth
@@ -46,7 +46,6 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPixmap, QFont
 
 from PyQt5.QtCore import Qt
-from datetime import datetime
 import PyQt5.QtWidgets
 
 import PyQt5.Qt
@@ -78,7 +77,7 @@ class MotionSenseApp(QWidget):
         self.addresses = []
 
         self.timer = PyQt5.QtCore.QTimer()
-        self.timer.setInterval(2000)
+        self.timer.setInterval(1000)
         self.timer.timeout.connect(self.update_timer)
 
         self.timer.start()
@@ -139,9 +138,9 @@ class MotionSenseApp(QWidget):
 
         logging_header = QLabel("Logging Options")
         logging_header.setFont(font)
-        Option1 = QLoggingOptions(lambda: self.log("Option1 Started"), "Log Option1")
-        Option2 = QLoggingOptions(lambda: self.log("Option2 Started"), "Log Option2")
-        Option3 = QLoggingOptions(lambda: self.log("Option3 Started"), "Log Option3")
+        Option1 = QLoggingOptions(lambda: self.log("Pre-Bike Phase Started", True), "Log Pre-Bike Phase")
+        Option2 = QLoggingOptions(lambda: self.log("Bike Started", True), "Log Bike Phase")
+        Option3 = QLoggingOptions(lambda: self.log("Post Bike Phase Started", True), "Log Post-Bike Phase")
 
         Options = QHBoxLayout()
         collections_layout.addWidget(logging_header)
@@ -159,11 +158,11 @@ class MotionSenseApp(QWidget):
         collections_layout.addWidget(QLabel(" "))
         # progress bar
         self.progress_bar = PyQt5.QtWidgets.QProgressBar()
-
+        self.progress_bar_label = QLabel("Collection Progress")
         data_label = QLabel("Data Collection:")
         data_label.setFont(font)
         collections_layout.addWidget(data_label)
-        collections_layout.addRow(QLabel("Collection Progress"), self.progress_bar)
+        collections_layout.addRow(self.progress_bar_label, self.progress_bar)
         collections_layout.addWidget(self.button)
         collections_layout.addWidget(self.gather_button)
 
@@ -183,6 +182,26 @@ class MotionSenseApp(QWidget):
                                                             "an apropriate MotionSenseDevice ready and turned on!")
         collections_layout.addWidget(self.notice)
 
+        self.path = self.file_line.text() + "\\" + self.file_line2.text()
+        print(self.path)
+
+        # try and create the directory for storing data
+        self.log("making directories..")
+        try:
+            os.mkdir(self.path)
+        except FileExistsError:
+            self.log("directory already exists, keeping old")
+        except:
+            self.log("Could not create the directory! " + str(self.path) + " is invalid.")
+            return
+        finally:
+            self.log("moving on")
+        self.log("sucessfully created directories!")
+        self.logging_file = open(self.path + "\\" + "log.txt", "a")
+        self.user_log_file = open(self.path + "\\" + "user_log.txt", "a")
+        self.log("created and activated log file...")
+
+
         # Nest the inner layouts into the outer layout
         outerLayout.addLayout(picture_layout)
         outerLayout.addLayout(topLayout)
@@ -193,6 +212,7 @@ class MotionSenseApp(QWidget):
         self.setLayout(outerLayout)
 
         self.currently_collecting = False
+        
 
 
 
@@ -216,22 +236,6 @@ class MotionSenseApp(QWidget):
                 self.optionsLayout.addWidget(device)
             self.path = self.file_line.text() + "\\" + self.file_line2.text()
             print(self.path)
-
-            # try and create the directory for storing data
-            self.log("making directories..")
-            try:
-                os.mkdir(self.path)
-            except FileExistsError:
-                self.log("directory already exists, keeping old")
-            except:
-                self.log("Could not create the directory! " + str(self.path) + " is invalid.")
-                return
-            finally:
-                self.log("moving on")
-            self.log("sucessfully created directories!")
-            self.logging_file = open(self.path + "\\" + "log.txt", "a")
-            self.log("created and activated log file...")
-
         else:
             print("failed to connect")
             self.log_disp.setText("failed to connect!")
@@ -267,11 +271,13 @@ class MotionSenseApp(QWidget):
             debug_string += "disconnected_devices = " + str(disconnected_devices)
             if self.currently_collecting:
                 # this timer is updating every 2 seconds, so we multiply by 2 to get the true time
-                progress_value = int(((self.update_modulus*2)/self.record_length)*100)
+                progress_value = int(((self.update_modulus)/self.record_length)*100)
+                
                 if progress_value >= 100:
                     progress_value = 98
                     debug_string = "Collection Finished, Disconnecting Devices..."
                 self.progress_bar.setValue(progress_value)
+                self.progress_bar_label.setText("Collection Progress: " + str(datetime.timedelta(seconds=self.update_modulus)))
                 if self.update_modulus % 2 == 0:
                     self.log(debug_string)
                 self.update_modulus += 1
@@ -315,7 +321,7 @@ class MotionSenseApp(QWidget):
             self.threads.clear()
 
 
-            #print(datetime.now())
+            #print(datetime.datetime.now())
             self.gather_button.setText("Start")
 
             return
@@ -391,6 +397,7 @@ class MotionSenseApp(QWidget):
         print(text)
         if user_message:
             info_string = "[USER INFO]: "
+            self.log_file_user(info_string + text)
         else:
             info_string = "[LOG]: "
         self.log_file(info_string + text)
@@ -399,8 +406,16 @@ class MotionSenseApp(QWidget):
 
     def log_file(self, text):
         if self.logging_file is not None and not self.logging_file.closed:
-            logging_string = str(datetime.now()) + ":  " + text + "\n"
+            logging_string = str(datetime.datetime.now()) + ":  " + text + "\n"
             self.logging_file.write(logging_string)
+            
+        else:
+            print("error writing to log file")
+
+    def log_file_user(self, text):
+        if self.user_log_file is not None and not self.user_log_file.closed:
+            logging_string = str(datetime.datetime.now()) + ":  " + text + "\n"
+            self.user_log_file.write(logging_string)
         else:
             print("error writing to log file")
 
@@ -579,6 +594,7 @@ class Window(QMainWindow):
         self.widget.log("closing app")
         try:
             self.widget.logging_file.close()
+            self.widget.user_log_file.close()
         except Exception as e:
             print(e)
 
