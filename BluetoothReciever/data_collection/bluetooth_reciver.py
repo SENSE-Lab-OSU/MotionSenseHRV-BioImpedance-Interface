@@ -45,7 +45,6 @@ sucessful_file_write = False
 
 
 
-
 ''' This is a class for holding information about a single bluetooth attribute.'''
 class MSenseCharacteristic:
 
@@ -340,10 +339,11 @@ def BioImpedanceHandle(sender, data):
     ImpedanceCounter = struct.unpack("<B", ImpedanceCounterRaw)
     #ImpedanceCounter = ord(ImpedanceCounter[0])
 
-    MSense_data.BioImpedanceMag.append(ImpedanceMag)
-    MSense_data.BioImpedancePhase.append(ImpedancePhase)
-    MSense_data.BioImpedancePacketCounter.append(ImpedanceCounter)
-    MSense_data.BioImpedanceTimeStamp.append(str(datetime.datetime.now().time()))
+    MSense_data.BioImpedanceMag.append(ImpedanceMag[0])
+    MSense_data.BioImpedancePhase.append(ImpedancePhase[0])
+    MSense_data.BioImpedancePacketCounter.append(ImpedanceCounter[0])
+    MSense_data.BioImpedanceTimeStamp.append(time.time())
+    #MSense_data.BioImpedanceTimeStamp.append(str(datetime.datetime.now().time()))
 
 
 
@@ -493,7 +493,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
 
                 #create_csv_file("ppg", path)
                 print("starting notify for " + str(characteristic.name))
-
+                
                 status = await client.start_notify(service, characteristic.function)
 
 
@@ -534,7 +534,7 @@ def write_all_files(path = None):
         file_name = path
     # write accelorometer data
     if not os.path.exists(file_name):
-        os.mkdir(file_name)
+        os.makedirs(file_name, exist_ok=True)
     time_stamp = datetime.datetime.now().strftime("%d-%m-%Y-at%H-%M")
     
     csv_rows = list()
@@ -647,9 +647,9 @@ def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
     plt.show(block=True)
 
 
-def show_impedance_graph(title, data: list, times:list, labels: list):
+def show_impedance_graph(title):
     # by just using plt, it now comes with auto zoom features which I somehow missed.
-
+    times = MSense_data.BioImpedanceTimeStamp
     # get the time where the array is equal to 10
     pre_times = numpy.array(times)
     bike_times = numpy.array(times)
@@ -670,39 +670,27 @@ def show_impedance_graph(title, data: list, times:list, labels: list):
     bike_index = numpy.argmin(bike_times)
     post_times = numpy.argmin(post_times)
 
+    pre_bike_matrix = numpy.array(contruct_points_matrix(0, pre_index))
+    bike_matrix = numpy.array(contruct_points_matrix(pre_index, bike_index))
+    post_matrix = numpy.array(contruct_points_matrix(bike_index, post_matrix))
+    
+    # TODO: Figure this out
+    pre_bike_y = []
+    for array_element in pre_bike_matrix:
+        pre_bike_y.append(numpy.mean(array_element))
+
+    pre_bike_x = numpy.arange(len(pre_bike_y)) 
 
 
 
 
-    # create random data
-    xdata = numpy.random.random([2, 10])
 
-    # split the data into two parts
-    xdata1 = xdata[0, :]
-    xdata2 = xdata[1, :]
-
-    ydata1 = xdata1 ** 2
-    ydata2 = 1 - xdata2 ** 3
+    
 
     # plot the data
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-
-    # ax.plot(xdata1, ydata1, color='tab:blue')
-    # ax.plot(xdata2, ydata2, color='tab:orange')
-    Fs = 25  # sampling rate of PPG
-    b = scipy.signal.firls(numtaps=33, bands=numpy.array([0, 0.2, 0.5, 2.5, 2.8, Fs / 2])
-                           , desired=numpy.array([0, 0, 1, 1, 0, 0]),
-                           weight=numpy.array([2000, 100, 1000]),
-                           fs=Fs)  # fit a filter
-
-    for data_element in range(len(data)):
-        row = len(data[data_element])
-        real_x_data = numpy.arange(row)
-        real_y_data = data[data_element]
-        if ppg_filter_passthrough:
-            real_y_data = scipy.signal.filtfilt(b, 1, real_y_data, axis=-1, padtype=None)
-        ax.plot(real_x_data, real_y_data, label=labels[data_element])
+    ax.plot(pre_bike_x, pre_bike_y)
 
     ax.legend()
     # set the limits
@@ -716,6 +704,24 @@ def show_impedance_graph(title, data: list, times:list, labels: list):
     # this may cause issues because we are supposed to shutdown this process after data
     # collection is done, which will shutdown this graph even if block=False.
     plt.show(block=True)
+
+
+def contruct_points_matrix(start_idx, stop_idx):
+    net_array = []
+    real_phase = MSense_data.BioImpedanceMag
+    imagine_phase = MSense_data.BioImpedancePhase
+    counter = MSense_data.BioImpedancePacketCounter
+    # create the empty array
+    for array_element in range(0, 100):
+        net_array.append(list())
+
+    for idx in range(start_idx, stop_idx):
+        actual_idx = counter[idx]
+        net_number = (real_phase[actual_idx] + imagine_phase[actual_idx])/ 2
+        net_array[idx].append(net_number)
+
+    return net_array
+
 
 
 def construct_graph_from_csv(title, file):
