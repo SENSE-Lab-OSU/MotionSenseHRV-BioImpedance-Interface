@@ -645,7 +645,79 @@ def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
     # this may cause issues because we are supposed to shutdown this process after data
     # collection is done, which will shutdown this graph even if block=False.
     plt.show(block=True)
-        
+
+
+def show_impedance_graph(title, data: list, times:list, labels: list):
+    # by just using plt, it now comes with auto zoom features which I somehow missed.
+
+    # get the time where the array is equal to 10
+    pre_times = numpy.array(times)
+    bike_times = numpy.array(times)
+    post_times = numpy.array(times)
+
+    starting_time = times[0]
+
+
+    pre_times -= (5 + starting_time)
+    bike_times -= (10 + starting_time)
+    post_times -= (15 + starting_time)
+
+    pre_times = abs(pre_times)
+    bike_times = abs(bike_times)
+    post_times = abs(post_times)
+
+    pre_index = numpy.argmin(pre_times)
+    bike_index = numpy.argmin(bike_times)
+    post_times = numpy.argmin(post_times)
+
+
+
+
+
+    # create random data
+    xdata = numpy.random.random([2, 10])
+
+    # split the data into two parts
+    xdata1 = xdata[0, :]
+    xdata2 = xdata[1, :]
+
+    ydata1 = xdata1 ** 2
+    ydata2 = 1 - xdata2 ** 3
+
+    # plot the data
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+
+    # ax.plot(xdata1, ydata1, color='tab:blue')
+    # ax.plot(xdata2, ydata2, color='tab:orange')
+    Fs = 25  # sampling rate of PPG
+    b = scipy.signal.firls(numtaps=33, bands=numpy.array([0, 0.2, 0.5, 2.5, 2.8, Fs / 2])
+                           , desired=numpy.array([0, 0, 1, 1, 0, 0]),
+                           weight=numpy.array([2000, 100, 1000]),
+                           fs=Fs)  # fit a filter
+
+    for data_element in range(len(data)):
+        row = len(data[data_element])
+        real_x_data = numpy.arange(row)
+        real_y_data = data[data_element]
+        if ppg_filter_passthrough:
+            real_y_data = scipy.signal.filtfilt(b, 1, real_y_data, axis=-1, padtype=None)
+        ax.plot(real_x_data, real_y_data, label=labels[data_element])
+
+    ax.legend()
+    # set the limits
+    # ax.set_xlim([0, 1])
+    # ax.set_ylim([-1000, 1000])
+
+    ax.set_title(title)
+
+    # display the plot
+
+    # this may cause issues because we are supposed to shutdown this process after data
+    # collection is done, which will shutdown this graph even if block=False.
+    plt.show(block=True)
+
+
 def construct_graph_from_csv(title, file):
     all_rows = []
     # should have used pandas here, but oh well
