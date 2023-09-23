@@ -18,11 +18,13 @@ accelorometer = bluetooth_reciver.MSenseCharacteristic("Accelorometer",
                                                        bluetooth_reciver.motionsense_handler,
                                                        "da39c921-1d81-48e2-9c68-d0ae4bbd351f")
 
-
+accelorometer_ENMO = bluetooth_reciver.MSenseCharacteristic("Accelorometer_ENMO",
+                                                       bluetooth_reciver.motionsense_handler,
+                                                       "da39c927-1d81-48e2-9c68-d0ae4bbd351f")
 
 #ommitting magnometer for now 
-RightSensor = bluetooth_reciver.MSenseDevice("RightMotionSense2", [ppg_sensor, accelorometer])
-LeftSensor = bluetooth_reciver.MSenseDevice("LeftMotionSense2", [ppg_sensor, accelorometer])
+RightSensor = bluetooth_reciver.MSenseDevice("RightMotionSense2", [ppg_sensor, accelorometer,accelorometer_ENMO])
+LeftSensor = bluetooth_reciver.MSenseDevice("LeftMotionSense2", [ppg_sensor, accelorometer,accelorometer_ENMO])
 # to replace, comment out the above 2 lines of code and replace it with these:
 #  
 #RightSensor = bluetooth_reciver.MSenseDevice("RightMotionSense2", [ppg_sensor, magnometer, accelorometer])
@@ -30,11 +32,11 @@ LeftSensor = bluetooth_reciver.MSenseDevice("LeftMotionSense2", [ppg_sensor, acc
 
 # Start BioImpedance Setup
 
-MagnitudeImpedance = bluetooth_reciver.MSenseCharacteristic("BioImpedance", bluetooth_reciver.BioImpedanceHandle, "DA39C924-1D81-48E2-9C68-D0AE4BBD351F")
+#MagnitudeImpedance = bluetooth_reciver.MSenseCharacteristic("BioImpedance", bluetooth_reciver.BioImpedanceHandle, "DA39C924-1D81-48E2-9C68-D0AE4BBD351F")
 
-LBioZSensor = bluetooth_reciver.MSenseDevice("LBIOZ", [MagnitudeImpedance])
+#LBioZSensor = bluetooth_reciver.MSenseDevice("LBIOZ", [MagnitudeImpedance])
 
-RBioZSensor = bluetooth_reciver.MSenseDevice("RBIOZ", [MagnitudeImpedance])
+#RBioZSensor = bluetooth_reciver.MSenseDevice("RBIOZ", [MagnitudeImpedance])
 
 
 
