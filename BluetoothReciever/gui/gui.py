@@ -136,18 +136,18 @@ class MotionSenseApp(QWidget):
         self.gather_button = PyQt5.QtWidgets.QPushButton("Start data_collection")
         self.gather_button.setDisabled(True)
 
-        logging_header = QLabel("Logging Options")
-        logging_header.setFont(font)
-        Option1 = QLoggingOptions(lambda: self.log("Pre-Bike Phase Started", True), "Log Pre-Bike Phase")
-        Option2 = QLoggingOptions(lambda: self.log("Bike Started", True), "Log Bike Phase")
-        Option3 = QLoggingOptions(lambda: self.log("Post Bike Phase Started", True), "Log Post-Bike Phase")
+        #logging_header = QLabel("Logging Options")
+        #logging_header.setFont(font)
+        #Option1 = QLoggingOptions(lambda: self.log("Pre-Bike Phase Started", True), "Log Pre-Bike Phase")
+        #Option2 = QLoggingOptions(lambda: self.log("Bike Started", True), "Log Bike Phase")
+        #Option3 = QLoggingOptions(lambda: self.log("Post Bike Phase Started", True), "Log Post-Bike Phase")
 
-        Options = QHBoxLayout()
-        collections_layout.addWidget(logging_header)
-        Options.addWidget(Option1)
-        Options.addWidget(Option2)
-        Options.addWidget(Option3)
-        collections_layout.addRow(Options)
+        #Options = QHBoxLayout()
+        #collections_layout.addWidget(logging_header)
+        #Options.addWidget(Option1)
+        #Options.addWidget(Option2)
+        #Options.addWidget(Option3)
+        #collections_layout.addRow(Options)
 
 
 

@@ -75,14 +75,14 @@ class MSenseDevice:
 '''Utility class for what sensor options to generate'''
 class MSense_collect_options:
 
-    def __init__(self,ppg=False, magnomater=False, accelorometer=False):
+    def __init__(self,ppg=False, magnomater=False, accelorometer=False,enmo=False):
         self.collect_ppg = ppg
         self.magnomater = magnomater
         self.accelorometer = accelorometer
-
+        self.enmo = enmo
 
     def __str__(self):
-        return str(self.collect_ppg) + str(self.magnomater) + str(self.accelorometer)
+        return str(self.collect_ppg) + str(self.magnomater) + str(self.accelorometer) + str(self.enmo)
 
 
 class MSense_data:
@@ -120,7 +120,12 @@ class MSense_data:
     magnometer = []
     magnometer_packet = []
     magnometer_file = None
-
+    
+    enmo = []
+    enmo_packet = []
+    enmo_timestamp = []
+    enmo_file = None
+    
     BioImpedanceMag = []
     BioImpedancePhase = []
     BioImpedancePacketCounter = []
@@ -209,7 +214,20 @@ def motionsense_handler(sender, data):
     MSense_data.accelorometer_packet_loss.append(packets_recived)
     MSense_data.accelorometer_timestamp.append(str(datetime.datetime.now().time()))
 
+def motionsense_ENMO_handler(sender, data):
+    global file_name
+    #m_service = bleak_device.services.characteristics[30]
+    #await bleak_device.read_gatt_char(m_service)
+    
+    enmoTemp = data[0:3]
+    enmo = struct.unpack(">f", enmoTemp)
+    enmoCounterRaw = data[8:9]
+    enmoCounter = struct.unpack(">h", enmoCounterRaw)
 
+
+    MSense_data.enmo.append(enmo[0])
+    MSense_data.enmo_packet.append(enmoCounter[0])
+    MSense_data.enmo_timestamp.append(str(datetime.datetime.now().time()))
 
 def ppg_handler(sender, data:bytes):
     global file_name
