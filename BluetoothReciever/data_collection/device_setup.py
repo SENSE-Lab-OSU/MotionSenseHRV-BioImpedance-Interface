@@ -40,7 +40,7 @@ LeftSensor = bluetooth_reciver.MSenseDevice("LeftMotionSense2", [ppg_sensor, acc
 
 
 
-all_sensors = [ RightSensor, LeftSensor, LBioZSensor, RBioZSensor ]
+all_sensors = [ RightSensor, LeftSensor ]
 
 
 
