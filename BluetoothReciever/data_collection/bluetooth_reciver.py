@@ -591,18 +591,19 @@ def write_all_files(path = None):
         show_graph(file_name +"unfiltered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
                                  MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], False)
 
-    print("begin BioImpedance Processing")
+    print("begin ENMO storing")
     csv_rows = list()
-    for data_element in range(len(MSense_data.BioImpedancePhase)):
-        csv_rows.append([MSense_data.BioImpedanceMag[data_element],MSense_data.BioImpedancePhase[data_element],
-                         MSense_data.BioImpedancePacketCounter[data_element], MSense_data.BioImpedanceTimeStamp[data_element]])
+    for data_element in range(len(MSense_data.enmo)):
+        csv_rows.append([MSense_data.enmo[data_element],MSense_data.enmo_packet[data_element],
+                         MSense_data.enmo_timestamp[data_element]])
     if len(csv_rows) != 0:
-        MSense_data.BioImpedanceFile = open(file_name + "//BioImpedance" + time_stamp +".csv", "w", newline="")
-        csv_writer = csv.writer(MSense_data.BioImpedanceFile)    
-        csv_writer.writerow(["BioImpReal", "BioImpImaginary", "PacketCounter", "TimeStamp"])
+        MSense_data.enmo_file = open(file_name + "//ENMO" + time_stamp +".csv", "w", newline="")
+        csv_writer = csv.writer(MSense_data.enmo_file)    
+        csv_writer.writerow(["ENMO", "PacketCounter", "TimeStamp"])
         csv_writer.writerows(csv_rows)
-        print("closing BioImpedance file")
-        MSense_data.BioImpedanceFile.close()
+        print("closing ENMO file")
+        MSense_data.enmo_file.close()
+    
     sucessful_file_write = True
 
 
