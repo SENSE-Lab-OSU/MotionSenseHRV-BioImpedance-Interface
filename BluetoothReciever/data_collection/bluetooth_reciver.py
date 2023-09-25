@@ -586,8 +586,8 @@ def write_all_files(path = None):
         csv_writer.writerows(csv_rows)
         print("closing ppg file")
         MSense_data.ppg_file.close()
-        show_graph(file_name + "filtered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
-                                 MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], True)
+        #show_graph(file_name + "filtered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
+        #                         MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], True)
        # show_graph(file_name +"unfiltered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
        #                          MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], False)
 
@@ -603,7 +603,7 @@ def write_all_files(path = None):
         csv_writer.writerows(csv_rows)
         print("closing ENMO file")
         MSense_data.enmo_file.close()
-        show_ENMO_graph(file_name + " ENMO graph", [MSense_data.enmo], ["ENMO"])
+       # show_ENMO_graph(file_name + " ENMO graph", [MSense_data.enmo], ["ENMO"])
     sucessful_file_write = True
 
 
