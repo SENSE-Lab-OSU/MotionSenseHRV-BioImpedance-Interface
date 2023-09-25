@@ -603,7 +603,7 @@ def write_all_files(path = None):
         csv_writer.writerows(csv_rows)
         print("closing ENMO file")
         MSense_data.enmo_file.close()
-    
+        show_ENMO_graph(file_name + " ENMO graph", [MSense_data.enmo], ["ENMO"])
     sucessful_file_write = True
 
 
@@ -650,6 +650,37 @@ def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
         real_y_data = data[data_element]
         if ppg_filter_passthrough:
             real_y_data = scipy.signal.filtfilt(b, 1, real_y_data, axis=-1, padtype=None)
+        ax.plot(real_x_data, real_y_data, label=labels[data_element])
+    
+    ax.legend()
+    # set the limits
+    #ax.set_xlim([0, 1])
+    #ax.set_ylim([-1000, 1000])
+    
+    ax.set_title(title)
+
+    # display the plot
+
+    # this may cause issues because we are supposed to shutdown this process after data
+    # collection is done, which will shutdown this graph even if block=False.
+    plt.show(block=True)
+
+def show_ENMO_graph(title, data:list, labels:list):
+    # by just using plt, it now comes with auto zoom features which I somehow missed.
+    
+
+    # plot the data
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    
+    Fs = 1 # sampling rate of ENMO 1 sample per second
+
+
+
+    for data_element in range(len(data)):
+        row = len(data[data_element])
+        real_x_data = numpy.arange(row)
+        real_y_data = data[data_element]
         ax.plot(real_x_data, real_y_data, label=labels[data_element])
     
     ax.legend()
