@@ -219,9 +219,9 @@ def motionsense_ENMO_handler(sender, data):
     #m_service = bleak_device.services.characteristics[30]
     #await bleak_device.read_gatt_char(m_service)
     
-    enmoTemp = data[0:3]
+    enmoTemp = data[0:4]
     enmo = struct.unpack(">f", enmoTemp)
-    enmoCounterRaw = data[8:9]
+    enmoCounterRaw = data[4:6]
     enmoCounter = struct.unpack(">h", enmoCounterRaw)
 
 
