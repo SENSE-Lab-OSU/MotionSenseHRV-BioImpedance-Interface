@@ -184,16 +184,16 @@ def motionsense_handler(sender, data):
     Accelorometer_X = data[0:2]
     Accelorometer_Y = data[2:4]
     Accelerometer_Z = data[4:6]
-    Angular_velocity_X = data[6:8]
-    Angular_velocity_Y = data[8:10]
-    Angular_velocity_Z = data[10:12]
+    #Angular_velocity_X = data[6:8]
+    #Angular_velocity_Y = data[8:10]
+    #Angular_velocity_Z = data[10:12]
     Accelorometer_X = struct.unpack(">h", Accelorometer_X)
     Accelorometer_Y = struct.unpack(">h", Accelorometer_Y)
     Accelerometer_Z = struct.unpack(">h", Accelerometer_Z)
 
-    Angular_velocity_X = struct.unpack(">h", Angular_velocity_X)
-    Angular_velocity_Y = struct.unpack(">h", Angular_velocity_Y)
-    Angular_velocity_Z = struct.unpack(">h", Angular_velocity_Z)
+    Angular_velocity_X = struct.unpack(">h", data[6:8])
+    Angular_velocity_Y = struct.unpack(">h", data[8:10])
+    Angular_velocity_Z = struct.unpack(">h", data[10:12])
 
     MSense_data.accelorometer_x.append(Accelorometer_X[0])
     MSense_data.accelorometer_y.append(Accelorometer_Y[0])

@@ -19,7 +19,7 @@ accelorometer = bluetooth_reciver.MSenseCharacteristic("Accelorometer",
                                                        "da39c921-1d81-48e2-9c68-d0ae4bbd351f")
 
 accelorometer_ENMO = bluetooth_reciver.MSenseCharacteristic("Accelorometer_ENMO",
-                                                       bluetooth_reciver.motionsense_handler,
+                                                       bluetooth_reciver.motionsense_ENMO_handler,
                                                        "da39c927-1d81-48e2-9c68-d0ae4bbd351f")
 
 #ommitting magnometer for now 
