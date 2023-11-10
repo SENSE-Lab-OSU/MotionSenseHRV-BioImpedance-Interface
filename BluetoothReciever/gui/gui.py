@@ -316,7 +316,8 @@ class MotionSenseApp(QWidget):
             print("trying to close app")
             self.refresh_log_file()
             for thread in self.threads:
-                thread[0].terminate()
+                with thread[1].get_lock():
+                    thread[1].value = -1
                 thread[0].join()
             self.threads.clear()
 
@@ -360,7 +361,7 @@ class MotionSenseApp(QWidget):
                 # a bit of a messy solution. For more compatibility options,
                 # use PyQt threadpool
                 self.log("creating child shared memory flag for end")
-                exit_flag = multiprocessing.Value("b")
+                exit_flag = multiprocessing.Value("i", 2)
                 self.log("creating Process...")
                 p = multiprocessing.Process(target=test_function, args=(device.address, path, self.record_length, options, exit_flag))
                 self.log("attempting to start thread" + str(total_checks))

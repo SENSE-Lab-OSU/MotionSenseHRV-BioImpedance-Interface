@@ -43,6 +43,8 @@ file_obj = None
 use_previous_packet_format = False
 sucessful_file_write = False
 
+status_flag = 0
+
 
 
 ''' This is a class for holding information about a single bluetooth attribute.'''
@@ -415,6 +417,22 @@ def create_csv_file(name:str, path):
         MSense_data.ppg_file.writeheader()
 
 
+# this is the function that is executed inside the GUI to make sure everything runs properly
+def non_async_collect(address, path, max_length, collect_options, end_flag):
+    global status_flag
+    status_flag = end_flag
+    print("starting non async collecion function with parameters:")
+    print("address: " + address)
+    print("path: " + path)
+    print("collection options: " + str(collect_options))
+    loop = asyncio.new_event_loop()
+    try:
+        loop.run_until_complete(run(address, True, path=path, data_amount=max_length, options=collect_options))
+    except Exception as e:
+        print("bleak client backend bluetooth error")
+        print(e)
+        
+
 
 async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None):
     try:
@@ -499,11 +517,19 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
 
             #we need to do the rest of the sensors as well
             #collect data
-            await asyncio.sleep(data_amount)
+            
+            for current_second in range(int(data_amount)):
+                print("current seconds in collection for device: " + str(current_second) + "and status:" + str(status_flag.value))
+                if (status_flag.value == -1):
+                    print("status triggered error, ending collection...")
+                    break
+                await asyncio.sleep(1.0)
+                
+            
 
     except Exception as e:
+        print("An Error Occured in the child thread during data Collection:")
         print(e)
-        await disconnect(client, current_services)
 
     try:
         print("trying to write to files")
@@ -564,6 +590,7 @@ def write_all_files(path = None):
     if len(csv_rows) != 0:    
         MSense_data.ppg_file = open(file_name + "//PPG" + time_stamp + ".csv", "w", newline="")
         csv_writer = csv.writer(MSense_data.ppg_file)
+
         csv_writer.writerow(["PPG_IR1", "PPG_IR2", "PPG_G1", "PPG_G2", "PacketCounter", "PacketLoss", "Timestamp"])
         csv_writer.writerows(csv_rows)
         print("closing ppg file")
@@ -771,19 +798,7 @@ def non_async_connect(devices_to_search=None):
     return address
 
 
-# this is the function that is executed inside the GUI to make sure everything runs properly
-def non_async_collect(address, path, max_length, collect_options, end_flag):
-    print("starting non async collecion function with parameters:")
-    print("address: " + address)
-    print("path: " + path)
-    print("collection options: " + str(collect_options))
-    loop = asyncio.new_event_loop()
-    try:
-        loop.run_until_complete(run(address, True, path=path, data_amount=max_length, options=collect_options))
-    except Exception as e:
-        print("bleak client backend bluetooth error")
-        print(e)
-        
+
 
 async def collect_with_adress(address):
     loop = asyncio.get_event_loop()
