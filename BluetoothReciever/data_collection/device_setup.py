@@ -10,8 +10,8 @@ from data_collection import bluetooth_reciver
 
 A Default Example using the Ohio State SENSE lab MotionSenseHRV devices has been done for you below. 
 Note that the encoding in the packets (located in bluetooth_reciver.py) is specifically done because we have created a 
-specific packet format that encodes data in a way that packs everything together, to minimize packet sizes.
-This format can be found in Configuration_Firmware.docx, and sections are also commented in blueooth reciver.py'''
+specific packet format odd bit data (ex: 19 bit floats) to pack everything together, to minimize packet sizes.
+This format can be found in Configuration_Firmware.docx, and sections are also commented in bluetooth_reciver.py'''
 
 ppg_sensor = bluetooth_reciver.MSenseCharacteristic("PPG", bluetooth_reciver.ppg_handler,
                                                     "da39c925-1d81-48e2-9c68-d0ae4bbd351f")

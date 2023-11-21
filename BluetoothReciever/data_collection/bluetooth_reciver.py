@@ -225,16 +225,25 @@ def ppg_handler(sender, data:bytes):
         Led_ir1 = struct.unpack("<f", Led_ir1)
         Led_ir2 = struct.unpack("<f", Led_ir2)
     else:
+        # to decode ppg, we need to reverse the order of the data and perform bit shifting, as we are working with
+        # 19 bit little endian numbers that are packed together 19 bit, then another 19 bit, etc
+
+        # get the first 8 bits and shift it left by 11 bits to get the MSB (most significant bit) (8 + 11 = 19)
+        # in position 19
         Led_ir11 = data[0]
         Led_ir11 <<= 11
+        # get the 2nd 8 bits and move it behind the first 8 bits. so we move the MSB bit to the 11th position (8+3=11)
         Led_ir12 = data[1]
         Led_ir12 <<= 3
+        # now that we have gotten the first 16 bits, there are only 3 bits left for our 19 bit number. we shift right
+        # so that the MSB occupies the third position, and everything after that is zeros
         Led_ir13 = data[2]
         Led_ir13 >>= 5
+        # add up all the bits to get our 19 bit floating number, as a python float
         Led_ir1 = Led_ir11 + Led_ir12 + Led_ir13
-
+        # continue this pattern.
         Led_ir21 = data[2]
-        Led_ir21 &= 31
+        Led_ir21 &= 31 # 31 = 00011111, so it acts as a bit mask to only keep the first 5 values starting from the right hand side and going left.
         Led_ir21 <<= 14
         Led_ir22 = data[3]
         Led_ir22 <<= 6
@@ -707,9 +716,6 @@ def show_impedance_graph(title):
         pre_bike_y.append(numpy.mean(array_element))
 
     pre_bike_x = numpy.arange(len(pre_bike_y)) 
-
-
-
 
 
     
