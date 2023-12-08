@@ -22,10 +22,11 @@ import datetime
 
 debug_print_updates = False
 show_matplotlib_graphs = True
-use_lsl = False
+use_lsl = True
 if use_lsl:
     from data_collection import lsl_transmission
-    stream_outlet = None
+    ppg_stream_outlet = None
+    accelorometer_outlet = None
 
 
 from bleak import BleakScanner
@@ -299,8 +300,8 @@ def ppg_handler(sender, data:bytes):
 
     horizontal_array = [Led_ir1, Led_ir2, Led_g15, Led_g2, packet_counter[0], 10-packets_recived]
     if use_lsl:
-        global stream_outlet
-        lsl_transmission.send_data(stream_outlet, horizontal_array)
+        global ppg_stream_outlet
+        lsl_transmission.send_data(ppg_stream_outlet, horizontal_array)
 
 
 def prev_format_accel_HRV(sender, data: bytes):
@@ -427,7 +428,7 @@ def create_csv_file(name:str, path):
 
 
 # this is the function that is executed inside the GUI to make sure everything runs properly
-def non_async_collect(address, path, max_length, collect_options, end_flag):
+def non_async_collect(address, path, max_length, collect_options, end_flag, name):
     global status_flag
     status_flag = end_flag
     print("starting non async collecion function with parameters:")
@@ -436,15 +437,16 @@ def non_async_collect(address, path, max_length, collect_options, end_flag):
     print("collection options: " + str(collect_options))
     loop = asyncio.new_event_loop()
     try:
-        loop.run_until_complete(run(address, True, path=path, data_amount=max_length, options=collect_options))
+        loop.run_until_complete(run(address, True, path=path, data_amount=max_length, options=collect_options, Name=name))
     except Exception as e:
         print("bleak client backend bluetooth error")
         print(e)
         
 
 
-async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None):
+async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None, Name="M"):
     try:
+
         print("starting run function")
         # this has to be global because it is async
         global bleak_device
@@ -473,13 +475,15 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             l.addHandler(h)
             logger.addHandler(h)
         if use_lsl:
-            global stream_outlet
-            stream_outlet = lsl_transmission.register_outlet(6)
+            global ppg_stream_outlet
+            global accelorometer_outlet
+            ppg_stream_outlet = lsl_transmission.register_outlet(6, 8, name=Name + "PPG")
+            accelorometer_outlet = lsl_transmission.register_outlet(5, 4, name=Name + "Acceloromater")
         print("trying to connect with client")
         async with BleakClient(address, disconnect_callback) as client:
             x = client.is_connected
             client.__str__()
-            print("connected to MotionSense!")
+            print("connected to " + str(Name) + "!")
             logger.info("Connected: {0}".format(x))
             clu = await client.get_services()
 
@@ -668,6 +672,7 @@ def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
         if ppg_filter_passthrough:
             real_y_data = scipy.signal.filtfilt(b, 1, real_y_data, axis=-1, padtype=None)
         ax.plot(real_x_data, real_y_data, label=labels[data_element])
+
     
     ax.legend()
     # set the limits

@@ -48,7 +48,7 @@ def demo():
         time.sleep(0.01)
 
 
-def register_outlet(channel_num, name = "MotionSense", hz=25):
+def register_outlet(channel_num, sample_num, name = "MotionSense", hz=25):
     info = StreamInfo(name, 'EEG', channel_num, hz, 'float32', 'myuid2424')
 
     # append some meta-data
@@ -62,7 +62,7 @@ def register_outlet(channel_num, name = "MotionSense", hz=25):
 
     # next make an outlet; we set the transmission chunk size to 32 (4*8) samples and
     # the outgoing buffer size to 360 seconds (max.)
-    outlet = StreamOutlet(info, 32, 360)
+    outlet = StreamOutlet(info, sample_num*4, 360)
     print("now ready to sending data...")
     return outlet
 

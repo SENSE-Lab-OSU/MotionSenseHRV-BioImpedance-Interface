@@ -363,7 +363,7 @@ class MotionSenseApp(QWidget):
                 self.log("creating child shared memory flag for end")
                 exit_flag = multiprocessing.Value("i", 2)
                 self.log("creating Process...")
-                p = multiprocessing.Process(target=test_function, args=(device.address, path, self.record_length, options, exit_flag))
+                p = multiprocessing.Process(target=test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
                 self.log("attempting to start thread" + str(total_checks))
                 p.start()
 
@@ -531,12 +531,12 @@ class Collection_Worker(QRunnable):
         self.function_handler(self.address, self.path, self.record_length, self.options)
 
 
-def test_function(address, path, record_length, options, test_flag):
+def test_function(address, path, record_length, options, test_flag, name):
     print("I am running in a test call!")
     import data_collection.bluetooth_reciver
     print("imported")
     try:
-        data_collection.bluetooth_reciver.non_async_collect(address, path, record_length, options, test_flag)
+        data_collection.bluetooth_reciver.non_async_collect(address, path, record_length, options, test_flag, name)
 
     except Exception as err:
         print(err)
@@ -600,8 +600,10 @@ class Window(QMainWindow):
             print(e)
 
 
-
-import bleak_winrt.windows.devices.bluetooth
+try:
+    import bleak_winrt.windows.devices.bluetooth
+except:
+    pass
 
 
 def update(param):
