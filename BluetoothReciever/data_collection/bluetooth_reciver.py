@@ -7,11 +7,11 @@ import asyncio
 import platform
 import time
 import atexit
-import bleak.exc
 import matplotlib.pyplot as plt
 import numpy
 from bleak import BleakClient
 from bleak import _logger as logger
+import bleak.uuids
 import scipy
 import struct
 import csv
@@ -27,6 +27,7 @@ if use_lsl:
     from data_collection import lsl_transmission
     ppg_stream_outlet = None
     accelorometer_outlet = None
+    led_outlet = None
 
 
 from bleak import BleakScanner
@@ -211,6 +212,25 @@ def motionsense_handler(sender, data):
                           len(MSense_data.accelorometer_packet_counter) - 2]
     MSense_data.accelorometer_packet_loss.append(packets_recived)
     MSense_data.accelorometer_timestamp.append(str(datetime.datetime.now().time()))
+    horizontal_array = [Accelorometer_X[0], Accelorometer_Y[0], Accelerometer_Z[0], Angular_velocity_X[0], Angular_velocity_Y[0], Angular_velocity_Y[0], packet_counter[0], packets_recived]
+    if use_lsl:
+        lsl_transmission.send_data(accelorometer_outlet, horizontal_array)
+
+def led_handler(sender, data):
+    led_status = data[0]
+
+    packet_counter = data[1:2]
+    if debug_print_updates:
+        print("led packet counter: " + str(packet_counter))
+    packet_counter = struct.unpack(">h", packet_counter)
+    send_array = [led_status, packet_counter]
+    if use_lsl:
+        lsl_transmission.send_data(led_outlet, send_array)
+    #packets_recived = MSense_data.accelorometer_packet_counter[len(MSense_data.accelorometer_packet_counter) - 1] - \
+    #                  MSense_data.accelorometer_packet_counter[
+    #                      len(MSense_data.accelorometer_packet_counter) - 2]
+    #MSense_data.accelorometer_packet_loss.append(packets_recived)
+    #MSense_data.accelorometer_timestamp.append(str(datetime.datetime.now().time()))
 
 
 
@@ -477,36 +497,51 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
         if use_lsl:
             global ppg_stream_outlet
             global accelorometer_outlet
-            ppg_stream_outlet = lsl_transmission.register_outlet(6, 8, name=Name + "PPG")
-            accelorometer_outlet = lsl_transmission.register_outlet(5, 4, name=Name + "Acceloromater")
+            global led_outlet
+            ppg_stream_outlet = lsl_transmission.register_outlet(6, 6, name=Name + "PPG")
+            accelorometer_outlet = lsl_transmission.register_outlet(7, 8, name=Name + "Acceloromater")
+            led_outlet = lsl_transmission.register_outlet(8, 2, name=Name + "led status")
         print("trying to connect with client")
         async with BleakClient(address, disconnect_callback) as client:
             x = client.is_connected
             client.__str__()
             print("connected to " + str(Name) + "!")
             logger.info("Connected: {0}".format(x))
-            clu = await client.get_services()
 
             uuid_arr = build_uuid_dict(client)
             bleak_device = client
 
             write_pi = bytearray([0, 1])
-            #this should be magnometer service
-            #m_service = bleak_device.services.characteristics[30]
-            #d = await bleak_device.read_gatt_char(m_service)
-            #motion_sense_characteristic()
 
-            #await client.write_gatt_char()
-            #await client.start
-            #tf_kr_array = await client.start_notify(l2_service, data_adr2)
+            # first try to get the battery level, which is known to always be uuid 2a19
+            default_battery_characteristic = 'da39adf0-1d81-48e2-9c68-d0ae4bbd351f'
+            use_battery = False
+            try:
+                for characteristics in client.services.characteristics.values():
+                    if characteristics.description == "Battery Level":
+                        battery_level = await client.read_gatt_char(characteristics.uuid)
+                        print("Battery Level: " + str(battery_level[0]))
+                        battery_level = battery_level[0]
+                        if battery_level > 2 and battery_level <= 100:
+                            use_battery = True
+                            status_flag = battery_level
+
+            except BaseException as e:
+                print("failed to get battery service")
+                print(e)
 
             current_services = []
+
+            # loop thorugh our selected characteristics and check if they are located in the the device's
+            # characteristics.
             for characteristic in options:
                 try:
-                    characteristic.uuid = characteristic.uuid.lower()
+
+                    characteristic.uuid = bleak.uuids.normalize_uuid_str(characteristic.uuid)
                     characteristic_number = uuid_arr[characteristic.uuid]
                     service = client.services.characteristics[characteristic_number]
                     print("Sucessfully obtained Service: " + str(service))
+
                 except KeyError as e:
                     error_string = "Error: bluetooth characteristic UUID is invalid for device " + characteristic.name
                     print(error_string)
@@ -515,10 +550,6 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
                     print(e)
                     return
 
-
-
-
-                #ppg_service = client.services.characteristics[uuid_arr["da39c926-1d81-48e2-9c68-d0ae4bbd351f"]]
 
                 current_services.append(service)
 

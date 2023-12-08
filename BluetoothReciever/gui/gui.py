@@ -341,7 +341,7 @@ class MotionSenseApp(QWidget):
 
             self.log("registering devices...")
             # for all MSense devices, get the characteristics that are checked and collect data from them
-
+            # device is a MotionSense_QWidget device
             for device in self.devices:
                 self.log("registering device " + str(device.address))
                 path = self.file_line.text() + "\\" + self.file_line2.text() + "\\" + device.name
@@ -354,8 +354,8 @@ class MotionSenseApp(QWidget):
                 self.log(str(options))
                 self.log("creating thread...") #data_collection.bluetooth_reciver.non_async_collect
 
-                th_thread = Collection_Worker(bluetooth_reciver.non_async_collect, device.address,
-                                              path, self.record_length, options)
+                #th_thread = Collection_Worker(bluetooth_reciver.non_async_collect, device.address,
+                #                              path, self.record_length, options)
 
 
                 # a bit of a messy solution. For more compatibility options,
@@ -373,7 +373,7 @@ class MotionSenseApp(QWidget):
                 #threadpool.start(th_thread)
                 #th_thread.run(self.addresses, path, record_length, options)
                 self.log("adding thread to list")
-                self.threads.append((p, exit_flag))
+                self.threads.append((p, exit_flag, device))
                 #data_collection.bluetooth_reciver.non_async_collect(self.address, path, record_length, options)
             #start logging for files
             self.log("sucessfully registered all devices")
