@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import numpy
 from bleak import BleakClient
 from bleak import _logger as logger
+from copy import deepcopy
 import bleak.uuids
 import scipy
 import struct
@@ -22,7 +23,7 @@ import datetime
 
 debug_print_updates = False
 show_matplotlib_graphs = True
-use_lsl = True
+use_lsl = False
 if use_lsl:
     from data_collection import lsl_transmission
     ppg_stream_outlet = None
@@ -219,7 +220,7 @@ def motionsense_handler(sender, data):
 def led_handler(sender, data):
     led_status = data[0]
 
-    packet_counter = data[1:2]
+    packet_counter = data[1:3]
     if debug_print_updates:
         print("led packet counter: " + str(packet_counter))
     packet_counter = struct.unpack(">h", packet_counter)
@@ -391,7 +392,7 @@ def build_uuid_dict(client):
     return uuid_arr
 
 def disconnect_callback(client):
-    print("error: device disconnected")
+    print("bleak error: device disconnected")
     # wait for 5 seconds to make sure the device doesn't reconnect, as per ble protocol?
     time.sleep(6)
     if not client.is_connected:
@@ -417,8 +418,12 @@ async def connect_address(Devices:list[MSenseDevice]=None):
 
 
     for devi in devices:
+        #item = substring_in_dict(devi.name, device_set)
+        #if item is not None:
+            #device_object = deepcopy(item)
         if devi.name in device_set:
             device_object = device_set[devi.name]
+            #device_object.name = devi.name
             device_object.address = devi.address
             addr = devi.address
             motion_sense_devices.append(device_object)
@@ -498,9 +503,9 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             global ppg_stream_outlet
             global accelorometer_outlet
             global led_outlet
-            ppg_stream_outlet = lsl_transmission.register_outlet(6, 6, name=Name + "PPG")
-            accelorometer_outlet = lsl_transmission.register_outlet(7, 8, name=Name + "Acceloromater")
-            led_outlet = lsl_transmission.register_outlet(8, 2, name=Name + "led status")
+            ppg_stream_outlet = lsl_transmission.register_outlet(6, name=Name + "PPG")
+            accelorometer_outlet = lsl_transmission.register_outlet(8, name=Name + "Acceloromater")
+            led_outlet = lsl_transmission.register_outlet(2, name=Name + "led status")
         print("trying to connect with client")
         async with BleakClient(address, disconnect_callback) as client:
             x = client.is_connected
@@ -537,7 +542,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             for characteristic in options:
                 try:
 
-                    characteristic.uuid = bleak.uuids.normalize_uuid_str(characteristic.uuid)
+                    characteristic.uuid = characteristic.uuid.lower() #bleak.uuids.normalize_uuid_str(characteristic.uuid)
                     characteristic_number = uuid_arr[characteristic.uuid]
                     service = client.services.characteristics[characteristic_number]
                     print("Sucessfully obtained Service: " + str(service))
@@ -868,6 +873,16 @@ def turn_on(data_function=notification_handler, record_length = 300):
     loop.run_until_complete(run(address, True, notification_handler, data_amount = record_length))
 
 atexit.register(write_all_files)
+
+def substring_in_dict(substring:str, key_dict:dict):
+    if substring is None:
+        return None
+    for key in key_dict.keys():
+        if key in substring:
+            return key_dict[key]
+    return None
+
+
 
 if __name__ =='__main__':
     turn_on(record_length=30)
