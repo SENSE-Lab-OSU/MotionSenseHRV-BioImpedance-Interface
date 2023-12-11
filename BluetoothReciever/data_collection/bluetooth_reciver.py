@@ -22,8 +22,8 @@ import sys
 import datetime
 
 debug_print_updates = False
-show_matplotlib_graphs = True
-use_lsl = False
+show_matplotlib_graphs = False
+use_lsl = True
 if use_lsl:
     from data_collection import lsl_transmission
     ppg_stream_outlet = None
@@ -224,7 +224,7 @@ def led_handler(sender, data):
     if debug_print_updates:
         print("led packet counter: " + str(packet_counter))
     packet_counter = struct.unpack(">h", packet_counter)
-    send_array = [led_status, packet_counter]
+    send_array = [led_status, packet_counter[0]]
     if use_lsl:
         lsl_transmission.send_data(led_outlet, send_array)
     #packets_recived = MSense_data.accelorometer_packet_counter[len(MSense_data.accelorometer_packet_counter) - 1] - \
@@ -503,9 +503,9 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             global ppg_stream_outlet
             global accelorometer_outlet
             global led_outlet
-            ppg_stream_outlet = lsl_transmission.register_outlet(6, name=Name + "PPG")
-            accelorometer_outlet = lsl_transmission.register_outlet(8, name=Name + "Acceloromater")
-            led_outlet = lsl_transmission.register_outlet(2, name=Name + "led status")
+            ppg_stream_outlet = lsl_transmission.register_outlet(6, name=Name + "PPG", type_array=["ir1", "ir2", "g1", "g2", "packet counter", "packet loss"])
+            accelorometer_outlet = lsl_transmission.register_outlet(8, name=Name + "Acceloromater", type_array=["AccelX", "AccelY", "AccelZ", "AngX", "AngY", "AngZ", "PC", "PL"])
+            led_outlet = lsl_transmission.register_outlet(2, name=Name + "led status", type_array=["led", "PC"])
         print("trying to connect with client")
         async with BleakClient(address, disconnect_callback) as client:
             x = client.is_connected
@@ -521,19 +521,10 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             # first try to get the battery level, which is known to always be uuid 2a19
             default_battery_characteristic = 'da39adf0-1d81-48e2-9c68-d0ae4bbd351f'
             use_battery = False
-            try:
-                for characteristics in client.services.characteristics.values():
-                    if characteristics.description == "Battery Level":
-                        battery_level = await client.read_gatt_char(characteristics.uuid)
-                        print("Battery Level: " + str(battery_level[0]))
-                        battery_level = battery_level[0]
-                        if battery_level > 2 and battery_level <= 100:
-                            use_battery = True
-                            status_flag = battery_level
 
-            except BaseException as e:
-                print("failed to get battery service")
-                print(e)
+            battery_level = await check_battery(client)
+            if battery_level is not None:
+                print(battery_level)
 
             current_services = []
 
@@ -542,7 +533,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             for characteristic in options:
                 try:
 
-                    characteristic.uuid = characteristic.uuid.lower() #bleak.uuids.normalize_uuid_str(characteristic.uuid)
+                    characteristic.uuid = bleak.uuids.normalize_uuid_str(characteristic.uuid) #characteristic.uuid.lower()
                     characteristic_number = uuid_arr[characteristic.uuid]
                     service = client.services.characteristics[characteristic_number]
                     print("Sucessfully obtained Service: " + str(service))
@@ -558,7 +549,6 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
 
                 current_services.append(service)
 
-                #create_csv_file("ppg", path)
                 print("starting notify for " + str(characteristic.name))
                 
                 status = await client.start_notify(service, characteristic.function)
@@ -853,6 +843,29 @@ async def collect_with_adress(address):
     loop.run_until_complete(run(address, True, notification_handler, data_amount=10))
 
     return True
+
+async def check_battery(client):
+    # for some reason the battery check right now causes issues, this boolean is here for now
+    # to prevent this.
+    check_battery = True
+    battery_level = -9
+    if check_battery:
+        try:
+            for characteristics in client.services.characteristics.values():
+                if characteristics.description == "Battery Level":
+                    battery_level = await client.read_gatt_char(characteristics.uuid)
+                    print("Battery Level: " + str(battery_level[0]))
+                    await asyncio.sleep(2.0)
+                    battery_level = battery_level[0]
+                    if battery_level > 2 and battery_level <= 100:
+                        use_battery = True
+                        return battery_level
+
+        except BaseException as e:
+            print("failed to get battery service")
+            print(e)
+    return battery_level
+
 
 
 def turn_on(data_function=notification_handler, record_length = 300):

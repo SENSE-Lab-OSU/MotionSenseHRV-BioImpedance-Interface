@@ -507,6 +507,13 @@ class MotionSense_device_QWidget(QWidget):
         return self.characteristics
 
 
+    def set_battery_level(self, battery_level:int):
+        self.battery_level = PyQt5.QtWidgets.QProgressBar()
+        self.battery_level.setValue(battery_level)
+        
+
+
+
 
 
 
@@ -585,7 +592,7 @@ class Window(QMainWindow):
         self.setCentralWidget(self.scroll)
 
         self.setGeometry(600, 100, 1000, 900)
-        self.setWindowTitle('Scroll Area Demonstration')
+        self.setWindowTitle('MotionSense Data Collection App')
         self.show()
 
         return

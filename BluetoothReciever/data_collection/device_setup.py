@@ -27,8 +27,13 @@ led = bluetooth_reciver.MSenseCharacteristic("LED Status", bluetooth_reciver.led
 
 
 #ommitting magnometer for now 
-RightSensor = bluetooth_reciver.MSenseDevice("RightMotionSense4", [ppg_sensor, accelorometer, led])
-LeftSensor = bluetooth_reciver.MSenseDevice("LeftMotionSense4", [ppg_sensor, accelorometer, led])
+RightSensor2 = bluetooth_reciver.MSenseDevice("RightMotionSense4", [ppg_sensor, accelorometer, led])
+LeftSensor2 = bluetooth_reciver.MSenseDevice("LeftMotionSense4", [ppg_sensor, accelorometer, led])
+
+RightSensor = bluetooth_reciver.MSenseDevice("RightMotionSense3", [ppg_sensor, accelorometer, led])
+LeftSensor = bluetooth_reciver.MSenseDevice("LeftMotionSense3", [ppg_sensor, accelorometer, led])
+
+
 # to replace, comment out the above 2 lines of code and replace it with these:
 #  
 #RightSensor = bluetooth_reciver.MSenseDevice("RightMotionSense2", [ppg_sensor, magnometer, accelorometer])
@@ -44,7 +49,7 @@ RBioZSensor = bluetooth_reciver.MSenseDevice("RBIOZ", [MagnitudeImpedance])
 
 
 # if you would like to add a new MSense device, please add it here
-all_sensors = [ RightSensor, LeftSensor, LBioZSensor, RBioZSensor ]
+all_sensors = [ RightSensor, LeftSensor, LBioZSensor, RBioZSensor, RightSensor2, LeftSensor2]
 
 
 
