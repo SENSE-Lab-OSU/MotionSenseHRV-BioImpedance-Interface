@@ -46,7 +46,7 @@ def demo():
 
 
 def register_outlet(channel_num, name = "MotionSense", type_array = [], hz=25):
-    info = StreamInfo(name, 'EEG', channel_num, hz, 'float32', 'myuid2424')
+    info = StreamInfo(name, 'MotionSense', channel_num, hz, 'float32', 'myuid2428')
 
     # append some meta-data
     info.desc().append_child_value("manufacturer", "BioSemi")
@@ -63,11 +63,12 @@ def register_outlet(channel_num, name = "MotionSense", type_array = [], hz=25):
     print("now ready to sending data...")
     return outlet
 
-def send_data(outlet, data):
+def send_data(outlet, data, custom_time_increment=0):
     #print("now sending data...")
     # make a new random 8-channel sample; this is converted into a
     # pylsl.vectorf (the data type that is expected by push_sample)
     mysample = []
+    #print(data)
     for counter, sample in enumerate(data):
         mysample.append(sample)
 
@@ -75,8 +76,11 @@ def send_data(outlet, data):
     # get a time stamp in seconds (we pretend that our samples are actually
     # 125ms old, e.g., as if coming from some external hardware)
     stamp = local_clock()
+    if custom_time_increment != 0:
+        stamp += custom_time_increment
     # now send it and wait for a bit
     outlet.push_sample(mysample, stamp)
+
 
 
 

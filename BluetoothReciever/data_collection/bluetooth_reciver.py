@@ -49,7 +49,7 @@ sucessful_file_write = False
 status_flag = 0
 
 
-
+previous_time = 0
 ''' This is a class for holding information about a single bluetooth attribute.'''
 class MSenseCharacteristic:
 
@@ -219,14 +219,18 @@ def motionsense_handler(sender, data):
 
 def led_handler(sender, data):
     led_status = data[0]
-
+    global previous_time
     packet_counter = data[1:3]
     if debug_print_updates:
         print("led packet counter: " + str(packet_counter))
     packet_counter = struct.unpack(">h", packet_counter)
     send_array = [led_status, packet_counter[0]]
+
+    print(time.time()-previous_time)
+    previous_time = time.time()
     if use_lsl:
         lsl_transmission.send_data(led_outlet, send_array)
+        #lsl_transmission.send_data(led_outlet, send_array, custom_time_increment=1)
     #packets_recived = MSense_data.accelorometer_packet_counter[len(MSense_data.accelorometer_packet_counter) - 1] - \
     #                  MSense_data.accelorometer_packet_counter[
     #                      len(MSense_data.accelorometer_packet_counter) - 2]
@@ -503,9 +507,9 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             global ppg_stream_outlet
             global accelorometer_outlet
             global led_outlet
-            ppg_stream_outlet = lsl_transmission.register_outlet(6, name=Name + "PPG", type_array=["ir1", "ir2", "g1", "g2", "packet counter", "packet loss"])
-            accelorometer_outlet = lsl_transmission.register_outlet(8, name=Name + "Acceloromater", type_array=["AccelX", "AccelY", "AccelZ", "AngX", "AngY", "AngZ", "PC", "PL"])
-            led_outlet = lsl_transmission.register_outlet(2, name=Name + "led status", type_array=["led", "PC"])
+            ppg_stream_outlet = lsl_transmission.register_outlet(6, name=Name + " PPG", type_array=["ir1", "ir2", "g1", "g2", "packet counter", "packet loss"])
+            accelorometer_outlet = lsl_transmission.register_outlet(8, name=Name + " Accelerometer", type_array=["AccelX", "AccelY", "AccelZ", "AngX", "AngY", "AngZ", "PC", "PL"])
+            led_outlet = lsl_transmission.register_outlet(2, name=Name + " Led Status", type_array=["led", "PC"], hz=5)
         print("trying to connect with client")
         async with BleakClient(address, disconnect_callback) as client:
             x = client.is_connected
@@ -525,6 +529,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             battery_level = await check_battery(client)
             if battery_level is not None:
                 print(battery_level)
+                status_flag.value = battery_level
 
             current_services = []
 
@@ -642,7 +647,7 @@ def write_all_files(path = None):
     print("begin BioImpedance Processing")
     csv_rows = list()
     for data_element in range(len(MSense_data.BioImpedancePhase)):
-        csv_rows.append([MSense_data.BioImpedanceMag[data_element],MSense_data.BioImpedancePhase[data_element],
+        csv_rows.append([MSense_data.BioImpedanceMag[data_element], MSense_data.BioImpedancePhase[data_element],
                          MSense_data.BioImpedancePacketCounter[data_element], MSense_data.BioImpedanceTimeStamp[data_element]])
     if len(csv_rows) != 0:
         MSense_data.BioImpedanceFile = open(file_name + "//BioImpedance" + time_stamp +".csv", "w", newline="")

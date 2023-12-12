@@ -510,7 +510,7 @@ class MotionSense_device_QWidget(QWidget):
     def set_battery_level(self, battery_level:int):
         self.battery_level = PyQt5.QtWidgets.QProgressBar()
         self.battery_level.setValue(battery_level)
-        
+
 
 
 
