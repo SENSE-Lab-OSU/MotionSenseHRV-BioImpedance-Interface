@@ -47,7 +47,7 @@ RBioZSensor = bluetooth_reciver.MSenseDevice("RBIOZ", [MagnitudeImpedance])
 
 
 # if you would like to add a new MSense device, please add it here
-all_sensors = [ RightSensor, LeftSensor, LBioZSensor, RBioZSensor, RightSensor2, LeftSensor2]
+all_sensors = [ RightSensor, LeftSensor, LBioZSensor, RBioZSensor]
 
 
 
