@@ -118,19 +118,23 @@ class MotionSenseApp(QWidget):
         self.file_line2 = QLineEdit()
         self.file_line2.setText("data")
 
-        # we create a counter for max length
         self.file_line3 = QLineEdit()
-        self.file_line3.setText(str(1.0))
+        self.file_line3.setText("Default Participant")
+
+        # we create a counter for max length
+        self.file_line4 = QLineEdit()
+        self.file_line4.setText(str(1.0))
         topLayout.addRow("Save Location:", self.file_line)
-        topLayout.addRow("Folder Name:", self.file_line2)
-        topLayout.addRow("Stop Recording Data after: (min)", self.file_line3)
+        topLayout.addRow("Folder (Study) Name:", self.file_line2)
+        topLayout.addRow("Participant ID", self.file_line3)
+        topLayout.addRow("Stop Recording Data after: (min)", self.file_line4)
 
         self.enable_csv = QCheckBox()
         topLayout.addRow("Open LSL Connection during Streaming", self.enable_csv)
 
 
         # layout for connecting to motionsense UI, with a button to connect
-        collections_layout = QFormLayout()
+        self.collections_layout = QFormLayout()
         self.button = PyQt5.QtWidgets.QPushButton("Connect to MotionSense")
         #button.setText("lol")
         self.gather_button = PyQt5.QtWidgets.QPushButton("Start data_collection")
@@ -138,33 +142,40 @@ class MotionSenseApp(QWidget):
 
         logging_header = QLabel("Logging Options")
         logging_header.setFont(font)
-        Option1 = QLoggingOptions(lambda: self.log("Pre-Bike Phase Started", True), "Log Pre-Bike Phase")
-        Option2 = QLoggingOptions(lambda: self.log("Bike Started", True), "Log Bike Phase")
-        Option3 = QLoggingOptions(lambda: self.log("Post Bike Phase Started", True), "Log Post-Bike Phase")
+        Option1 = QLoggingOptions(self, "Pre-Bike")
+        Option2 = QLoggingOptions(self, "Bike")
+        Option3 = QLoggingOptions(self, "Wrist Pace")
+        Option4 = QLoggingOptions(self, "Cooldown")
+        Option5 = QLoggingOptions(self, "Post-Bike")
 
         Options = QHBoxLayout()
-        collections_layout.addWidget(logging_header)
+        self.collections_layout.addWidget(logging_header)
         Options.addWidget(Option1)
         Options.addWidget(Option2)
         Options.addWidget(Option3)
-        collections_layout.addRow(Options)
+        Options.addWidget(Option4)
+        Options.addWidget(Option5)
+        self.collections_layout.addRow(Options)
+
 
 
 
         self.th_log = QLineEdit()
         self.log_button = PyQt5.QtWidgets.QPushButton("log custom message:")
         self.log_button.clicked.connect(self.send_note)
-        collections_layout.addRow(self.log_button, self.th_log)
-        collections_layout.addWidget(QLabel(" "))
+        self.collections_layout.addRow(self.log_button, self.th_log)
+        self.completed_messages = QLabel("")
+        self.collections_layout.addWidget(self.completed_messages)
+        self.collections_layout.addWidget(QLabel(" "))
         # progress bar
         self.progress_bar = PyQt5.QtWidgets.QProgressBar()
         self.progress_bar_label = QLabel("Collection Progress")
         data_label = QLabel("Data Collection:")
         data_label.setFont(font)
-        collections_layout.addWidget(data_label)
-        collections_layout.addRow(self.progress_bar_label, self.progress_bar)
-        collections_layout.addWidget(self.button)
-        collections_layout.addWidget(self.gather_button)
+        self.collections_layout.addWidget(data_label)
+        self.collections_layout.addRow(self.progress_bar_label, self.progress_bar)
+        self.collections_layout.addWidget(self.button)
+        self.collections_layout.addWidget(self.gather_button)
 
         # add out button action to the widget
         self.button.clicked.connect(self.update_connect_ui)
@@ -177,12 +188,14 @@ class MotionSenseApp(QWidget):
         self.log_disp = PyQt5.QtWidgets.QLabel("Waiting to connect to a device...")
         self.log_disp.setFont(bold_font)
 
-        collections_layout.addWidget(self.log_disp)
+        self.collections_layout.addWidget(self.log_disp)
         self.notice = PyQt5.QtWidgets.QLabel("Note: In order to run this you will need to have "
                                                             "an apropriate MotionSenseDevice ready and turned on!")
-        collections_layout.addWidget(self.notice)
+        self.collections_layout.addWidget(self.notice)
 
         self.path = self.file_line.text() + "\\" + self.file_line2.text()
+        if self.file_line3.text() != "Default Participant":
+            self.path += "\\" + self.file_line3.text()
         print(self.path)
 
         # try and create the directory for storing data
@@ -206,7 +219,7 @@ class MotionSenseApp(QWidget):
         outerLayout.addLayout(picture_layout)
         outerLayout.addLayout(topLayout)
         outerLayout.addLayout(self.optionsLayout)
-        outerLayout.addLayout(collections_layout)
+        outerLayout.addLayout(self.collections_layout)
 
         # Set the window's main layout
         self.setLayout(outerLayout)
@@ -332,7 +345,7 @@ class MotionSenseApp(QWidget):
 
             self.log("trying to start collection...")
             try:
-                self.record_length = float(self.file_line3.text())*60
+                self.record_length = float(self.file_line4.text()) * 60
             except ValueError:
                 self.record_length = 180.0
                 self.log_disp.setText("record length input invalid, defaulting to 180.0")
@@ -440,12 +453,22 @@ class MotionSenseApp(QWidget):
 
 class QLoggingOptions(PyQt5.QtWidgets.QPushButton):
 
-    def __init__(self, function, text):
+    def __init__(self, parent: MotionSenseApp, text):
         super().__init__()
-        self.clicked.connect(function)
-        self.setText(text)
+        self.clicked_before = False
+        self.parent_widget = parent
+        self.clicked.connect(lambda: parent.log(text + " Phase Started", True))
+        self.clicked.connect(self.set_color)
+        self.setText("Log " + text + " Phase")
+        self.layout_widget = self.parentWidget()
 
-
+    def set_color(self):
+        self.setStyleSheet("background-color : green")
+        phase_text = self.text()
+        phase_text += " Completed!"
+        if not self.clicked_before:
+            self.parent_widget.completed_messages.setText(self.parent_widget.completed_messages.text()+"\n"+phase_text)
+            self.clicked_before = True
 
 
 
@@ -487,7 +510,7 @@ class MotionSense_device_QWidget(QWidget):
             current_checkbox.append(characteristic)
             current_checkbox[0].setChecked(True)
             self.options.append(current_checkbox)
-
+            
 
         for check_widget in self.options:
             optionsLayout.addWidget(check_widget[0])
@@ -592,7 +615,8 @@ class Window(QMainWindow):
         self.setCentralWidget(self.scroll)
 
         self.setGeometry(600, 100, 1000, 900)
-        self.setWindowTitle('MotionSense Data Collection App')
+
+        self.setWindowTitle('OSU MotionSense Data Collection')
         self.show()
 
         return
