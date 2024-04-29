@@ -7,11 +7,12 @@ import asyncio
 import platform
 import time
 import atexit
-import bleak.exc
 import matplotlib.pyplot as plt
 import numpy
 from bleak import BleakClient
 from bleak import _logger as logger
+from copy import deepcopy
+import bleak.uuids
 import scipy
 import struct
 import csv
@@ -21,11 +22,13 @@ import sys
 import datetime
 
 debug_print_updates = False
-show_matplotlib_graphs = True
-use_lsl = False
+show_matplotlib_graphs = False
+use_lsl = True
 if use_lsl:
     from data_collection import lsl_transmission
-    stream_outlet = None
+    ppg_stream_outlet = None
+    accelorometer_outlet = None
+    led_outlet = None
 
 
 from bleak import BleakScanner
@@ -46,7 +49,7 @@ sucessful_file_write = False
 status_flag = 0
 
 
-
+previous_time = 0
 ''' This is a class for holding information about a single bluetooth attribute.'''
 class MSenseCharacteristic:
 
@@ -210,6 +213,29 @@ def motionsense_handler(sender, data):
                           len(MSense_data.accelorometer_packet_counter) - 2]
     MSense_data.accelorometer_packet_loss.append(packets_recived)
     MSense_data.accelorometer_timestamp.append(str(datetime.datetime.now().time()))
+    horizontal_array = [Accelorometer_X[0], Accelorometer_Y[0], Accelerometer_Z[0], Angular_velocity_X[0], Angular_velocity_Y[0], Angular_velocity_Y[0], packet_counter[0], packets_recived]
+    if use_lsl:
+        lsl_transmission.send_data(accelorometer_outlet, horizontal_array)
+
+def led_handler(sender, data):
+    led_status = data[0]
+    global previous_time
+    packet_counter = data[1:3]
+    if debug_print_updates:
+        print("led packet counter: " + str(packet_counter))
+    packet_counter = struct.unpack(">h", packet_counter)
+    send_array = [led_status, packet_counter[0]]
+
+    print(time.time()-previous_time)
+    previous_time = time.time()
+    if use_lsl:
+        lsl_transmission.send_data(led_outlet, send_array)
+        #lsl_transmission.send_data(led_outlet, send_array, custom_time_increment=1)
+    #packets_recived = MSense_data.accelorometer_packet_counter[len(MSense_data.accelorometer_packet_counter) - 1] - \
+    #                  MSense_data.accelorometer_packet_counter[
+    #                      len(MSense_data.accelorometer_packet_counter) - 2]
+    #MSense_data.accelorometer_packet_loss.append(packets_recived)
+    #MSense_data.accelorometer_timestamp.append(str(datetime.datetime.now().time()))
 
 
 
@@ -225,16 +251,25 @@ def ppg_handler(sender, data:bytes):
         Led_ir1 = struct.unpack("<f", Led_ir1)
         Led_ir2 = struct.unpack("<f", Led_ir2)
     else:
+        # to decode ppg, we need to reverse the order of the data and perform bit shifting, as we are working with
+        # 19 bit little endian numbers that are packed together 19 bit, then another 19 bit, etc
+
+        # get the first 8 bits and shift it left by 11 bits to get the MSB (most significant bit) (8 + 11 = 19)
+        # in position 19
         Led_ir11 = data[0]
         Led_ir11 <<= 11
+        # get the 2nd 8 bits and move it behind the first 8 bits. so we move the MSB bit to the 11th position (8+3=11)
         Led_ir12 = data[1]
         Led_ir12 <<= 3
+        # now that we have gotten the first 16 bits, there are only 3 bits left for our 19 bit number. we shift right
+        # so that the MSB occupies the third position, and everything after that is zeros
         Led_ir13 = data[2]
         Led_ir13 >>= 5
+        # add up all the bits to get our 19 bit floating number, as a python float
         Led_ir1 = Led_ir11 + Led_ir12 + Led_ir13
-
+        # continue this pattern.
         Led_ir21 = data[2]
-        Led_ir21 &= 31
+        Led_ir21 &= 31 # 31 = 00011111, so it acts as a bit mask to only keep the first 5 values starting from the right hand side and going left.
         Led_ir21 <<= 14
         Led_ir22 = data[3]
         Led_ir22 <<= 6
@@ -290,8 +325,8 @@ def ppg_handler(sender, data:bytes):
 
     horizontal_array = [Led_ir1, Led_ir2, Led_g15, Led_g2, packet_counter[0], 10-packets_recived]
     if use_lsl:
-        global stream_outlet
-        lsl_transmission.send_data(stream_outlet, horizontal_array)
+        global ppg_stream_outlet
+        lsl_transmission.send_data(ppg_stream_outlet, horizontal_array)
 
 
 def prev_format_accel_HRV(sender, data: bytes):
@@ -361,7 +396,7 @@ def build_uuid_dict(client):
     return uuid_arr
 
 def disconnect_callback(client):
-    print("error: device disconnected")
+    print("bleak error: device disconnected")
     # wait for 5 seconds to make sure the device doesn't reconnect, as per ble protocol?
     time.sleep(6)
     if not client.is_connected:
@@ -387,8 +422,12 @@ async def connect_address(Devices:list[MSenseDevice]=None):
 
 
     for devi in devices:
+        #item = substring_in_dict(devi.name, device_set)
+        #if item is not None:
+            #device_object = deepcopy(item)
         if devi.name in device_set:
             device_object = device_set[devi.name]
+            #device_object.name = devi.name
             device_object.address = devi.address
             addr = devi.address
             motion_sense_devices.append(device_object)
@@ -418,7 +457,7 @@ def create_csv_file(name:str, path):
 
 
 # this is the function that is executed inside the GUI to make sure everything runs properly
-def non_async_collect(address, path, max_length, collect_options, end_flag):
+def non_async_collect(address, path, max_length, collect_options, end_flag, name):
     global status_flag
     status_flag = end_flag
     print("starting non async collecion function with parameters:")
@@ -427,15 +466,16 @@ def non_async_collect(address, path, max_length, collect_options, end_flag):
     print("collection options: " + str(collect_options))
     loop = asyncio.new_event_loop()
     try:
-        loop.run_until_complete(run(address, True, path=path, data_amount=max_length, options=collect_options))
+        loop.run_until_complete(run(address, True, path=path, data_amount=max_length, options=collect_options, Name=name))
     except Exception as e:
         print("bleak client backend bluetooth error")
         print(e)
         
 
 
-async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None):
+async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None, Name="M"):
     try:
+
         print("starting run function")
         # this has to be global because it is async
         global bleak_device
@@ -464,36 +504,45 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             l.addHandler(h)
             logger.addHandler(h)
         if use_lsl:
-            global stream_outlet
-            stream_outlet = lsl_transmission.register_outlet(6)
+            global ppg_stream_outlet
+            global accelorometer_outlet
+            global led_outlet
+            ppg_stream_outlet = lsl_transmission.register_outlet(6, name=Name + " PPG", type_array=["ir1", "ir2", "g1", "g2", "packet counter", "packet loss"])
+            accelorometer_outlet = lsl_transmission.register_outlet(8, name=Name + " Accelerometer", type_array=["AccelX", "AccelY", "AccelZ", "AngX", "AngY", "AngZ", "PC", "PL"])
+            led_outlet = lsl_transmission.register_outlet(2, name=Name + " Led Status", type_array=["led", "PC"], hz=5)
         print("trying to connect with client")
         async with BleakClient(address, disconnect_callback) as client:
             x = client.is_connected
             client.__str__()
-            print("connected to MotionSense!")
+            print("connected to " + str(Name) + "!")
             logger.info("Connected: {0}".format(x))
-            clu = await client.get_services()
 
             uuid_arr = build_uuid_dict(client)
             bleak_device = client
 
             write_pi = bytearray([0, 1])
-            #this should be magnometer service
-            #m_service = bleak_device.services.characteristics[30]
-            #d = await bleak_device.read_gatt_char(m_service)
-            #motion_sense_characteristic()
 
-            #await client.write_gatt_char()
-            #await client.start
-            #tf_kr_array = await client.start_notify(l2_service, data_adr2)
+            # first try to get the battery level, which is known to always be uuid 2a19
+            default_battery_characteristic = 'da39adf0-1d81-48e2-9c68-d0ae4bbd351f'
+            use_battery = False
+
+            battery_level = await check_battery(client)
+            if battery_level is not None:
+                print(battery_level)
+                status_flag.value = battery_level
 
             current_services = []
+
+            # loop thorugh our selected characteristics and check if they are located in the the device's
+            # characteristics.
             for characteristic in options:
                 try:
-                    characteristic.uuid = characteristic.uuid.lower()
+
+                    characteristic.uuid = bleak.uuids.normalize_uuid_str(characteristic.uuid) #characteristic.uuid.lower()
                     characteristic_number = uuid_arr[characteristic.uuid]
                     service = client.services.characteristics[characteristic_number]
                     print("Sucessfully obtained Service: " + str(service))
+
                 except KeyError as e:
                     error_string = "Error: bluetooth characteristic UUID is invalid for device " + characteristic.name
                     print(error_string)
@@ -503,13 +552,8 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
                     return
 
 
-
-
-                #ppg_service = client.services.characteristics[uuid_arr["da39c926-1d81-48e2-9c68-d0ae4bbd351f"]]
-
                 current_services.append(service)
 
-                #create_csv_file("ppg", path)
                 print("starting notify for " + str(characteristic.name))
                 
                 status = await client.start_notify(service, characteristic.function)
@@ -603,7 +647,7 @@ def write_all_files(path = None):
     print("begin BioImpedance Processing")
     csv_rows = list()
     for data_element in range(len(MSense_data.BioImpedancePhase)):
-        csv_rows.append([MSense_data.BioImpedanceMag[data_element],MSense_data.BioImpedancePhase[data_element],
+        csv_rows.append([MSense_data.BioImpedanceMag[data_element], MSense_data.BioImpedancePhase[data_element],
                          MSense_data.BioImpedancePacketCounter[data_element], MSense_data.BioImpedanceTimeStamp[data_element]])
     if len(csv_rows) != 0:
         MSense_data.BioImpedanceFile = open(file_name + "//BioImpedance" + time_stamp +".csv", "w", newline="")
@@ -659,6 +703,7 @@ def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
         if ppg_filter_passthrough:
             real_y_data = scipy.signal.filtfilt(b, 1, real_y_data, axis=-1, padtype=None)
         ax.plot(real_x_data, real_y_data, label=labels[data_element])
+
     
     ax.legend()
     # set the limits
@@ -707,9 +752,6 @@ def show_impedance_graph(title):
         pre_bike_y.append(numpy.mean(array_element))
 
     pre_bike_x = numpy.arange(len(pre_bike_y)) 
-
-
-
 
 
     
@@ -807,6 +849,29 @@ async def collect_with_adress(address):
 
     return True
 
+async def check_battery(client):
+    # for some reason the battery check right now causes issues, this boolean is here for now
+    # to prevent this.
+    check_battery = True
+    battery_level = -9
+    if check_battery:
+        try:
+            for characteristics in client.services.characteristics.values():
+                if characteristics.description == "Battery Level":
+                    battery_level = await client.read_gatt_char(characteristics.uuid)
+                    print("Battery Level: " + str(battery_level[0]))
+                    await asyncio.sleep(2.0)
+                    battery_level = battery_level[0]
+                    if battery_level > 2 and battery_level <= 100:
+                        use_battery = True
+                        return battery_level
+
+        except BaseException as e:
+            print("failed to get battery service")
+            print(e)
+    return battery_level
+
+
 
 def turn_on(data_function=notification_handler, record_length = 300):
     os.environ["PYTHONASYNCIODEBUG"] = str(1)
@@ -826,6 +891,16 @@ def turn_on(data_function=notification_handler, record_length = 300):
     loop.run_until_complete(run(address, True, notification_handler, data_amount = record_length))
 
 atexit.register(write_all_files)
+
+def substring_in_dict(substring:str, key_dict:dict):
+    if substring is None:
+        return None
+    for key in key_dict.keys():
+        if key in substring:
+            return key_dict[key]
+    return None
+
+
 
 if __name__ =='__main__':
     turn_on(record_length=30)

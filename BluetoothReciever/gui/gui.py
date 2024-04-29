@@ -354,7 +354,7 @@ class MotionSenseApp(QWidget):
 
             self.log("registering devices...")
             # for all MSense devices, get the characteristics that are checked and collect data from them
-
+            # device is a MotionSense_QWidget device
             for device in self.devices:
                 self.log("registering device " + str(device.address))
                 path = self.file_line.text() + "\\" + self.file_line2.text() + "\\" + device.name
@@ -367,8 +367,8 @@ class MotionSenseApp(QWidget):
                 self.log(str(options))
                 self.log("creating thread...") #data_collection.bluetooth_reciver.non_async_collect
 
-                th_thread = Collection_Worker(bluetooth_reciver.non_async_collect, device.address,
-                                              path, self.record_length, options)
+                #th_thread = Collection_Worker(bluetooth_reciver.non_async_collect, device.address,
+                #                              path, self.record_length, options)
 
 
                 # a bit of a messy solution. For more compatibility options,
@@ -376,7 +376,7 @@ class MotionSenseApp(QWidget):
                 self.log("creating child shared memory flag for end")
                 exit_flag = multiprocessing.Value("i", 2)
                 self.log("creating Process...")
-                p = multiprocessing.Process(target=test_function, args=(device.address, path, self.record_length, options, exit_flag))
+                p = multiprocessing.Process(target=test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
                 self.log("attempting to start thread" + str(total_checks))
                 p.start()
 
@@ -386,7 +386,7 @@ class MotionSenseApp(QWidget):
                 #threadpool.start(th_thread)
                 #th_thread.run(self.addresses, path, record_length, options)
                 self.log("adding thread to list")
-                self.threads.append((p, exit_flag))
+                self.threads.append((p, exit_flag, device))
                 #data_collection.bluetooth_reciver.non_async_collect(self.address, path, record_length, options)
             #start logging for files
             self.log("sucessfully registered all devices")
@@ -530,6 +530,13 @@ class MotionSense_device_QWidget(QWidget):
         return self.characteristics
 
 
+    def set_battery_level(self, battery_level:int):
+        self.battery_level = PyQt5.QtWidgets.QProgressBar()
+        self.battery_level.setValue(battery_level)
+
+
+
+
 
 
 
@@ -554,12 +561,12 @@ class Collection_Worker(QRunnable):
         self.function_handler(self.address, self.path, self.record_length, self.options)
 
 
-def test_function(address, path, record_length, options, test_flag):
+def test_function(address, path, record_length, options, test_flag, name):
     print("I am running in a test call!")
     import data_collection.bluetooth_reciver
     print("imported")
     try:
-        data_collection.bluetooth_reciver.non_async_collect(address, path, record_length, options, test_flag)
+        data_collection.bluetooth_reciver.non_async_collect(address, path, record_length, options, test_flag, name)
 
     except Exception as err:
         print(err)
@@ -608,6 +615,7 @@ class Window(QMainWindow):
         self.setCentralWidget(self.scroll)
 
         self.setGeometry(600, 100, 1000, 900)
+
         self.setWindowTitle('OSU MotionSense Data Collection')
         self.show()
 
@@ -623,8 +631,10 @@ class Window(QMainWindow):
             print(e)
 
 
-
-import bleak_winrt.windows.devices.bluetooth
+try:
+    import bleak_winrt.windows.devices.bluetooth
+except:
+    pass
 
 
 def update(param):
