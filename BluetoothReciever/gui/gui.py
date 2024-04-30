@@ -55,7 +55,7 @@ threadpool = QThreadPool()
 
 bold_font = QFont()
 bold_font.setBold(True)
-bold_font.setPointSize(14)
+bold_font.setPointSize(16)
 
 
 # our __init__  should be dependency free
@@ -110,8 +110,8 @@ class MotionSenseApp(QWidget):
         # Setting title text font to be bold and big
         font = PyQt5.Qt.QFont()
         font.setBold(True)
-        font.setPointSize(16)
-        header_label.setFont(font)
+        font.setPointSize(14)
+        header_label.setFont(bold_font)
         header_label.setAlignment(Qt.AlignCenter)
         # Create a form layout for the label and line edit
         self.topLayout = QFormLayout()
@@ -158,14 +158,18 @@ class MotionSenseApp(QWidget):
         Options.addWidget(Option4)
         Options.addWidget(Option5)
         self.collections_layout.addRow(Options)
-
+        button_font = QFont()
+        button_font.setBold(True)
+        button_font.setPointSize(11)
         # layout for connecting to motionsense UI, with a button to connect
         self.button = PyQt5.QtWidgets.QPushButton("Connect to MotionSense")
+        self.button.setFont(button_font)
         # button.setText("lol")
         self.gather_button = PyQt5.QtWidgets.QPushButton("Start data_collection")
         self.gather_button.setFixedHeight(50)
         self.gather_button.setDisabled(True)
 
+        self.gather_button.setFont(button_font)
 
         self.th_log = QLineEdit()
         self.log_button = PyQt5.QtWidgets.QPushButton("log custom message:")
@@ -192,7 +196,7 @@ class MotionSenseApp(QWidget):
         self.gather_button.clicked.connect(self.collect_data)
 
         self.log_disp = PyQt5.QtWidgets.QLabel("Waiting to connect to a device...")
-        self.log_disp.setFont(bold_font)
+        self.log_disp.setFont(font)
 
         self.collections_layout.addWidget(self.log_disp)
         self.notice = PyQt5.QtWidgets.QLabel("Note: In order to run this you will need to have "
@@ -627,8 +631,8 @@ class Window(QMainWindow):
 
         test_gradient.setStart(self.width() / 2, 0.0)
         test_gradient.setFinalStop(self.width() / 2, self.height())
-        test_gradient.setColorAt(1.0, PyQt5.Qt.QColor(200, 200, 200,255))
-        test_gradient.setColorAt(0.0, PyQt5.Qt.QColor(255, 150, 150, 255))
+        test_gradient.setColorAt(0.0, PyQt5.Qt.QColor(200, 200, 200,255))
+        test_gradient.setColorAt(1.0, PyQt5.Qt.QColor(255, 150, 150, 255))
 
         p.setBrush(self.backgroundRole(), PyQt5.Qt.QBrush(test_gradient))
         self.setPalette(p)
