@@ -27,8 +27,6 @@ from data_collection import bluetooth_reciver
 from data_collection import device_setup
 
 
-
-
 import PyQt5
 from PyQt5.QtWidgets import (
     QApplication,
@@ -43,6 +41,9 @@ from PyQt5.QtWidgets import (
     QMainWindow
 
 )
+
+
+
 from PyQt5.QtGui import QPixmap, QFont
 
 from PyQt5.QtCore import Qt
@@ -54,7 +55,7 @@ threadpool = QThreadPool()
 
 bold_font = QFont()
 bold_font.setBold(True)
-bold_font.setPointSize(12)
+bold_font.setPointSize(14)
 
 
 # our __init__  should be dependency free
@@ -83,6 +84,8 @@ class MotionSenseApp(QWidget):
         self.timer.start()
 
         self.record_length = 180.0
+
+
         # initialize all of the components of the UI - The Checkboxs, Line Edits, Logo, Text, what have you not
 
         # Create an outer layout
@@ -91,8 +94,7 @@ class MotionSenseApp(QWidget):
         # create a seperate layout just for logo
         picture_layout = QFormLayout()
 
-        # Create a form layout for the label and line edit
-        topLayout = QFormLayout()
+
 
         #try to add OSU logo image
         image = QLabel(self)
@@ -108,10 +110,13 @@ class MotionSenseApp(QWidget):
         # Setting title text font to be bold and big
         font = PyQt5.Qt.QFont()
         font.setBold(True)
-        font.setPointSize(14)
+        font.setPointSize(16)
         header_label.setFont(font)
-        topLayout.addWidget(header_label)
-
+        header_label.setAlignment(Qt.AlignCenter)
+        # Create a form layout for the label and line edit
+        self.topLayout = QFormLayout()
+        #self.topLayout.addWidget(header_label)
+        picture_layout.addWidget(header_label)
         self.file_line = QLineEdit()
         self.file_line.setText(os.getcwd())
 
@@ -124,21 +129,18 @@ class MotionSenseApp(QWidget):
         # we create a counter for max length
         self.file_line4 = QLineEdit()
         self.file_line4.setText(str(1.0))
-        topLayout.addRow("Save Location:", self.file_line)
-        topLayout.addRow("Folder (Study) Name:", self.file_line2)
-        topLayout.addRow("Participant ID", self.file_line3)
-        topLayout.addRow("Stop Recording Data after: (min)", self.file_line4)
 
-        self.enable_csv = QCheckBox()
-        topLayout.addRow("Open LSL Connection during Streaming", self.enable_csv)
+        self.path_desciption = QLabel("Path Will be Saved To")
+        self.edit_path_button = PyQt5.QtWidgets.QPushButton("Show Additional Options")
+        self.path_options_expanded = False
+        self.edit_path_button.clicked.connect(self.setup_top_inputs)
 
+        #self.topLayout.addRow(self.path_desciption)
 
-        # layout for connecting to motionsense UI, with a button to connect
+        self.topLayout.addRow("Enter Participant ID", self.file_line3)
+        self.topLayout.addWidget(self.edit_path_button)
+
         self.collections_layout = QFormLayout()
-        self.button = PyQt5.QtWidgets.QPushButton("Connect to MotionSense")
-        #button.setText("lol")
-        self.gather_button = PyQt5.QtWidgets.QPushButton("Start data_collection")
-        self.gather_button.setDisabled(True)
 
         logging_header = QLabel("Logging Options")
         logging_header.setFont(font)
@@ -157,7 +159,12 @@ class MotionSenseApp(QWidget):
         Options.addWidget(Option5)
         self.collections_layout.addRow(Options)
 
-
+        # layout for connecting to motionsense UI, with a button to connect
+        self.button = PyQt5.QtWidgets.QPushButton("Connect to MotionSense")
+        # button.setText("lol")
+        self.gather_button = PyQt5.QtWidgets.QPushButton("Start data_collection")
+        self.gather_button.setFixedHeight(50)
+        self.gather_button.setDisabled(True)
 
 
         self.th_log = QLineEdit()
@@ -173,15 +180,14 @@ class MotionSenseApp(QWidget):
         data_label = QLabel("Data Collection:")
         data_label.setFont(font)
         self.collections_layout.addWidget(data_label)
-        self.collections_layout.addRow(self.progress_bar_label, self.progress_bar)
         self.collections_layout.addWidget(self.button)
         self.collections_layout.addWidget(self.gather_button)
-
+        #self.collections_layout.addRow(self.progress_bar_label, self.progress_bar)
         # add out button action to the widget
         self.button.clicked.connect(self.update_connect_ui)
         # when self.button is clicked, it will now call self.update_connect_ui
         self.button.clicked.connect(self.connect_to_motionsense_handle)
-
+        self.button.setFixedHeight(50)
         self.optionsLayout = QFormLayout()
         self.gather_button.clicked.connect(self.collect_data)
 
@@ -193,31 +199,12 @@ class MotionSenseApp(QWidget):
                                                             "an apropriate MotionSenseDevice ready and turned on!")
         self.collections_layout.addWidget(self.notice)
 
-        self.path = self.file_line.text() + "\\" + self.file_line2.text()
-        if self.file_line3.text() != "Default Participant":
-            self.path += "\\" + self.file_line3.text()
-        print(self.path)
 
-        # try and create the directory for storing data
-        self.log("making directories..")
-        try:
-            os.mkdir(self.path)
-        except FileExistsError:
-            self.log("directory already exists, keeping old")
-        except:
-            self.log("Could not create the directory! " + str(self.path) + " is invalid.")
-            return
-        finally:
-            self.log("moving on")
-        self.log("sucessfully created directories!")
-        self.logging_file = open(self.path + "\\" + "log.txt", "a")
-        self.user_log_file = open(self.path + "\\" + "user_log.txt", "a")
-        self.log("created and activated log file...")
 
 
         # Nest the inner layouts into the outer layout
         outerLayout.addLayout(picture_layout)
-        outerLayout.addLayout(topLayout)
+        outerLayout.addLayout(self.topLayout)
         outerLayout.addLayout(self.optionsLayout)
         outerLayout.addLayout(self.collections_layout)
 
@@ -226,8 +213,43 @@ class MotionSenseApp(QWidget):
 
         self.currently_collecting = False
         
+    def setup_top_inputs(self):
+        if not self.path_options_expanded:
+            self.topLayout.removeWidget(self.edit_path_button)
+            self.topLayout.addRow("Save Location:", self.file_line)
+            self.topLayout.addRow("Folder (Study) Name:", self.file_line2)
+            self.topLayout.addRow("Stop Recording Data after: (min)", self.file_line4)
+            self.enable_csv = QCheckBox()
+            self.topLayout.addRow("Open LSL Connection during Streaming", self.enable_csv)
+            self.edit_path_button.setText("Hide Additional Options")
+            self.topLayout.addWidget(self.edit_path_button)
+            self.path_options_expanded = True
 
 
+    def create_log_and_folders(self):
+        new_user_path = self.file_line.text() + "\\" + self.file_line2.text()
+        if self.file_line3.text() != "Default Participant":
+            new_user_path += "\\" + self.file_line3.text()
+        print(new_user_path)
+        if new_user_path != self.path:
+            # try and create the directory for storing data
+            self.log("making directories..")
+            try:
+                os.mkdir(self.path)
+            except FileExistsError:
+                self.log("directory already exists, keeping old")
+            except:
+                self.log("Could not create the directory! " + str(self.path) + " is invalid.")
+                return
+            finally:
+                self.log("moving on")
+            self.log("sucessfully created directories!")
+            if self.logging_file is None:
+                self.logging_file = open(self.path + "\\" + "log.txt", "a")
+                self.user_log_file = open(self.path + "\\" + "user_log.txt", "a")
+                self.log("created and activated log file...")
+            else:
+                self.refresh_log_file()
 
     '''this is the connection function that is only executed upon the 'connect' button press
     '''
@@ -235,6 +257,7 @@ class MotionSenseApp(QWidget):
         print("button pressed")
 
         connect_addresses = bluetooth_reciver.non_async_connect(device_setup.all_sensors)
+        self.create_log_and_folders()
         if len(connect_addresses) != 0:
             self.log_disp.setText("collection will be saved to")
             self.button.setText("connected!")
@@ -276,8 +299,14 @@ class MotionSenseApp(QWidget):
         if self.threads is not None:
             for thread in self.threads:
                 process = thread[0]
+                battery_value = thread[1]
+                device = thread[2]
                 if process.is_alive():
-                    pass
+                    try:
+                        calculated_battery_value = float(battery_value) / 100.0
+                        device.set_battery_level(calculated_battery_value)
+                    except Exception:
+                        self.log("error trying to process battery level")
                 else:
                     disconnected_devices += 1
             debug_string = "Current Collecting Devices: " + str(len(self.threads)- disconnected_devices) + "\n"
@@ -321,7 +350,7 @@ class MotionSenseApp(QWidget):
             self.currently_collecting = False
             self.log("Stopped data collection")
             self.gather_button.setText("Saved!")
-            self.log_disp.setText("Stopping Collection and saving to file...")
+            self.log_disp.setText("Stopping Collection and saving to file, please note this will take a while...")
             self.log("trying to terminate existing bluetooth data collection...")
 
 
@@ -436,7 +465,8 @@ class MotionSenseApp(QWidget):
 
     def refresh_log_file(self):
         if self.logging_file is not None and self.path is not None:
-            self.logging_file.close()
+            if not self.logging_file.closed:
+                self.logging_file.close()
             self.logging_file = open(self.path + "\\" + "log.txt", "a")
 
     def send_note(self):
@@ -488,6 +518,8 @@ class MotionSense_device_QWidget(QWidget):
         self.number = number
         self.address = device.address
 
+        self.battery_visible = False
+        self.battery_level = PyQt5.QtWidgets.QProgressBar()
         if device.name == None or device.name == "":
             print("error registering device")
             return -1
@@ -500,6 +532,10 @@ class MotionSense_device_QWidget(QWidget):
         device_name = QLabel(self.name + " Device " + str(self.address))
         device_name.setFont(bold_font)
         optionsLayout.addWidget(device_name)
+        optionsLayout.addWidget(self.battery_level)
+        #self.battery_level.setVisible(False)
+
+
         # here is where we customize the attributes
 
             # for every ble characteristic we want to collect from, we set up this 2 element array:
@@ -531,8 +567,12 @@ class MotionSense_device_QWidget(QWidget):
 
 
     def set_battery_level(self, battery_level:int):
-        self.battery_level = PyQt5.QtWidgets.QProgressBar()
         self.battery_level.setValue(battery_level)
+
+        if not self.battery_visible:
+            self.battery_visible = True
+            self.battery_level.setVisible(True)
+
 
 
 
@@ -600,7 +640,7 @@ class Window(QMainWindow):
         self.widget = MotionSenseApp()
         self.vbox = QVBoxLayout()  # The Vertical Box that contains the Horizontal Boxes of  labels and buttons
 
-        for i in range(1, 50):
+        for i in range(1, 10):
             object = QLabel("TextLabel: " + str(i))
             self.vbox.addWidget(object)
 
@@ -614,7 +654,7 @@ class Window(QMainWindow):
 
         self.setCentralWidget(self.scroll)
 
-        self.setGeometry(600, 100, 1000, 900)
+        self.setGeometry(600, 100, 1000, 800)
 
         self.setWindowTitle('OSU MotionSense Data Collection')
         self.show()
