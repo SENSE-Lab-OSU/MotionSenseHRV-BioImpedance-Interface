@@ -58,6 +58,10 @@ bold_font.setBold(True)
 bold_font.setPointSize(16)
 
 
+font = PyQt5.Qt.QFont()
+font.setBold(True)
+font.setPointSize(14)
+
 # our __init__  should be dependency free
 # for device or bluetooth backend specific functionalities, modify the functions
 # for connecting and updating
@@ -108,9 +112,7 @@ class MotionSenseApp(QWidget):
         header_label = QLabel("Welcome to OSU SENSELAB MotionSense Data Collection!")
 
         # Setting title text font to be bold and big
-        font = PyQt5.Qt.QFont()
-        font.setBold(True)
-        font.setPointSize(14)
+
         header_label.setFont(bold_font)
         header_label.setAlignment(Qt.AlignCenter)
         # Create a form layout for the label and line edit
@@ -128,7 +130,7 @@ class MotionSenseApp(QWidget):
 
         # we create a counter for max length
         self.file_line4 = QLineEdit()
-        self.file_line4.setText(str(1.0))
+        self.file_line4.setText(str(23.0))
 
         self.path_desciption = QLabel("Path Will be Saved To")
         self.edit_path_button = PyQt5.QtWidgets.QPushButton("Show Additional Options")
@@ -237,6 +239,7 @@ class MotionSenseApp(QWidget):
             self.edit_path_button.setText("Show Additional Options")
             self.path_options_expanded = False
 
+
     def create_log_and_folders(self):
         new_user_path = self.file_line.text() + "\\" + self.file_line2.text()
         if self.file_line3.text() != "Default Participant":
@@ -310,12 +313,13 @@ class MotionSenseApp(QWidget):
         if self.threads is not None:
             for thread in self.threads:
                 process = thread[0]
-                battery_value = thread[1]
+                battery_value = thread[1].value
                 device = thread[2]
                 if process.is_alive():
                     try:
-                        calculated_battery_value = float(battery_value) / 100.0
-                        device.set_battery_level(calculated_battery_value)
+                        if battery_value >= 3:
+                            #calculated_battery_value = float(battery_value) / 100.0
+                            device.set_battery_level(battery_value)
                     except Exception:
                         self.log("error trying to process battery level")
                 else:
@@ -358,10 +362,11 @@ class MotionSenseApp(QWidget):
 
         if self.currently_collecting:
             # this means the button has been pressed before, and we need to stop it
+            self.log("Stopping Collection and saving to file, please note this will take a while...")
             self.currently_collecting = False
-            self.log("Stopped data collection")
+            #self.log("Stopped data collection")
             self.gather_button.setText("Saved!")
-            self.log_disp.setText("Stopping Collection and saving to file, please note this will take a while...")
+
             self.log("trying to terminate existing bluetooth data collection...")
 
 
@@ -541,10 +546,10 @@ class MotionSense_device_QWidget(QWidget):
 
         # Add the checkboxes to the layout
         device_name = QLabel(self.name + " Device " + str(self.address))
-        device_name.setFont(bold_font)
+        device_name.setFont(font)
         optionsLayout.addWidget(device_name)
-        optionsLayout.addWidget(self.battery_level)
-        #self.battery_level.setVisible(False)
+        optionsLayout.addRow("Battery Level:", self.battery_level)
+        self.battery_level.setVisible(False)
 
 
         # here is where we customize the attributes
