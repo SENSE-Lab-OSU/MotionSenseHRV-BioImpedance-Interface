@@ -604,6 +604,7 @@ def write_all_files(path = None):
         file_name = path
     # write accelorometer data
     if not os.path.exists(file_name):
+
         os.makedirs(file_name, exist_ok=True)
     time_stamp = datetime.datetime.now().strftime("%d-%m-%Y-at%H-%M")
     

@@ -105,7 +105,7 @@ class MotionSenseApp(QWidget):
         picture_layout.addWidget(image)
 
         # Add a label and a line edit to the form layout
-        header_label = QLabel("Welcome to OSU SENSELAB MotionSense Datacollection!")
+        header_label = QLabel("Welcome to OSU SENSELAB MotionSense Data Collection!")
 
         # Setting title text font to be bold and big
         font = PyQt5.Qt.QFont()
@@ -186,7 +186,7 @@ class MotionSenseApp(QWidget):
         self.collections_layout.addWidget(data_label)
         self.collections_layout.addWidget(self.button)
         self.collections_layout.addWidget(self.gather_button)
-        #self.collections_layout.addRow(self.progress_bar_label, self.progress_bar)
+        self.collections_layout.addRow(self.progress_bar_label, self.progress_bar)
         # add out button action to the widget
         self.button.clicked.connect(self.update_connect_ui)
         # when self.button is clicked, it will now call self.update_connect_ui
@@ -228,7 +228,14 @@ class MotionSenseApp(QWidget):
             self.edit_path_button.setText("Hide Additional Options")
             self.topLayout.addWidget(self.edit_path_button)
             self.path_options_expanded = True
+        else:
+            for i in reversed(range(self.topLayout.count())):
+                self.topLayout.itemAt(i).widget().setParent(None)
+            self.topLayout.addRow("Enter Participant ID", self.file_line3)
 
+            self.topLayout.addWidget(self.edit_path_button)
+            self.edit_path_button.setText("Show Additional Options")
+            self.path_options_expanded = False
 
     def create_log_and_folders(self):
         new_user_path = self.file_line.text() + "\\" + self.file_line2.text()
