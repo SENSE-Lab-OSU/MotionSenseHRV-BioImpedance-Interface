@@ -248,11 +248,13 @@ class MotionSenseApp(QWidget):
         if new_user_path != self.path:
             # try and create the directory for storing data
             self.log("making directories..")
+            self.path = new_user_path
             try:
-                os.mkdir(self.path)
+                os.makedirs(self.path, exist_ok=True)
             except FileExistsError:
                 self.log("directory already exists, keeping old")
-            except:
+            except Exception as e:
+                print(e)
                 self.log("Could not create the directory! " + str(self.path) + " is invalid.")
                 return
             finally:
@@ -284,7 +286,7 @@ class MotionSenseApp(QWidget):
                 device = MotionSense_device_QWidget(count, adress)
                 self.devices.append(device)
                 self.optionsLayout.addWidget(device)
-            self.path = self.file_line.text() + "\\" + self.file_line2.text()
+
             print(self.path)
         else:
             print("failed to connect")
@@ -402,7 +404,7 @@ class MotionSenseApp(QWidget):
             # device is a MotionSense_QWidget device
             for device in self.devices:
                 self.log("registering device " + str(device.address))
-                path = self.file_line.text() + "\\" + self.file_line2.text() + "\\" + device.name
+                path = self.path + "\\" + device.name
                 options = device.get_characteristics()
                 if len(options) == 0:
                     # if the user didn't check any boxes we don't need to run any data
@@ -536,6 +538,7 @@ class MotionSense_device_QWidget(QWidget):
 
         self.battery_visible = False
         self.battery_level = PyQt5.QtWidgets.QProgressBar()
+        self.battery_level.setFixedWidth(200)
         if device.name == None or device.name == "":
             print("error registering device")
             return -1

@@ -642,8 +642,8 @@ def write_all_files(path = None):
         MSense_data.ppg_file.close()
         show_graph(file_name + "filtered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
                                  MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], True)
-        show_graph(file_name +"unfiltered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
-                                 MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], False)
+        #show_graph(file_name +"unfiltered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
+        #                         MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], False)
 
     print("begin BioImpedance Processing")
     csv_rows = list()
