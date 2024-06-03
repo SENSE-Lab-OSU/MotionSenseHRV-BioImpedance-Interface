@@ -53,7 +53,9 @@ file_obj = None
 
 use_previous_packet_format = False
 sucessful_file_write = False
-real_time_graph_updates = False
+real_time_graph_updates = True
+
+real_time_graph_counter = 0
 
 status_flag = 0
 
@@ -317,14 +319,19 @@ def ppg_handler(sender, data:bytes):
         print("ppg packet counter: " + str(packet_counter))
     packet_counter = struct.unpack(">h", packet_counter)
 
-    MSens e_data.ppg_led1ir_arr.append(Led_ir1)
+    MSense_data.ppg_led1ir_arr.append(Led_ir1)
     MSense_data.ppg_led2ir_arr.append(Led_ir2)
     MSense_data.ppg_g1_arr.append(Led_g15)
     MSense_data.ppg_g2_arr.append(Led_g2)
     if real_time_graph_updates:
-        show_graph(file_name + "filtered ppg graph",
-                   [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
-                    MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], True, True)
+        global real_time_graph_counter
+        real_time_graph_counter += 1
+        if real_time_graph_counter > 20:
+            real_time_graph_counter = 0
+            show_realtime_graph(file_name + "filtered ppg graph",
+                    [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
+                    MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"])
+            
     # packet counter logic calculation
     MSense_data.ppg_packet_counter.append(packet_counter[0])
     packets_recived = MSense_data.ppg_packet_counter[len(MSense_data.ppg_packet_counter) - 1] - MSense_data.ppg_packet_counter[
@@ -652,8 +659,7 @@ def write_all_files(path = None):
         csv_writer.writerows(csv_rows)
         print("closing ppg file")
         MSense_data.ppg_file.close()
-        show_graph(file_name + "filtered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
-                                 MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], True)
+        
         #show_graph(file_name +"unfiltered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
         #                         MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], False)
 
@@ -669,7 +675,11 @@ def write_all_files(path = None):
         csv_writer.writerows(csv_rows)
         print("closing BioImpedance file")
         MSense_data.BioImpedanceFile.close()
+    
     sucessful_file_write = True
+    if not real_time_graph_updates:
+        show_graph(file_name + "filtered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
+                                 MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], True)
 
 
 def write_files(file_name:str, type:str, time_stamp:str, file_obj,
@@ -681,17 +691,46 @@ def write_files(file_name:str, type:str, time_stamp:str, file_obj,
             csv_writer.writerows(csv_rows)
             print("closing file")
             
+# by just using plt, it now comes with auto zoom features which I somehow missed.
+
+    # plot the data
+
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+def show_realtime_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
+    
+    ax.clear()
+    for data_element in range(len(data)):
+        row = len(data[data_element])
+        if row > 250:
+            row = 250
+        real_y_data = data[data_element][-250:]
+        real_x_data = numpy.arange(row)
+        if ppg_filter_passthrough:
+            Fs = 25  # sampling rate of PPG
+            b = scipy.signal.firls(numtaps=33, bands=numpy.array([0, 0.2, 0.5, 2.5, 2.8, Fs / 2])
+                                   , desired=numpy.array([0, 0, 1, 1, 0, 0]),
+                                   weight=numpy.array([2000, 100, 1000]),
+                                   fs=Fs)  # fit a filter
+            real_y_data = scipy.signal.filtfilt(b, 1, real_y_data, axis=-1, padtype=None)
+        
+        ax.plot(real_x_data, real_y_data, label=labels[data_element])
+
+    ax.legend()
+    ax.set_title(title)
+
+    # display the plot
+    plt.pause(.001)
+    
+
+
+
 
 # shows a graph of ppg signals. data is a list of ppg signals (which is a list of samples.)
 def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False, pause=False):
-    # by just using plt, it now comes with auto zoom features which I somehow missed.
-
-    # plot the data
+    
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-
-
-
 
     for data_element in range(len(data)):
         row = len(data[data_element])
@@ -704,6 +743,7 @@ def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False, paus
                                    weight=numpy.array([2000, 100, 1000]),
                                    fs=Fs)  # fit a filter
             real_y_data = scipy.signal.filtfilt(b, 1, real_y_data, axis=-1, padtype=None)
+        
         ax.plot(real_x_data, real_y_data, label=labels[data_element])
 
     
@@ -718,10 +758,13 @@ def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False, paus
 
     # this may cause issues because we are supposed to shutdown this process after data
     # collection is done, which will shutdown this graph even if block=False.
-    if pause:
-        plt.pause(.001)
-    else:
-        plt.show(block=True)
+    
+    plt.show(block=True)
+
+
+
+
+
 
 
 def show_impedance_graph(title):
