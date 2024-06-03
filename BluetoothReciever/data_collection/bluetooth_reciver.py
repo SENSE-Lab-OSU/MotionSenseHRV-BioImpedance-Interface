@@ -33,6 +33,14 @@ if use_lsl:
 
 from bleak import BleakScanner
 
+try:
+    # this is a quick fix for windows devices in which the backend is win32, because win32 does not allow
+    # a gui tick with bleak for some reason
+    from bleak.backends.winrt.util import allow_sta
+    allow_sta()
+except ImportError:
+    # other OSes and versions work, so we can just ignore.
+    pass
 
 Tensorflow_UUID = ""
 ppg_UUID = ""
@@ -45,6 +53,7 @@ file_obj = None
 
 use_previous_packet_format = False
 sucessful_file_write = False
+real_time_graph_updates = False
 
 status_flag = 0
 
@@ -308,11 +317,14 @@ def ppg_handler(sender, data:bytes):
         print("ppg packet counter: " + str(packet_counter))
     packet_counter = struct.unpack(">h", packet_counter)
 
-    MSense_data.ppg_led1ir_arr.append(Led_ir1)
+    MSens e_data.ppg_led1ir_arr.append(Led_ir1)
     MSense_data.ppg_led2ir_arr.append(Led_ir2)
     MSense_data.ppg_g1_arr.append(Led_g15)
     MSense_data.ppg_g2_arr.append(Led_g2)
-
+    if real_time_graph_updates:
+        show_graph(file_name + "filtered ppg graph",
+                   [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
+                    MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], True, True)
     # packet counter logic calculation
     MSense_data.ppg_packet_counter.append(packet_counter[0])
     packets_recived = MSense_data.ppg_packet_counter[len(MSense_data.ppg_packet_counter) - 1] - MSense_data.ppg_packet_counter[
@@ -670,31 +682,15 @@ def write_files(file_name:str, type:str, time_stamp:str, file_obj,
             print("closing file")
             
 
-
-def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
+# shows a graph of ppg signals. data is a list of ppg signals (which is a list of samples.)
+def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False, pause=False):
     # by just using plt, it now comes with auto zoom features which I somehow missed.
-    
-    # create random data
-    xdata = numpy.random.random([2, 10])
-
-    # split the data into two parts
-    xdata1 = xdata[0, :]
-    xdata2 = xdata[1, :]
-
-    ydata1 = xdata1 ** 2
-    ydata2 = 1 - xdata2 ** 3
 
     # plot the data
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    
-    #ax.plot(xdata1, ydata1, color='tab:blue')
-    #ax.plot(xdata2, ydata2, color='tab:orange')
-    Fs = 25 # sampling rate of PPG
-    b = scipy.signal.firls(numtaps=33,bands= numpy.array([0,0.2,0.5,2.5,2.8,Fs/2])
-                  , desired = numpy.array([0,0,1,1,0,0]),
-                  weight = numpy.array([2000,100,1000]),
-                  fs = Fs) # fit a filter
+
+
 
 
     for data_element in range(len(data)):
@@ -702,6 +698,11 @@ def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
         real_x_data = numpy.arange(row)
         real_y_data = data[data_element]
         if ppg_filter_passthrough:
+            Fs = 25  # sampling rate of PPG
+            b = scipy.signal.firls(numtaps=33, bands=numpy.array([0, 0.2, 0.5, 2.5, 2.8, Fs / 2])
+                                   , desired=numpy.array([0, 0, 1, 1, 0, 0]),
+                                   weight=numpy.array([2000, 100, 1000]),
+                                   fs=Fs)  # fit a filter
             real_y_data = scipy.signal.filtfilt(b, 1, real_y_data, axis=-1, padtype=None)
         ax.plot(real_x_data, real_y_data, label=labels[data_element])
 
@@ -717,7 +718,10 @@ def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
 
     # this may cause issues because we are supposed to shutdown this process after data
     # collection is done, which will shutdown this graph even if block=False.
-    plt.show(block=True)
+    if pause:
+        plt.pause(.001)
+    else:
+        plt.show(block=True)
 
 
 def show_impedance_graph(title):
