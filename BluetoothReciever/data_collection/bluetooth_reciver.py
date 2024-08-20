@@ -539,7 +539,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             uuid_arr = build_uuid_dict(client)
             bleak_device = client
 
-            write_pi = bytearray([0, 1])
+            write_pi = bytearray([0x01])
 
             # first try to get the battery level, which is known to always be uuid 2a19
             default_battery_characteristic = 'da39adf0-1d81-48e2-9c68-d0ae4bbd351f'
@@ -554,7 +554,15 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
 
             # loop thorugh our selected characteristics and check if they are located in the the device's
             # characteristics.
+
+            # MSense 4 Needs enabling
+            if Name == "MotionSenseHRV4Left" or Name == "MotionSenseHRV4Right":
+                await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c931-1d81-48e2-9c68-d0ae4bbd351f"), write_pi)
+
+
             for characteristic in options:
+                if characteristic.function is None:
+                    continue
                 try:
 
                     characteristic.uuid = bleak.uuids.normalize_uuid_str(characteristic.uuid) #characteristic.uuid.lower()
@@ -565,10 +573,11 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
                 except KeyError as e:
                     error_string = "Error: bluetooth characteristic UUID is invalid for device " + characteristic.name
                     print(error_string)
-                    return error_string
+
                 except BaseException as e:
-                    print(e)
-                    return
+                    print("characteristic notify error" + e)
+
+
 
 
                 current_services.append(service)
@@ -594,6 +603,8 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
         print("An Error Occured in the child thread during data Collection:")
         print(e)
 
+    if Name == "MotionSenseHRV4Left" or Name == "MotionSenseHRV4Right":
+        await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c931-1d81-48e2-9c68-d0ae4bbd351f"), bytearray([0x00]))
     try:
         print("trying to write to files")
         write_all_files(file_name)
