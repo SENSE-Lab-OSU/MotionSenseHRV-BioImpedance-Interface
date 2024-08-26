@@ -118,6 +118,9 @@ class MSense_data:
     # assigned a file object
     ppg_file = None
 
+    enmo_data = []
+    enmo_packet_counter = []
+    enmo_file = None
 
     accelorometer_data = []
     accelorometer_packet_counter = []
@@ -227,6 +230,28 @@ def motionsense_handler(sender, data):
     horizontal_array = [Accelorometer_X[0], Accelorometer_Y[0], Accelerometer_Z[0], Angular_velocity_X[0], Angular_velocity_Y[0], Angular_velocity_Y[0], packet_counter[0], packets_recived]
     if use_lsl:
         lsl_transmission.send_data(accelorometer_outlet, horizontal_array)
+
+
+def enmo_handler(sender, data):
+    global file_name
+    #m_service = bleak_device.services.characteristics[30]
+    #await bleak_device.read_gatt_char(m_service)
+    accelorometer_data = []
+    ENMO = data[0:4]
+    packet_counter = data[4:6]
+    ENMO = struct.unpack("<f", ENMO)
+
+    if debug_print_updates:
+        print("accelorometer packet counter: " + str(packet_counter))
+    packet_counter = struct.unpack("<h", packet_counter)
+    MSense_data.enmo_data.append(ENMO)
+    MSense_data.enmo_packet_counter.append(packet_counter)
+    horizontal_array = [ENMO, packet_counter]
+    if use_lsl:
+        lsl_transmission.send_data(accelorometer_outlet, horizontal_array)
+
+
+
 
 def led_handler(sender, data):
     led_status = data[0]
@@ -596,6 +621,9 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
                     print("status triggered error, ending collection...")
                     break
                 await asyncio.sleep(1.0)
+            if Name == "MotionSenseHRV4Left" or Name == "MotionSenseHRV4Right":
+                await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c931-1d81-48e2-9c68-d0ae4bbd351f"),
+                                        bytearray([0x00]))
                 
             
 
@@ -603,8 +631,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
         print("An Error Occured in the child thread during data Collection:")
         print(e)
 
-    if Name == "MotionSenseHRV4Left" or Name == "MotionSenseHRV4Right":
-        await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c931-1d81-48e2-9c68-d0ae4bbd351f"), bytearray([0x00]))
+
     try:
         print("trying to write to files")
         write_all_files(file_name)
@@ -673,6 +700,17 @@ def write_all_files(path = None):
         
         #show_graph(file_name +"unfiltered ppg graph", [MSense_data.ppg_led1ir_arr, MSense_data.ppg_led2ir_arr, MSense_data.ppg_g1_arr,
         #                         MSense_data.ppg_g2_arr], ["ir1", "ir2", "g1", "g2"], False)
+    csv_rows = list()
+    if len(MSense_data.enmo_data) > 0:
+        for data_element in range(len(MSense_data.enmo_data)):
+            csv_rows.append([MSense_data.enmo_data[data_element], MSense_data.enmo_packet_counter[data_element]])
+
+        MSense_data.enmo_file = open(file_name + "//ENMO" + time_stamp + ".csv", "w", newline="")
+        csv_writer = csv.writer(MSense_data.enmo_file)
+        csv_writer.writerow(["Enmo", "Packet Counter"])
+        csv_writer.writerows(csv_rows)
+        MSense_data.enmo_file.close()
+
 
     print("begin BioImpedance Processing")
     csv_rows = list()
