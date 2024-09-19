@@ -445,6 +445,7 @@ def disconnect_callback(client):
     time.sleep(6)
     if not client.is_connected:
         global file_name
+
         write_all_files(file_name)
         sys.exit()
     else:
@@ -581,7 +582,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             # characteristics.
 
             # MSense 4 Needs enabling
-            if Name == "MotionSenseHRV4Left" or Name == "MotionSenseHRV4Right":
+            if  "MotionSenseHRV4" in Name or "MSense4" in Name:
                 await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c931-1d81-48e2-9c68-d0ae4bbd351f"), write_pi)
 
 
@@ -621,7 +622,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
                     print("status triggered error, ending collection...")
                     break
                 await asyncio.sleep(1.0)
-            if Name == "MotionSenseHRV4Left" or Name == "MotionSenseHRV4Right":
+            if "MotionSenseHRV4" in Name or "MSense4" in Name:
                 await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c931-1d81-48e2-9c68-d0ae4bbd351f"),
                                         bytearray([0x00]))
                 

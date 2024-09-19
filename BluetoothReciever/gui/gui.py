@@ -164,7 +164,7 @@ class MotionSenseApp(QWidget):
         button_font.setBold(True)
         button_font.setPointSize(11)
         # layout for connecting to motionsense UI, with a button to connect
-        self.button = PyQt5.QtWidgets.QPushButton("Connect to MotionSense")
+        self.button = PyQt5.QtWidgets.QPushButton("Scan for MotionSense")
         self.button.setFont(button_font)
         # button.setText("lol")
         self.gather_button = PyQt5.QtWidgets.QPushButton("Start data_collection")
