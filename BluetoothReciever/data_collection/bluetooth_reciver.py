@@ -29,6 +29,7 @@ if use_lsl:
     ppg_stream_outlet = None
     accelorometer_outlet = None
     led_outlet = None
+    enmo_outlet = None
 
 
 from bleak import BleakScanner
@@ -243,12 +244,13 @@ def enmo_handler(sender, data):
 
     if debug_print_updates:
         print("accelorometer packet counter: " + str(packet_counter))
-    packet_counter = struct.unpack("<h", packet_counter)
+    packet_counter = struct.unpack("<H", packet_counter)
     MSense_data.enmo_data.append(ENMO)
     MSense_data.enmo_packet_counter.append(packet_counter)
     horizontal_array = [ENMO, packet_counter]
     if use_lsl:
-        lsl_transmission.send_data(accelorometer_outlet, horizontal_array)
+        global enmo_outlet
+        lsl_transmission.send_data(enmo_outlet, horizontal_array)
 
 
 
@@ -552,9 +554,11 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             global ppg_stream_outlet
             global accelorometer_outlet
             global led_outlet
+            global enmo_outlet
             ppg_stream_outlet = lsl_transmission.register_outlet(6, name=Name + " PPG", type_array=["ir1", "ir2", "g1", "g2", "packet counter", "packet loss"])
             accelorometer_outlet = lsl_transmission.register_outlet(8, name=Name + " Accelerometer", type_array=["AccelX", "AccelY", "AccelZ", "AngX", "AngY", "AngZ", "PC", "PL"])
             led_outlet = lsl_transmission.register_outlet(2, name=Name + " Led Status", type_array=["led", "PC"], hz=5)
+            enmo_outlet = lsl_transmission.register_outlet(2, name= Name + "Enmo Timestamp", type_array=["enmo", "pkt_counter"])
         print("trying to connect with client")
         async with BleakClient(address, disconnect_callback) as client:
             x = client.is_connected
