@@ -247,7 +247,7 @@ def enmo_handler(sender, data):
     packet_counter = struct.unpack("<H", packet_counter)
     MSense_data.enmo_data.append(ENMO)
     MSense_data.enmo_packet_counter.append(packet_counter)
-    horizontal_array = [ENMO, packet_counter]
+    horizontal_array = [ENMO[0], packet_counter[0]]
     if use_lsl:
         global enmo_outlet
         lsl_transmission.send_data(enmo_outlet, horizontal_array)
