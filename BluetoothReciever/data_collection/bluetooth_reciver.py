@@ -23,7 +23,7 @@ import datetime
 
 debug_print_updates = False
 show_matplotlib_graphs = False
-use_lsl = False
+use_lsl = True
 if use_lsl:
     from data_collection import lsl_transmission
     ppg_stream_outlet = None
