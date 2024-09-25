@@ -550,15 +550,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             h.setLevel(logging.DEBUG)
             l.addHandler(h)
             logger.addHandler(h)
-        if use_lsl:
-            global ppg_stream_outlet
-            global accelorometer_outlet
-            global led_outlet
-            global enmo_outlet
-            ppg_stream_outlet = lsl_transmission.register_outlet(6, name=Name + " PPG", type_array=["ir1", "ir2", "g1", "g2", "packet counter", "packet loss"])
-            accelorometer_outlet = lsl_transmission.register_outlet(8, name=Name + " Accelerometer", type_array=["AccelX", "AccelY", "AccelZ", "AngX", "AngY", "AngZ", "PC", "PL"])
-            led_outlet = lsl_transmission.register_outlet(2, name=Name + " Led Status", type_array=["led", "PC"], hz=5)
-            enmo_outlet = lsl_transmission.register_outlet(2, name= Name + "Enmo Timestamp", type_array=["enmo", "pkt_counter"])
+
         print("trying to connect with client")
         async with BleakClient(address, disconnect_callback) as client:
             x = client.is_connected
@@ -586,9 +578,22 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             # characteristics.
 
             # MSense 4 Needs enabling
+
+
             if  "MotionSenseHRV4" in Name or "MSense4" in Name:
                 await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c931-1d81-48e2-9c68-d0ae4bbd351f"), write_pi)
-
+                if use_lsl:
+                    global enmo_outlet
+                    enmo_outlet = lsl_transmission.register_outlet(2, name=Name + "Enmo Timestamp",
+                                                           type_array=["enmo", "pkt_counter"])
+            else:
+                if use_lsl:
+                    global ppg_stream_outlet
+                    global accelorometer_outlet
+                    global led_outlet
+                    ppg_stream_outlet = lsl_transmission.register_outlet(6, name=Name + " PPG", type_array=["ir1", "ir2", "g1", "g2", "packet counter", "packet loss"])
+                    accelorometer_outlet = lsl_transmission.register_outlet(8, name=Name + " Accelerometer", type_array=["AccelX", "AccelY", "AccelZ", "AngX", "AngY", "AngZ", "PC", "PL"])
+                    led_outlet = lsl_transmission.register_outlet(2, name=Name + " Led Status", type_array=["led", "PC"], hz=5)
 
             for characteristic in options:
                 if characteristic.function is None:
