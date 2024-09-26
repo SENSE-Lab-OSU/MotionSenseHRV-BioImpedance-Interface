@@ -248,6 +248,7 @@ def enmo_handler(sender, data):
     MSense_data.enmo_data.append(ENMO)
     MSense_data.enmo_packet_counter.append(packet_counter)
     horizontal_array = [ENMO[0], packet_counter[0]]
+    print(str(horizontal_array))
     if use_lsl:
         global enmo_outlet
         lsl_transmission.send_data(enmo_outlet, horizontal_array)
@@ -444,14 +445,15 @@ def build_uuid_dict(client):
 def disconnect_callback(client):
     print("bleak error: device disconnected")
     # wait for 5 seconds to make sure the device doesn't reconnect, as per ble protocol?
-    time.sleep(6)
-    if not client.is_connected:
-        global file_name
+    print(str(client.is_connected))
+    #time.sleep(6)
+    #if not client.is_connected:
+    #    global file_name
 
-        write_all_files(file_name)
-        sys.exit()
-    else:
-        print("device reconnected")
+    #    write_all_files(file_name)
+    #    sys.exit()
+    #else:
+    #    print("device reconnected")
 
 
 
@@ -521,14 +523,15 @@ def non_async_collect(address, path, max_length, collect_options, end_flag, name
 
 
 async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None, Name="M"):
+    global file_name
+    file_name = path
     try:
-
         print("starting run function")
         # this has to be global because it is async
         global bleak_device
         global start_collection_date
         # just a little check to remember why this is global
-        global file_name
+
         print(file_name)
         global file_obj
         start_collection_date += str(datetime.datetime.now())
@@ -536,7 +539,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
         start_collection_date = start_collection_date.replace(":", "")
         assert options != None
         assert path != None
-        file_name = path
+
         assert len(options) != 0
         print(type(options[0]))
         assert type(options[0]) == MSenseCharacteristic
@@ -553,6 +556,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
 
         print("trying to connect with client")
         async with BleakClient(address, disconnect_callback) as client:
+            #client.connect()
             x = client.is_connected
             client.__str__()
             print("connected to " + str(Name) + "!")
@@ -613,28 +617,22 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
                 except BaseException as e:
                     print("characteristic notify error" + e)
 
-
-
-
                 current_services.append(service)
 
                 print("starting notify for " + str(characteristic.name))
                 
                 status = await client.start_notify(service, characteristic.function)
 
-
             #we need to do the rest of the sensors as well
             #collect data
             
             for current_second in range(int(data_amount)):
                 print("current seconds in collection for device: " + str(current_second) + "and status:" + str(status_flag.value))
-                if (status_flag.value == -1):
+                if (status_flag.value == -1) or not client.is_connected:
                     print("status triggered error, ending collection...")
                     break
                 await asyncio.sleep(1.0)
-            if "MotionSenseHRV4" in Name or "MSense4" in Name:
-                await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c931-1d81-48e2-9c68-d0ae4bbd351f"),
-                                        bytearray([0x00]))
+            await disconnect(client, current_services, Name)
                 
             
 
@@ -642,21 +640,18 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
         print("An Error Occured in the child thread during data Collection:")
         print(e)
 
+    finally:
+        try:
+            print("trying to write to files")
+            write_all_files(file_name)
+        except Exception as e:
+            print(e)
+        print("all files written")
 
-    try:
-        print("trying to write to files")
-        write_all_files(file_name)
-    except Exception as e:
-        print(e)
 
-    print("all files written")
-    await disconnect(client, current_services)
 
-        #j = MSense_data
-    ppg_pack = MSense_data.ppg_packet_counter
-    ppg_pack_loss = MSense_data.ppg_packet_loss_counter
 
-    magno_pack = MSense_data.magnometer_packet
+
     return "Finished Data Collection for "
 
 
@@ -920,19 +915,18 @@ def construct_graph_from_csv(title, file):
     show_graph(title, all_columns, titles)
         
 
-async def disconnect(client, services:list):
-    for service in services:
-        try:
-            await client.stop_notify(service)
-        except Exception as e:
-            print("failed to stop notify")
-            print(e)
-    try:
-        await client.disconnect()
-    except Exception as e:
-        print("failed to disconnect")
-        print(e)
-    print('properly disconnected')
+async def disconnect(client, services:list, Name):
+
+    if "MotionSenseHRV4" in Name or "MSense4" in Name:
+        await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c931-1d81-48e2-9c68-d0ae4bbd351f"),
+                                     bytearray([0x00]))
+
+    #try:
+        #await client.disconnect()
+    #except Exception as e:
+    #    print("failed to disconnect")
+    #    print(e)
+    #print('properly disconnected')
 
 def start_background_loop(loop: asyncio.AbstractEventLoop):
     asyncio.set_event_loop(loop)

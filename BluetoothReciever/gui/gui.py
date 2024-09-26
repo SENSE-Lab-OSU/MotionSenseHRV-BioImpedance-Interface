@@ -2,7 +2,6 @@ import os
 import sys
 import time
 import atexit
-import PyQt5.QtBluetooth
 from PyQt5.QtCore import QRunnable, QThreadPool
 from PyQt5.Qt import QLinearGradient
 import PyQt5.QtCore
