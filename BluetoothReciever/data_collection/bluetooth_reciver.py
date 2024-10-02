@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 """
-
+import sys
+#sys.coinit_flags = 0
 import logging
 import asyncio
 import platform
@@ -18,7 +19,7 @@ import struct
 import csv
 import threading
 import os
-import sys
+
 import datetime
 
 debug_print_updates = False
@@ -37,9 +38,14 @@ from bleak import BleakScanner
 try:
     # this is a quick fix for windows devices in which the backend is win32, because win32 does not allow
     # a gui tick with bleak for some reason
-    from bleak.backends.winrt.util import allow_sta
+    from bleak.backends.winrt.util import allow_sta, uninitialize_sta
+    print("performing sta logistics")
+    print(sys.modules)
     allow_sta()
-except ImportError:
+    #uninitialize_sta()
+except ImportError as e:
+    print("skipped sta")
+    print(e)
     # other OSes and versions work, so we can just ignore.
     pass
 
@@ -555,7 +561,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             logger.addHandler(h)
 
         print("trying to connect with client")
-        async with BleakClient(address, disconnect_callback) as client:
+        async with BleakClient(address) as client:
             #client.connect()
             x = client.is_connected
             client.__str__()

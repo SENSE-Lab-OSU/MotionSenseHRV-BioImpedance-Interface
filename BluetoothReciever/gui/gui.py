@@ -6,6 +6,7 @@ from PyQt5.QtCore import QRunnable, QThreadPool
 from PyQt5.Qt import QLinearGradient
 import PyQt5.QtCore
 import multiprocessing
+import threading
 from PyQt5.QtCore import pyqtSlot
 
 
@@ -420,11 +421,14 @@ class MotionSenseApp(QWidget):
                 # a bit of a messy solution. For more compatibility options,
                 # use PyQt threadpool
                 self.log("creating child shared memory flag for end")
+
                 exit_flag = multiprocessing.Value("i", 2)
+                #exit_flag = 2
                 self.log("creating Process...")
-                p = multiprocessing.Process(target=test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
+                #p = multiprocessing.Process(target=test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
+                p2 = threading.Thread(target=test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
                 self.log("attempting to start thread" + str(total_checks))
-                p.start()
+                p2.start()
 
                 total_checks += 1
 
@@ -432,7 +436,7 @@ class MotionSenseApp(QWidget):
                 #threadpool.start(th_thread)
                 #th_thread.run(self.addresses, path, record_length, options)
                 self.log("adding thread to list")
-                self.threads.append((p, exit_flag, device))
+                self.threads.append((p2, exit_flag, device))
                 #data_collection.bluetooth_reciver.non_async_collect(self.address, path, record_length, options)
             #start logging for files
             self.log("sucessfully registered all devices")
@@ -702,6 +706,7 @@ def update(param):
 def start():
     #bleak_winrt.windows.devices.bluetooth.BluetoothLEPreferredConnectionParametersRequest
     print("starting gui")
+    print(sys.version)
     app = QApplication(sys.argv)
     window = Window()
     window.show()
@@ -716,4 +721,5 @@ def start():
 
 
 if __name__ == "__main__":
+
     start()
