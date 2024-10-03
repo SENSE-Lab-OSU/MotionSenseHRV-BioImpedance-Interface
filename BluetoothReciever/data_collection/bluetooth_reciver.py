@@ -8,6 +8,7 @@ import asyncio
 import platform
 import time
 import atexit
+import hashlib
 import matplotlib.pyplot as plt
 import numpy
 from bleak import BleakClient
@@ -660,6 +661,12 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
 
     return "Finished Data Collection for "
 
+def compute_int_hash(name:str):
+    hash_object = hashlib.sha256(name.encode())
+    hex_digest = hash_object.hexdigest()
+    integer_representation = int(hex_digest, 16) % 32000
+    byte_representation = struct.pack("<I", integer_representation)
+    return byte_representation
 
 
 

@@ -12,6 +12,12 @@ from PyQt5.QtCore import pyqtSlot
 
 import datetime
 
+class num:
+
+    def __init__(self, value):
+        self.value = value
+
+
 print(str(datetime.datetime.now()))
 
 
@@ -376,8 +382,8 @@ class MotionSenseApp(QWidget):
             print("trying to close app")
             self.refresh_log_file()
             for thread in self.threads:
-                with thread[1].get_lock():
-                    thread[1].value = -1
+
+                thread[1].value = -1
                 thread[0].join()
             self.threads.clear()
 
@@ -402,6 +408,8 @@ class MotionSenseApp(QWidget):
             self.log("registering devices...")
             # for all MSense devices, get the characteristics that are checked and collect data from them
             # device is a MotionSense_QWidget device
+            exit_flag = num(2)
+            exit_flag.value = 2
             for device in self.devices:
                 self.log("registering device " + str(device.address))
                 path = self.path + "\\" + device.name
@@ -422,8 +430,8 @@ class MotionSenseApp(QWidget):
                 # use PyQt threadpool
                 self.log("creating child shared memory flag for end")
 
-                exit_flag = multiprocessing.Value("i", 2)
-                #exit_flag = 2
+                #exit_flag = multiprocessing.Value("i", 2)
+
                 self.log("creating Process...")
                 #p = multiprocessing.Process(target=test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
                 p2 = threading.Thread(target=test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
@@ -436,7 +444,7 @@ class MotionSenseApp(QWidget):
                 #threadpool.start(th_thread)
                 #th_thread.run(self.addresses, path, record_length, options)
                 self.log("adding thread to list")
-                self.threads.append((p2, exit_flag, device))
+                self.threads.append([p2, exit_flag, device])
                 #data_collection.bluetooth_reciver.non_async_collect(self.address, path, record_length, options)
             #start logging for files
             self.log("sucessfully registered all devices")
