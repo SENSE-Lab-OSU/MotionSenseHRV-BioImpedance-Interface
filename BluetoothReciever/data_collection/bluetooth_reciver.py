@@ -514,22 +514,20 @@ def create_csv_file(name:str, path):
 
 # this is the function that is executed inside the GUI to make sure everything runs properly
 def non_async_collect(address, path, max_length, collect_options, end_flag, name):
-    global status_flag
-    status_flag = end_flag
     print("starting non async collecion function with parameters:")
     print("address: " + address)
     print("path: " + path)
     print("collection options: " + str(collect_options))
     loop = asyncio.new_event_loop()
     try:
-        loop.run_until_complete(run(address, True, path=path, data_amount=max_length, options=collect_options, Name=name))
+        loop.run_until_complete(run(address, True, path=path, data_amount=max_length, options=collect_options, status_flag=end_flag, Name=name))
     except Exception as e:
         print("bleak client backend bluetooth error")
         print(e)
         
 
 
-async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None, Name="M"):
+async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None, status_flag=None, Name="M"):
     global file_name
     file_name = path
     try:
@@ -581,7 +579,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             battery_level = await check_battery(client)
             if battery_level is not None:
                 print(battery_level)
-                status_flag.value = battery_level
+                status_flag.set_value(battery_level)
 
             current_services = []
 
@@ -634,8 +632,8 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             #collect data
             
             for current_second in range(int(data_amount)):
-                print("current seconds in collection for device: " + str(current_second) + "and status:" + str(status_flag.value))
-                if (status_flag.value == -1) or not client.is_connected:
+                print("current seconds in collection for device: " + str(current_second) + "and status:" + str(status_flag.get_value()))
+                if (status_flag.get_value() == -1) or not client.is_connected:
                     print("status triggered error, ending collection...")
                     break
                 await asyncio.sleep(1.0)

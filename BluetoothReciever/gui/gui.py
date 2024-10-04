@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import copy
 import atexit
 from PyQt5.QtCore import QRunnable, QThreadPool
 from PyQt5.Qt import QLinearGradient
@@ -14,8 +15,16 @@ import datetime
 
 class num:
 
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, array, index):
+        self.array = array
+        self.index = index
+
+    def set_value(self, value):
+        self.array[self.index][1] = value
+
+    def get_value(self):
+        return self.array[self.index][1]
+
 
 
 print(str(datetime.datetime.now()))
@@ -321,7 +330,7 @@ class MotionSenseApp(QWidget):
         if self.threads is not None:
             for thread in self.threads:
                 process = thread[0]
-                battery_value = thread[1].value
+                battery_value = thread[1]
                 device = thread[2]
                 if process.is_alive():
                     try:
@@ -383,7 +392,7 @@ class MotionSenseApp(QWidget):
             self.refresh_log_file()
             for thread in self.threads:
 
-                thread[1].value = -1
+                thread[1] = -1
                 thread[0].join()
             self.threads.clear()
 
@@ -408,9 +417,9 @@ class MotionSenseApp(QWidget):
             self.log("registering devices...")
             # for all MSense devices, get the characteristics that are checked and collect data from them
             # device is a MotionSense_QWidget device
-            exit_flag = num(2)
-            exit_flag.value = 2
+            index = -1
             for device in self.devices:
+                index += 1
                 self.log("registering device " + str(device.address))
                 path = self.path + "\\" + device.name
                 options = device.get_characteristics()
@@ -433,8 +442,10 @@ class MotionSenseApp(QWidget):
                 #exit_flag = multiprocessing.Value("i", 2)
 
                 self.log("creating Process...")
+
                 #p = multiprocessing.Process(target=test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
-                p2 = threading.Thread(target=test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
+                p2 = threading.Thread(target=test_function, args=(copy.copy(device.address), copy.copy(path), self.record_length, copy.copy(options), num(self.threads, copy.copy(index)), copy.copy(device.name)))
+                self.threads.append([p2, 2, device])
                 self.log("attempting to start thread" + str(total_checks))
                 p2.start()
 
@@ -444,7 +455,7 @@ class MotionSenseApp(QWidget):
                 #threadpool.start(th_thread)
                 #th_thread.run(self.addresses, path, record_length, options)
                 self.log("adding thread to list")
-                self.threads.append([p2, exit_flag, device])
+
                 #data_collection.bluetooth_reciver.non_async_collect(self.address, path, record_length, options)
             #start logging for files
             self.log("sucessfully registered all devices")
