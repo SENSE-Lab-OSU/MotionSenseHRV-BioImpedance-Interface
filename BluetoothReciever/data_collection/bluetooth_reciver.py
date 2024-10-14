@@ -33,15 +33,12 @@ if use_lsl:
 
 
 from bleak import BleakScanner
+import os
+import platform
 
-try:
-    # this is a quick fix for windows devices in which the backend is win32, because win32 does not allow
-    # a gui tick with bleak for some reason
+if "win" in platform.platform().lower():
     from bleak.backends.winrt.util import allow_sta
     allow_sta()
-except ImportError:
-    # other OSes and versions work, so we can just ignore.
-    pass
 
 Tensorflow_UUID = ""
 ppg_UUID = ""
