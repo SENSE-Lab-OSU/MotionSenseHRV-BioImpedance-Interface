@@ -44,7 +44,7 @@ try:
     print(sys.modules)
     allow_sta()
     #uninitialize_sta()
-except ImportError as e:
+except AttributeError as e:
     print("skipped sta")
     print(e)
     # other OSes and versions work, so we can just ignore.
