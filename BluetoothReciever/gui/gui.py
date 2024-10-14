@@ -1,3 +1,4 @@
+import asyncio
 import os
 import sys
 import time
@@ -175,6 +176,12 @@ class MotionSenseApp(QWidget):
         Options.addWidget(Option4)
         Options.addWidget(Option5)
         self.collections_layout.addRow(Options)
+
+        self.reset_button = PyQt5.QtWidgets.QPushButton("Reset Device Flash")
+        self.reset_button.clicked.connect(self.reset_device_async)
+
+
+
         button_font = QFont()
         button_font.setBold(True)
         button_font.setPointSize(11)
@@ -194,7 +201,10 @@ class MotionSenseApp(QWidget):
         self.collections_layout.addRow(self.log_button, self.th_log)
         self.completed_messages = QLabel("")
         self.collections_layout.addWidget(self.completed_messages)
+        self.collections_layout.addWidget(self.reset_button)
         self.collections_layout.addWidget(QLabel(" "))
+
+
         # progress bar
         self.progress_bar = PyQt5.QtWidgets.QProgressBar()
         self.progress_bar_label = QLabel("Collection Progress")
@@ -473,7 +483,15 @@ class MotionSenseApp(QWidget):
 
 
 
+    def reset_devices(self):
+        self.log("attempting to reset devices...")
+        loop = asyncio.new_event_loop()
+        for device in self.devices:
+            loop.run_until_complete(bluetooth_reciver.reset_device(device.address))
 
+    def reset_device_async(self):
+        p = threading.Thread(target=self.reset_devices)
+        p.start()
 
     def log(self, text, user_message=False):
         self.log_disp.setText(text)
@@ -644,10 +662,9 @@ class Collection_Worker(QRunnable):
 
 def test_function(address, path, record_length, options, test_flag, name):
     print("I am running in a test call!")
-    import data_collection.bluetooth_reciver
     print("imported")
     try:
-        data_collection.bluetooth_reciver.non_async_collect(address, path, record_length, options, test_flag, name)
+        bluetooth_reciver.non_async_collect(address, path, record_length, options, test_flag, name)
 
     except Exception as err:
         print(err)

@@ -591,6 +591,12 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
 
             if  "MotionSenseHRV4" in Name or "MSense4" in Name:
                 print("Found MSense4 Device!")
+                unix_time = struct.pack("<Q", int(time.time()))
+                encoding = compute_int_hash(path)
+                await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c932-1d81-48e2-9c68-d0ae4bbd351f"),
+                                             unix_time)
+                await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c933-1d81-48e2-9c68-d0ae4bbd351f"), encoding)
+
                 await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c931-1d81-48e2-9c68-d0ae4bbd351f"), write_pi)
                 if use_lsl:
                     global enmo_outlet
@@ -654,10 +660,18 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
         print("all files written")
 
 
-
-
-
     return "Finished Data Collection for "
+
+
+async def reset_device(address):
+    reset_characteristic = "da39c934-1d81-48e2-9c68-d0ae4bbd351f"
+    async with BleakClient(address) as client:
+        print("resettting " + client.address)
+        value = 68
+        value = struct.pack("<I", value)
+        await client.write_gatt_char(reset_characteristic, value)
+    print("reset command finished!")
+
 
 def compute_int_hash(name:str):
     hash_object = hashlib.sha256(name.encode())
