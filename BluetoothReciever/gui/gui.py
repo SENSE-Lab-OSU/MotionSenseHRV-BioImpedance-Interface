@@ -1,15 +1,19 @@
-import asyncio
+
 import os
 import sys
-import time
+sys.coinit_flags = 0
 import copy
-import atexit
-from PyQt5.QtCore import QRunnable, QThreadPool
-from PyQt5.Qt import QLinearGradient
-import PyQt5.QtCore
+
+import asyncio
 import multiprocessing
 import threading
-from PyQt5.QtCore import pyqtSlot
+
+
+def is_multiprocessing():
+    """Check if the current script is running in a multiprocessing context."""
+    return multiprocessing.get_start_method(allow_none=True) is not None
+
+use_multiprocessing = True
 
 
 import datetime
@@ -38,10 +42,16 @@ This code is designed to be as dependency free as possible,
 so that making new scripts for data collection can be easily be swapped out by
 replacing singular function calls to collect_data'''
 
+
 from data_collection import bluetooth_reciver
 
 from data_collection import device_setup
 
+
+from PyQt5.QtCore import QRunnable
+from PyQt5.Qt import QLinearGradient
+
+from PyQt5.QtCore import pyqtSlot
 
 import PyQt5
 from PyQt5.QtWidgets import (
@@ -65,9 +75,8 @@ from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtCore import Qt
 import PyQt5.QtWidgets
 
-import PyQt5.Qt
 
-threadpool = QThreadPool()
+
 
 bold_font = QFont()
 bold_font.setBold(True)
@@ -231,8 +240,6 @@ class MotionSenseApp(QWidget):
         self.collections_layout.addWidget(self.notice)
 
 
-
-
         # Nest the inner layouts into the outer layout
         outerLayout.addLayout(picture_layout)
         outerLayout.addLayout(self.topLayout)
@@ -340,7 +347,10 @@ class MotionSenseApp(QWidget):
         if self.threads is not None:
             for thread in self.threads:
                 process = thread[0]
+
                 battery_value = thread[1]
+                if use_multiprocessing:
+                    battery_value = thread[1].value
                 device = thread[2]
                 if process.is_alive():
                     try:
@@ -401,8 +411,11 @@ class MotionSenseApp(QWidget):
             print("trying to close app")
             self.refresh_log_file()
             for thread in self.threads:
-
-                thread[1] = -1
+                if use_multiprocessing:
+                    with thread[1].get_lock():
+                        thread[1].value = -1
+                else:
+                    thread[1] = -1
                 thread[0].join()
             self.threads.clear()
 
@@ -449,15 +462,18 @@ class MotionSenseApp(QWidget):
                 # use PyQt threadpool
                 self.log("creating child shared memory flag for end")
 
-                #exit_flag = multiprocessing.Value("i", 2)
+
 
                 self.log("creating Process...")
-
-                #p = multiprocessing.Process(target=test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
-                p2 = threading.Thread(target=test_function, args=(copy.copy(device.address), copy.copy(path), self.record_length, copy.copy(options), num(self.threads, copy.copy(index)), copy.copy(device.name)))
-                self.threads.append([p2, 2, device])
+                if use_multiprocessing:
+                    exit_flag = multiprocessing.Value("i", 2)
+                    p = multiprocessing.Process(target=bluetooth_reciver.test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
+                    self.threads.append([p, exit_flag, device])
+                else:
+                    p = threading.Thread(target=bluetooth_reciver.test_function, args=(copy.copy(device.address), copy.copy(path), self.record_length, copy.copy(options), num(self.threads, copy.copy(index)), copy.deepcopy(device.name)))
+                    self.threads.append([p, 2, device])
                 self.log("attempting to start thread" + str(total_checks))
-                p2.start()
+                p.start()
 
                 total_checks += 1
 
@@ -660,16 +676,7 @@ class Collection_Worker(QRunnable):
         self.function_handler(self.address, self.path, self.record_length, self.options)
 
 
-def test_function(address, path, record_length, options, test_flag, name):
-    print("I am running in a test call!")
-    print("imported")
-    try:
-        bluetooth_reciver.non_async_collect(address, path, record_length, options, test_flag, name)
 
-    except Exception as err:
-        print(err)
-
-    print("I am done!")
 
 
 
@@ -728,15 +735,6 @@ class Window(QMainWindow):
         except Exception as e:
             print(e)
 
-
-try:
-    import bleak_winrt.windows.devices.bluetooth
-except:
-    pass
-
-
-def update(param):
-    print("hello")
 
 
 def start():

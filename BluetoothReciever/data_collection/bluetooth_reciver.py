@@ -1,24 +1,26 @@
 # -*- coding: utf-8 -*-
 """
 """
+
 import sys
-#sys.coinit_flags = 0
+sys.coinit_flags = 0  # 0 means MTA
+
 import logging
 import asyncio
 import platform
 import time
 import atexit
 import hashlib
-import matplotlib.pyplot as plt
+
 import numpy
 from bleak import BleakClient
 from bleak import _logger as logger
+from bleak import BleakScanner
 from copy import deepcopy
 import bleak.uuids
 import scipy
 import struct
 import csv
-import threading
 import os
 
 import datetime
@@ -34,21 +36,32 @@ if use_lsl:
     enmo_outlet = None
 
 
-from bleak import BleakScanner
+import multiprocessing
+def is_multiprocessing():
+    """Check if the current script is running in a multiprocessing context."""
+    return multiprocessing.get_start_method(allow_none=True) is not None
 
-try:
-    # this is a quick fix for windows devices in which the backend is win32, because win32 does not allow
-    # a gui tick with bleak for some reason
-    from bleak.backends.winrt.util import allow_sta, uninitialize_sta
-    print("performing sta logistics")
-    print(sys.modules)
-    allow_sta()
-    #uninitialize_sta()
-except AttributeError as e:
-    print("skipped sta")
-    print(e)
-    # other OSes and versions work, so we can just ignore.
-    pass
+if True:
+    try:
+        # this is a quick fix for windows devices in which the backend is win32, because win32 does not allow
+        # a gui tick with bleak for some reason
+        from bleak.backends.winrt.util import allow_sta, uninitialize_sta
+        print("performing sta logistics")
+        print(sys.modules)
+        if not is_multiprocessing():
+            allow_sta()
+        else:
+            uninitialize_sta()
+    except AttributeError as e:
+        print("skipped sta")
+        print(e)
+        # other OSes and versions work, so we can just ignore.
+        pass
+    except ModuleNotFoundError as e:
+        print("skipped sta")
+        print(e)
+        # other OSes and versions work, so we can just ignore.
+        pass
 
 Tensorflow_UUID = ""
 ppg_UUID = ""
@@ -70,6 +83,8 @@ status_flag = 0
 
 previous_time = 0
 ''' This is a class for holding information about a single bluetooth attribute.'''
+
+
 class MSenseCharacteristic:
 
 
@@ -125,10 +140,12 @@ class MSense_data:
     # upon first execution of the handler, this variable will be
     # assigned a file object
     ppg_file = None
+    ppg_lsl = None
 
     enmo_data = []
     enmo_packet_counter = []
     enmo_file = None
+    enmo_lsl = None
 
     accelorometer_data = []
     accelorometer_packet_counter = []
@@ -138,6 +155,7 @@ class MSense_data:
     accelorometer_z = []
     accelorometer_timestamp = []
     accelorometer_file = None
+    accelorometer_lsl = None
 
 
     angular_velocity_x = []
@@ -511,6 +529,17 @@ def create_csv_file(name:str, path):
         MSense_data.ppg_file = csv.DictWriter(th_csv_file, fieldnames=field_names)
         MSense_data.ppg_file.writeheader()
 
+def test_function(address, path, record_length, options, test_flag, name):
+    print("I am running in a test call!")
+    print("imported")
+    try:
+        non_async_collect(address, path, record_length, options, test_flag, name)
+
+    except Exception as err:
+        print(err)
+
+    print("I am done!")
+
 
 # this is the function that is executed inside the GUI to make sure everything runs properly
 def non_async_collect(address, path, max_length, collect_options, end_flag, name):
@@ -579,7 +608,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             battery_level = await check_battery(client)
             if battery_level is not None:
                 print(battery_level)
-                status_flag.set_value(battery_level)
+                status_flag.value = battery_level # set_value(battery_level)
 
             current_services = []
 
@@ -638,8 +667,8 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             #collect data
             
             for current_second in range(int(data_amount)):
-                print("current seconds in collection for device: " + str(current_second) + "and status:" + str(status_flag.get_value()))
-                if (status_flag.get_value() == -1) or not client.is_connected:
+                print("current seconds in collection for device: " + str(current_second) + "and status:" + str(status_flag))
+                if (status_flag.value == -1) or not client.is_connected:
                     print("status triggered error, ending collection...")
                     break
                 await asyncio.sleep(1.0)
@@ -666,10 +695,13 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
 async def reset_device(address):
     reset_characteristic = "da39c934-1d81-48e2-9c68-d0ae4bbd351f"
     async with BleakClient(address) as client:
-        print("resettting " + client.address)
-        value = 68
-        value = struct.pack("<I", value)
-        await client.write_gatt_char(reset_characteristic, value)
+        try:
+            print("resettting " + client.address)
+            value = 68
+            value = struct.pack("<I", value)
+            await client.write_gatt_char(reset_characteristic, value)
+        except Exception as e:
+            print(e)
     print("reset command finished!")
 
 
@@ -775,10 +807,11 @@ def write_files(file_name:str, type:str, time_stamp:str, file_obj,
 
     # plot the data
 
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
+
 def show_realtime_graph(title, data:list, labels:list, ppg_filter_passthrough=False):
-    
+    import matplotlib.pyplot as plt
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
     ax.clear()
     for data_element in range(len(data)):
         row = len(data[data_element])
@@ -808,7 +841,7 @@ def show_realtime_graph(title, data:list, labels:list, ppg_filter_passthrough=Fa
 
 # shows a graph of ppg signals. data is a list of ppg signals (which is a list of samples.)
 def show_graph(title, data:list, labels:list, ppg_filter_passthrough=False, pause=False):
-    
+    import matplotlib.pyplot as plt
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
 
